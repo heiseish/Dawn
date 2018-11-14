@@ -1,0 +1,1 @@
+{"version":3,"file":"help.js","sourceRoot":"","sources":["../../../src/main/actions/help.ts"],"names":[],"mappings":";;AAAA,MAAM,WAAW,GAAG,oEAAoE,CAAA;AACxF;;;;GAIG;AACH,kBAAe,CAAC,IAAc,EAAY,EAAE;IAC3C,IAAI,CAAC,QAAQ,GAAG;QACf,UAAU,EAAE,qCAAqC,GAAG,WAAW;QAC/D,UAAU,EAAE,IAAI;KAChB,CAAA;IACD,OAAO,IAAI,CAAA;AACZ,CAAC,CAAA"}

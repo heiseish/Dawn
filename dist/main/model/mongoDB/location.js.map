@@ -1,0 +1,1 @@
+{"version":3,"file":"location.js","sourceRoot":"","sources":["../../../../src/main/model/mongoDB/location.ts"],"names":[],"mappings":";;;;;AAAA,oDAA8B;AAC9B,MAAM,MAAM,GAAG,eAAQ,CAAC,MAAM,CAAA;AAC9B,kBAAe,IAAI,MAAM,CAAC;IACzB,GAAG,EAAE,MAAM,IAAI,MAAM;IACrB,IAAI,EAAE,MAAM,IAAI,MAAM;IACtB,gBAAgB,EAAE,MAAM;CACxB,EAAE,EAAE,MAAM,EAAE,KAAK,EAAE,GAAG,EAAG,KAAK,EAAG,CAAC,CAAA"}
