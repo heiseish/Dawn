@@ -5,12 +5,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "test": "npx babel-node test/index.js",
+    "test": "node test/index.js",
     "start:dev": "yarn build && yarn start:prod",
     "start:prod": "node dist/index.js",
     "start": "npx if-env NODE_ENV=production && yarn start:prod || yarn start:dev",
-    "flow": "flow",
-    "flow:check": "flow check ./src/",
     "build": "tsc"
   },
   "dependencies": {

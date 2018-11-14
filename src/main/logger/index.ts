@@ -9,7 +9,7 @@ class Logger {
 
 	private generateDateTimePrefix() {
 		if (process.env.NODE_ENV === 'production') return ''
-		return '[' + this.prefixColor(new Date().toString()) + ']'
+		else return '[' + this.prefixColor(new Date().toString()) + ']'
 	}
 	/**
 	 * Logging out the text with prefix color

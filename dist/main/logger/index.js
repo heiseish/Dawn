@@ -10,7 +10,10 @@ class Logger {
         this.prefixColor = chalk_1.default.magenta;
     }
     generateDateTimePrefix() {
-        return '[' + this.prefixColor(new Date().toString()) + ']';
+        if (process.env.NODE_ENV === 'production')
+            return '';
+        else
+            return '[' + this.prefixColor(new Date().toString()) + ']';
     }
     /**
      * Logging out the text with prefix color
