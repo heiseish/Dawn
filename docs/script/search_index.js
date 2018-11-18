@@ -1,284 +1,1640 @@
 window.esdocSearchIndex = [
   [
-    "*.ts/.external-ecmascript.js~array",
+    "potts-reborn/src/main/environment.ts~admin_id",
+    "variable/index.html#static-variable-ADMIN_ID",
+    "<span>ADMIN_ID</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/app.ts~app",
+    "class/src/App.ts~App.html",
+    "<span>App</span> <span class=\"search-result-import-path\">potts-reborn/src/App.ts</span>",
+    "class"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~cache_duration",
+    "variable/index.html#static-variable-CACHE_DURATION",
+    "<span>CACHE_DURATION</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~darksky_key",
+    "variable/index.html#static-variable-DARKSKY_KEY",
+    "<span>DARKSKY_KEY</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~fb_page_id",
+    "variable/index.html#static-variable-FB_PAGE_ID",
+    "<span>FB_PAGE_ID</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~fb_page_token",
+    "variable/index.html#static-variable-FB_PAGE_TOKEN",
+    "<span>FB_PAGE_TOKEN</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~fb_verify_token",
+    "variable/index.html#static-variable-FB_VERIFY_TOKEN",
+    "<span>FB_VERIFY_TOKEN</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~git_id",
+    "variable/index.html#static-variable-GIT_ID",
+    "<span>GIT_ID</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~git_pw",
+    "variable/index.html#static-variable-GIT_PW",
+    "<span>GIT_PW</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~google_application_credentials",
+    "variable/index.html#static-variable-GOOGLE_APPLICATION_CREDENTIALS",
+    "<span>GOOGLE_APPLICATION_CREDENTIALS</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~google_project_id",
+    "variable/index.html#static-variable-GOOGLE_PROJECT_ID",
+    "<span>GOOGLE_PROJECT_ID</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/hq.ts~headquarter",
+    "class/src/main/hq.ts~Headquarter.html",
+    "<span>Headquarter</span> <span class=\"search-result-import-path\">potts-reborn/src/main/hq.ts</span>",
+    "class"
+  ],
+  [
+    "potts-reborn/src/main/logger/index.ts~logger",
+    "class/src/main/logger/index.ts~Logger.html",
+    "<span>Logger</span> <span class=\"search-result-import-path\">potts-reborn/src/main/logger/index.ts</span>",
+    "class"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~mongo_db_uri",
+    "variable/index.html#static-variable-MONGO_DB_URI",
+    "<span>MONGO_DB_URI</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~newsapi_key",
+    "variable/index.html#static-variable-NEWSAPI_KEY",
+    "<span>NEWSAPI_KEY</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~pguri",
+    "variable/index.html#static-variable-PGURI",
+    "<span>PGURI</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~port",
+    "variable/index.html#static-variable-PORT",
+    "<span>PORT</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~telegram_token",
+    "variable/index.html#static-variable-TELEGRAM_TOKEN",
+    "<span>TELEGRAM_TOKEN</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~twitter_access_token_key",
+    "variable/index.html#static-variable-TWITTER_ACCESS_TOKEN_KEY",
+    "<span>TWITTER_ACCESS_TOKEN_KEY</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~twitter_access_token_secret",
+    "variable/index.html#static-variable-TWITTER_ACCESS_TOKEN_SECRET",
+    "<span>TWITTER_ACCESS_TOKEN_SECRET</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~twitter_consumer_key",
+    "variable/index.html#static-variable-TWITTER_CONSUMER_KEY",
+    "<span>TWITTER_CONSUMER_KEY</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~twitter_consumer_secret",
+    "variable/index.html#static-variable-TWITTER_CONSUMER_SECRET",
+    "<span>TWITTER_CONSUMER_SECRET</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/model/mongodb/text.ts~text",
+    "variable/index.html#static-variable-Text",
+    "<span>Text</span> <span class=\"search-result-import-path\">potts-reborn/src/main/model/mongoDB/text.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~unsplash_id",
+    "variable/index.html#static-variable-UNSPLASH_ID",
+    "<span>UNSPLASH_ID</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~unsplash_secret",
+    "variable/index.html#static-variable-UNSPLASH_SECRET",
+    "<span>UNSPLASH_SECRET</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@google/controller.ts~using_translation",
+    "variable/index.html#static-variable-USING_TRANSLATION",
+    "<span>USING_TRANSLATION</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@google/controller.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@google/controller.ts~using_vision",
+    "variable/index.html#static-variable-USING_VISION",
+    "<span>USING_VISION</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@google/controller.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/environment.ts~zamzar_apikey",
+    "variable/index.html#static-variable-ZAMZAR_APIKEY",
+    "<span>ZAMZAR_APIKEY</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/analyze.ts~analyze",
+    "function/index.html#static-function-analyze",
+    "<span>analyze</span> <span class=\"search-result-import-path\">potts-reborn/src/main/analyze.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/bye.ts~bye",
+    "function/index.html#static-function-bye",
+    "<span>bye</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/bye.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/catfact.ts~catfact",
+    "function/index.html#static-function-catFact",
+    "<span>catFact</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/catFact.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@google/tensorflow/utils.ts~characterlevelembed",
+    "function/index.html#static-function-characterLevelEmbed",
+    "<span>characterLevelEmbed</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@google/tensorflow/utils.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@twitter/index.ts~checkandreturntwitteruser",
+    "function/index.html#static-function-checkAndReturnTwitterUser",
+    "<span>checkAndReturnTwitterUser</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@twitter/index.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/array.ts~checkduplicates",
+    "function/index.html#static-function-checkDuplicates",
+    "<span>checkDuplicates</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/array.ts~checkifarraymutual",
+    "function/index.html#static-function-checkIfArrayMutual",
+    "<span>checkIfArrayMutual</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@twitter/index.ts~client",
+    "variable/index.html#static-variable-client",
+    "<span>client</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@twitter/index.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/node-cache.ts~close",
+    "function/index.html#static-function-close",
+    "<span>close</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/node-cache.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/compliment.ts~compliment",
+    "function/index.html#static-function-compliment",
+    "<span>compliment</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/compliment.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/array.ts~containsobjectwithnameattribute",
+    "function/index.html#static-function-containsObjectWithNameAttribute",
+    "<span>containsObjectWithNameAttribute</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@facebook/pytorch/converse.ts~converse",
+    "function/index.html#static-function-converse",
+    "<span>converse</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@facebook/pytorch/converse.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/gists.ts~creategist",
+    "function/index.html#static-function-createGist",
+    "<span>createGist</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/gists.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/encrypt.ts~decrypt",
+    "function/index.html#static-function-decrypt",
+    "<span>decrypt</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/encrypt.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/gists.ts~editgist",
+    "function/index.html#static-function-editGist",
+    "<span>editGist</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/gists.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/encrypt.ts~encrypt",
+    "function/index.html#static-function-encrypt",
+    "<span>encrypt</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/encrypt.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/execute.ts~execute",
+    "function/index.html#static-function-execute",
+    "<span>execute</span> <span class=\"search-result-import-path\">potts-reborn/src/main/execute.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/model/database/firebasedb.ts~firebase",
+    "variable/index.html#static-variable-firebase",
+    "<span>firebase</span> <span class=\"search-result-import-path\">potts-reborn/src/main/model/database/firebasedb.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/node-cache.ts~flush",
+    "function/index.html#static-function-flush",
+    "<span>flush</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/node-cache.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/moment.ts~formattimeforlisttemplate",
+    "function/index.html#static-function-formatTimeForListTemplate",
+    "<span>formatTimeForListTemplate</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/moment.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/marked.ts~generatehelpmanual",
+    "function/index.html#static-function-generateHelpManual",
+    "<span>generateHelpManual</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/marked.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/string.ts~generaterandomid",
+    "function/index.html#static-function-generateRandomId",
+    "<span>generateRandomId</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/generictemplate.ts~generictemplate",
+    "function/index.html#static-function-genericTemplate",
+    "<span>genericTemplate</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/genericTemplate.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/node-cache.ts~get",
+    "function/index.html#static-function-get",
+    "<span>get</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/node-cache.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/news.ts~getallheadlines",
+    "function/index.html#static-function-getAllHeadlines",
+    "<span>getAllHeadlines</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/news.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/array.ts~getcommonmembersfromtwoarrays",
+    "function/index.html#static-function-getCommonMembersFromTwoArrays",
+    "<span>getCommonMembersFromTwoArrays</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/news.ts~getheadlineswithcategory",
+    "function/index.html#static-function-getHeadlinesWithCategory",
+    "<span>getHeadlinesWithCategory</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/news.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/news.ts~getheadlineswithquery",
+    "function/index.html#static-function-getHeadlinesWithQuery",
+    "<span>getHeadlinesWithQuery</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/news.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/moment.ts~getningoftheday",
+    "function/index.html#static-function-getNingOfTheDay",
+    "<span>getNingOfTheDay</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/moment.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/string.ts~getnumberstringfromstring",
+    "function/index.html#static-function-getNumberStringFromString",
+    "<span>getNumberStringFromString</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/account.ts~getplatformandid",
+    "function/index.html#static-function-getPlatformAndId",
+    "<span>getPlatformAndId</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/account.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/news.ts~getrandomheadlines",
+    "function/index.html#static-function-getRandomHeadlines",
+    "<span>getRandomHeadlines</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/news.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/news.ts~getrandomtop5headlines",
+    "function/index.html#static-function-getRandomTop5Headlines",
+    "<span>getRandomTop5Headlines</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/news.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@twitter/index.ts~gettwitterstatus",
+    "function/index.html#static-function-getTwitterStatus",
+    "<span>getTwitterStatus</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@twitter/index.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/model/cache.ts~getuser",
+    "function/index.html#static-function-getUser",
+    "<span>getUser</span> <span class=\"search-result-import-path\">potts-reborn/src/main/model/cache.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/graphapi.ts~getusername",
+    "function/index.html#static-function-getUserName",
+    "<span>getUserName</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/graphApi.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/worldcup.ts~getwcschedule",
+    "function/index.html#static-function-getWCSchedule",
+    "<span>getWCSchedule</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/worldCup.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/weather.ts~getweather",
+    "function/index.html#static-function-getWeather",
+    "<span>getWeather</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/weather.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/weather.ts~getweathermessage",
+    "function/index.html#static-function-getWeatherMessage",
+    "<span>getWeatherMessage</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/weather.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/giphy.ts~giphy",
+    "function/index.html#static-function-giphy",
+    "<span>giphy</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/giphy.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/greet.ts~greet",
+    "function/index.html#static-function-greet",
+    "<span>greet</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/greet.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/help.ts~help",
+    "function/index.html#static-function-help",
+    "<span>help</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/help.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/identifysource.ts~identifysource",
+    "function/index.html#static-function-identifySource",
+    "<span>identifySource</span> <span class=\"search-result-import-path\">potts-reborn/src/main/identifySource.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/telegram/api/image.ts~image",
+    "function/index.html#static-function-image",
+    "<span>image</span> <span class=\"search-result-import-path\">potts-reborn/src/main/telegram/api/image.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/listtemplate.ts~listtemplate",
+    "function/index.html#static-function-listTemplate",
+    "<span>listTemplate</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/listTemplate.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/logger/index.ts~logger",
+    "variable/index.html#static-variable-logger",
+    "<span>logger</span> <span class=\"search-result-import-path\">potts-reborn/src/main/logger/index.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/senderaction.ts~markseen",
+    "function/index.html#static-function-markSeen",
+    "<span>markSeen</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/senderAction.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/object.ts~maskobject",
+    "function/index.html#static-function-maskObject",
+    "<span>maskObject</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/object.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/mediatemplate.ts~mediatemplate",
+    "function/index.html#static-function-mediaTemplate",
+    "<span>mediaTemplate</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/mediaTemplate.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/message.ts~message",
+    "function/index.html#static-function-message",
+    "<span>message</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/message.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/telegram/api/message.ts~message",
+    "function/index.html#static-function-message",
+    "<span>message</span> <span class=\"search-result-import-path\">potts-reborn/src/main/telegram/api/message.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/fbrequest.ts~messaging",
+    "variable/index.html#static-variable-messaging",
+    "<span>messaging</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/fbrequest.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/node-cache.ts~mycache",
+    "variable/index.html#static-variable-myCache",
+    "<span>myCache</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/node-cache.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/actions/news.ts~news",
+    "function/index.html#static-function-news",
+    "<span>news</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/news.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/string.ts~padleft",
+    "function/index.html#static-function-padLeft",
+    "<span>padLeft</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/string.ts~padright",
+    "function/index.html#static-function-padRight",
+    "<span>padRight</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/utils.ts~parsearticles",
+    "function/index.html#static-function-parseArticles",
+    "<span>parseArticles</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/utils.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/parser.ts~parsearticles",
+    "function/index.html#static-function-parseArticles",
+    "<span>parseArticles</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/parser.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/pkmgo.ts~pkmgo",
+    "function/index.html#static-function-pkmGo",
+    "<span>pkmGo</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/pkmGo.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/string.ts~possiblenay",
+    "variable/index.html#static-variable-possibleNay",
+    "<span>possibleNay</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/string.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/lib/string.ts~possibleyay",
+    "variable/index.html#static-variable-possibleYay",
+    "<span>possibleYay</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/string.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@google/tensorflow/intentclassification.ts~predict",
+    "function/index.html#static-function-predict",
+    "<span>predict</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@google/tensorflow/intentClassification.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/preprocess.ts~preprocess",
+    "function/index.html#static-function-preprocess",
+    "<span>preprocess</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/preprocess.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/telegram/preprocess.ts~preprocess",
+    "function/index.html#static-function-preprocess",
+    "<span>preprocess</span> <span class=\"search-result-import-path\">potts-reborn/src/main/telegram/preprocess.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/quickreply.ts~quickreply",
+    "function/index.html#static-function-quickReply",
+    "<span>quickReply</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/quickReply.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/string.ts~randombyemessage",
+    "function/index.html#static-function-randomByeMessage",
+    "<span>randomByeMessage</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/string.ts~randomconfusedmessage",
+    "function/index.html#static-function-randomConfusedMessage",
+    "<span>randomConfusedMessage</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/string.ts~randomgreetingprefix",
+    "function/index.html#static-function-randomGreetingPrefix",
+    "<span>randomGreetingPrefix</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/string.ts~randomgreetingsuffix",
+    "function/index.html#static-function-randomGreetingSuffix",
+    "<span>randomGreetingSuffix</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/array.ts~randomindex",
+    "function/index.html#static-function-randomIndex",
+    "<span>randomIndex</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/string.ts~randomresponsetocomplimentmessage",
+    "function/index.html#static-function-randomResponseToComplimentMessage",
+    "<span>randomResponseToComplimentMessage</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/lib/string.ts~randomresponsetothanksmessage",
+    "function/index.html#static-function-randomResponseToThanksMessage",
+    "<span>randomResponseToThanksMessage</span> <span class=\"search-result-import-path\">potts-reborn/src/main/lib/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/array.ts~removefromarray",
+    "function/index.html#static-function-removeFromArray",
+    "<span>removeFromArray</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/string.ts~replaceall",
+    "function/index.html#static-function-replaceAll",
+    "<span>replaceAll</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/string.ts~replaceallsubstring",
+    "function/index.html#static-function-replaceAllSubstring",
+    "<span>replaceAllSubstring</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/replytodocument.ts~replytodocument",
+    "function/index.html#static-function-replyToDocument",
+    "<span>replyToDocument</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/replyToDocument.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/respond.ts~respond",
+    "function/index.html#static-function-respond",
+    "<span>respond</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/respond.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/respond.ts~respond",
+    "function/index.html#static-function-respond",
+    "<span>respond</span> <span class=\"search-result-import-path\">potts-reborn/src/main/respond.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/telegram/respond.ts~respond",
+    "function/index.html#static-function-respond",
+    "<span>respond</span> <span class=\"search-result-import-path\">potts-reborn/src/main/telegram/respond.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/retrieveorcreateuser.ts~retrieveorcreateuser",
+    "function/index.html#static-function-retrieveOrCreateUser",
+    "<span>retrieveOrCreateUser</span> <span class=\"search-result-import-path\">potts-reborn/src/main/retrieveOrCreateUser.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/node-cache.ts~save",
+    "function/index.html#static-function-save",
+    "<span>save</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/node-cache.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/model/cache.ts~saveuser",
+    "function/index.html#static-function-saveUser",
+    "<span>saveUser</span> <span class=\"search-result-import-path\">potts-reborn/src/main/model/cache.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/sendimage.ts~sendimage",
+    "function/index.html#static-function-sendImage",
+    "<span>sendImage</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/sendImage.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/rx.ts~setupstreamingapi",
+    "function/index.html#static-function-setUpStreamingApi",
+    "<span>setUpStreamingApi</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/rx.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/array.ts~shuffle",
+    "function/index.html#static-function-shuffle",
+    "<span>shuffle</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@google/speech.ts~speechtotext",
+    "function/index.html#static-function-speechToText",
+    "<span>speechToText</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@google/speech.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/model/mongodb/text.ts~textschema",
+    "variable/index.html#static-variable-textSchema",
+    "<span>textSchema</span> <span class=\"search-result-import-path\">potts-reborn/src/main/model/mongoDB/text.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/actions/thanks.ts~thanks",
+    "function/index.html#static-function-thanks",
+    "<span>thanks</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/thanks.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@google/tensorflow/utils.ts~towordintent",
+    "function/index.html#static-function-toWordIntent",
+    "<span>toWordIntent</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@google/tensorflow/utils.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/utils/string.ts~tokenizetext",
+    "function/index.html#static-function-tokenizeText",
+    "<span>tokenizeText</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/string.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@google/translate.ts~translate",
+    "function/index.html#static-function-translate",
+    "<span>translate</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@google/translate.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/senderaction.ts~typingoff",
+    "function/index.html#static-function-typingOff",
+    "<span>typingOff</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/senderAction.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/senderaction.ts~typingon",
+    "function/index.html#static-function-typingOn",
+    "<span>typingOn</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/senderAction.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/marked.ts~updatehelpmanual",
+    "function/index.html#static-function-updateHelpManual",
+    "<span>updateHelpManual</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/marked.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/api/utility.ts~uploadmedia",
+    "function/index.html#static-function-uploadMedia",
+    "<span>uploadMedia</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/api/utility.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/messenger/fbrequest.ts~uploading",
+    "variable/index.html#static-variable-uploading",
+    "<span>uploading</span> <span class=\"search-result-import-path\">potts-reborn/src/main/messenger/fbrequest.ts</span>",
+    "variable"
+  ],
+  [
+    "potts-reborn/src/main/utils/timer.ts~waittodo",
+    "function/index.html#static-function-waitToDo",
+    "<span>waitToDo</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/timer.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/weather.ts~weather",
+    "function/index.html#static-function-weather",
+    "<span>weather</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/weather.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/actions/worldcup.ts~worldcup",
+    "function/index.html#static-function-worldCup",
+    "<span>worldCup</span> <span class=\"search-result-import-path\">potts-reborn/src/main/actions/worldCup.ts</span>",
+    "function"
+  ],
+  [
+    "src/.external-ecmascript.js~array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-    "*.ts/.external-ecmascript.js~Array",
+    "src/.external-ecmascript.js~Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~arraybuffer",
+    "src/.external-ecmascript.js~arraybuffer",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
-    "*.ts/.external-ecmascript.js~ArrayBuffer",
+    "src/.external-ecmascript.js~ArrayBuffer",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~boolean",
+    "src/.external-ecmascript.js~boolean",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
-    "*.ts/.external-ecmascript.js~Boolean",
+    "src/.external-ecmascript.js~Boolean",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~dataview",
+    "src/.external-ecmascript.js~dataview",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
-    "*.ts/.external-ecmascript.js~DataView",
+    "src/.external-ecmascript.js~DataView",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~date",
+    "src/.external-ecmascript.js~date",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
-    "*.ts/.external-ecmascript.js~Date",
+    "src/.external-ecmascript.js~Date",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~error",
+    "src/.external-ecmascript.js~error",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
-    "*.ts/.external-ecmascript.js~Error",
+    "src/.external-ecmascript.js~Error",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~evalerror",
+    "src/.external-ecmascript.js~evalerror",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
-    "*.ts/.external-ecmascript.js~EvalError",
+    "src/.external-ecmascript.js~EvalError",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~float32array",
+    "src/.external-ecmascript.js~float32array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
-    "*.ts/.external-ecmascript.js~Float32Array",
+    "src/.external-ecmascript.js~Float32Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~float64array",
+    "src/.external-ecmascript.js~float64array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
-    "*.ts/.external-ecmascript.js~Float64Array",
+    "src/.external-ecmascript.js~Float64Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~function",
+    "src/.external-ecmascript.js~function",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
-    "*.ts/.external-ecmascript.js~Function",
+    "src/.external-ecmascript.js~Function",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~generator",
+    "src/.external-ecmascript.js~generator",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
-    "*.ts/.external-ecmascript.js~Generator",
+    "src/.external-ecmascript.js~Generator",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~generatorfunction",
+    "src/.external-ecmascript.js~generatorfunction",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
-    "*.ts/.external-ecmascript.js~GeneratorFunction",
+    "src/.external-ecmascript.js~GeneratorFunction",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~infinity",
+    "src/.external-ecmascript.js~infinity",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
-    "*.ts/.external-ecmascript.js~Infinity",
+    "src/.external-ecmascript.js~Infinity",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~int16array",
+    "src/.external-ecmascript.js~int16array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
-    "*.ts/.external-ecmascript.js~Int16Array",
+    "src/.external-ecmascript.js~Int16Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~int32array",
+    "src/.external-ecmascript.js~int32array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
-    "*.ts/.external-ecmascript.js~Int32Array",
+    "src/.external-ecmascript.js~Int32Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~int8array",
+    "src/.external-ecmascript.js~int8array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
-    "*.ts/.external-ecmascript.js~Int8Array",
+    "src/.external-ecmascript.js~Int8Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~internalerror",
+    "src/.external-ecmascript.js~internalerror",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
-    "*.ts/.external-ecmascript.js~InternalError",
+    "src/.external-ecmascript.js~InternalError",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~json",
+    "src/.external-ecmascript.js~json",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
-    "*.ts/.external-ecmascript.js~JSON",
+    "src/.external-ecmascript.js~JSON",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~map",
+    "src/.external-ecmascript.js~map",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
-    "*.ts/.external-ecmascript.js~Map",
+    "src/.external-ecmascript.js~Map",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~nan",
+    "src/.external-ecmascript.js~nan",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
-    "*.ts/.external-ecmascript.js~NaN",
+    "src/.external-ecmascript.js~NaN",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~number",
+    "src/.external-ecmascript.js~number",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
-    "*.ts/.external-ecmascript.js~Number",
+    "src/.external-ecmascript.js~Number",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~object",
+    "src/.external-ecmascript.js~object",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
-    "*.ts/.external-ecmascript.js~Object",
+    "src/.external-ecmascript.js~Object",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~promise",
+    "src/.external-ecmascript.js~promise",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
-    "*.ts/.external-ecmascript.js~Promise",
+    "src/.external-ecmascript.js~Promise",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~proxy",
+    "src/.external-ecmascript.js~proxy",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
-    "*.ts/.external-ecmascript.js~Proxy",
+    "src/.external-ecmascript.js~Proxy",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~rangeerror",
+    "src/.external-ecmascript.js~rangeerror",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
-    "*.ts/.external-ecmascript.js~RangeError",
+    "src/.external-ecmascript.js~RangeError",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~referenceerror",
+    "src/.external-ecmascript.js~referenceerror",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
-    "*.ts/.external-ecmascript.js~ReferenceError",
+    "src/.external-ecmascript.js~ReferenceError",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~reflect",
+    "src/.external-ecmascript.js~reflect",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
-    "*.ts/.external-ecmascript.js~Reflect",
+    "src/.external-ecmascript.js~Reflect",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~regexp",
+    "src/.external-ecmascript.js~regexp",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
-    "*.ts/.external-ecmascript.js~RegExp",
+    "src/.external-ecmascript.js~RegExp",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~set",
+    "src/.external-ecmascript.js~set",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
-    "*.ts/.external-ecmascript.js~Set",
+    "src/.external-ecmascript.js~Set",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~string",
+    "src/.external-ecmascript.js~string",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-    "*.ts/.external-ecmascript.js~String",
+    "src/.external-ecmascript.js~String",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~symbol",
+    "src/.external-ecmascript.js~symbol",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
-    "*.ts/.external-ecmascript.js~Symbol",
+    "src/.external-ecmascript.js~Symbol",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~syntaxerror",
+    "src/.external-ecmascript.js~syntaxerror",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
-    "*.ts/.external-ecmascript.js~SyntaxError",
+    "src/.external-ecmascript.js~SyntaxError",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~typeerror",
+    "src/.external-ecmascript.js~typeerror",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
-    "*.ts/.external-ecmascript.js~TypeError",
+    "src/.external-ecmascript.js~TypeError",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~urierror",
+    "src/.external-ecmascript.js~urierror",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
-    "*.ts/.external-ecmascript.js~URIError",
+    "src/.external-ecmascript.js~URIError",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~uint16array",
+    "src/.external-ecmascript.js~uint16array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
-    "*.ts/.external-ecmascript.js~Uint16Array",
+    "src/.external-ecmascript.js~Uint16Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~uint32array",
+    "src/.external-ecmascript.js~uint32array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
-    "*.ts/.external-ecmascript.js~Uint32Array",
+    "src/.external-ecmascript.js~Uint32Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~uint8array",
+    "src/.external-ecmascript.js~uint8array",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
-    "*.ts/.external-ecmascript.js~Uint8Array",
+    "src/.external-ecmascript.js~Uint8Array",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~uint8clampedarray",
+    "src/.external-ecmascript.js~uint8clampedarray",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
-    "*.ts/.external-ecmascript.js~Uint8ClampedArray",
+    "src/.external-ecmascript.js~Uint8ClampedArray",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~weakmap",
+    "src/.external-ecmascript.js~weakmap",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
-    "*.ts/.external-ecmascript.js~WeakMap",
+    "src/.external-ecmascript.js~WeakMap",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~weakset",
+    "src/.external-ecmascript.js~weakset",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
-    "*.ts/.external-ecmascript.js~WeakSet",
+    "src/.external-ecmascript.js~WeakSet",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~boolean",
+    "src/.external-ecmascript.js~boolean",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
-    "*.ts/.external-ecmascript.js~boolean",
+    "src/.external-ecmascript.js~boolean",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~function",
+    "src/.external-ecmascript.js~function",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
-    "*.ts/.external-ecmascript.js~function",
+    "src/.external-ecmascript.js~function",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~null",
+    "src/.external-ecmascript.js~null",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
-    "*.ts/.external-ecmascript.js~null",
+    "src/.external-ecmascript.js~null",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~number",
+    "src/.external-ecmascript.js~number",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
-    "*.ts/.external-ecmascript.js~number",
+    "src/.external-ecmascript.js~number",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~object",
+    "src/.external-ecmascript.js~object",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
-    "*.ts/.external-ecmascript.js~object",
+    "src/.external-ecmascript.js~object",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~string",
+    "src/.external-ecmascript.js~string",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-    "*.ts/.external-ecmascript.js~string",
+    "src/.external-ecmascript.js~string",
     "external"
   ],
   [
-    "*.ts/.external-ecmascript.js~undefined",
+    "src/.external-ecmascript.js~undefined",
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
-    "*.ts/.external-ecmascript.js~undefined",
+    "src/.external-ecmascript.js~undefined",
     "external"
+  ],
+  [
+    "src/app.ts",
+    "file/src/App.ts.html",
+    "src/App.ts",
+    "file"
+  ],
+  [
+    "src/app.ts~app#constructor",
+    "class/src/App.ts~App.html#instance-constructor-constructor",
+    "src/App.ts~App#constructor",
+    "method"
+  ],
+  [
+    "src/app.ts~app#express",
+    "class/src/App.ts~App.html#instance-member-express",
+    "src/App.ts~App#express",
+    "member"
+  ],
+  [
+    "src/app.ts~app#headquarter",
+    "class/src/App.ts~App.html#instance-member-headquarter",
+    "src/App.ts~App#headquarter",
+    "member"
+  ],
+  [
+    "src/app.ts~app#loadfacebookendpoint",
+    "class/src/App.ts~App.html#instance-method-loadFacebookEndpoint",
+    "src/App.ts~App#loadFacebookEndpoint",
+    "method"
+  ],
+  [
+    "src/app.ts~app#loadpingendpoints",
+    "class/src/App.ts~App.html#instance-method-loadPingEndpoints",
+    "src/App.ts~App#loadPingEndpoints",
+    "method"
+  ],
+  [
+    "src/app.ts~app#loadstreamingendpoint",
+    "class/src/App.ts~App.html#instance-method-loadStreamingEndpoint",
+    "src/App.ts~App#loadStreamingEndpoint",
+    "method"
+  ],
+  [
+    "src/app.ts~app#loadtelegramendpoint",
+    "class/src/App.ts~App.html#instance-method-loadTelegramEndpoint",
+    "src/App.ts~App#loadTelegramEndpoint",
+    "method"
+  ],
+  [
+    "src/index.ts",
+    "file/src/index.ts.html",
+    "src/index.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/bye.ts",
+    "file/src/main/actions/bye.ts.html",
+    "src/main/actions/bye.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/compliment.ts",
+    "file/src/main/actions/compliment.ts.html",
+    "src/main/actions/compliment.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/greet.ts",
+    "file/src/main/actions/greet.ts.html",
+    "src/main/actions/greet.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/help.ts",
+    "file/src/main/actions/help.ts.html",
+    "src/main/actions/help.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/index.ts",
+    "file/src/main/actions/index.ts.html",
+    "src/main/actions/index.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/news.ts",
+    "file/src/main/actions/news.ts.html",
+    "src/main/actions/news.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/pkmgo.ts",
+    "file/src/main/actions/pkmGo.ts.html",
+    "src/main/actions/pkmGo.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/replytodocument.ts",
+    "file/src/main/actions/replyToDocument.ts.html",
+    "src/main/actions/replyToDocument.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/thanks.ts",
+    "file/src/main/actions/thanks.ts.html",
+    "src/main/actions/thanks.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/utils.ts",
+    "file/src/main/actions/utils.ts.html",
+    "src/main/actions/utils.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/weather.ts",
+    "file/src/main/actions/weather.ts.html",
+    "src/main/actions/weather.ts",
+    "file"
+  ],
+  [
+    "src/main/actions/worldcup.ts",
+    "file/src/main/actions/worldCup.ts.html",
+    "src/main/actions/worldCup.ts",
+    "file"
+  ],
+  [
+    "src/main/analyze.ts",
+    "file/src/main/analyze.ts.html",
+    "src/main/analyze.ts",
+    "file"
+  ],
+  [
+    "src/main/environment.ts",
+    "file/src/main/environment.ts.html",
+    "src/main/environment.ts",
+    "file"
+  ],
+  [
+    "src/main/execute.ts",
+    "file/src/main/execute.ts.html",
+    "src/main/execute.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/@facebook/pytorch/converse.ts",
+    "file/src/main/externalApis/@facebook/pytorch/converse.ts.html",
+    "src/main/externalApis/@facebook/pytorch/converse.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/@facebook/pytorch/index.ts",
+    "file/src/main/externalApis/@facebook/pytorch/index.ts.html",
+    "src/main/externalApis/@facebook/pytorch/index.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/@google/controller.ts",
+    "file/src/main/externalApis/@google/controller.ts.html",
+    "src/main/externalApis/@google/controller.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/@google/speech.ts",
+    "file/src/main/externalApis/@google/speech.ts.html",
+    "src/main/externalApis/@google/speech.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/@google/tensorflow/intentclassification.ts",
+    "file/src/main/externalApis/@google/tensorflow/intentClassification.ts.html",
+    "src/main/externalApis/@google/tensorflow/intentClassification.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/@google/tensorflow/utils.ts",
+    "file/src/main/externalApis/@google/tensorflow/utils.ts.html",
+    "src/main/externalApis/@google/tensorflow/utils.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/@google/translate.ts",
+    "file/src/main/externalApis/@google/translate.ts.html",
+    "src/main/externalApis/@google/translate.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/@twitter/index.ts",
+    "file/src/main/externalApis/@twitter/index.ts.html",
+    "src/main/externalApis/@twitter/index.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/catfact.ts",
+    "file/src/main/externalApis/catFact.ts.html",
+    "src/main/externalApis/catFact.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/giphy.ts",
+    "file/src/main/externalApis/giphy.ts.html",
+    "src/main/externalApis/giphy.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/gists.ts",
+    "file/src/main/externalApis/gists.ts.html",
+    "src/main/externalApis/gists.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/marked.ts",
+    "file/src/main/externalApis/marked.ts.html",
+    "src/main/externalApis/marked.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/moment.ts",
+    "file/src/main/externalApis/moment.ts.html",
+    "src/main/externalApis/moment.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/news.ts",
+    "file/src/main/externalApis/news.ts.html",
+    "src/main/externalApis/news.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/node-cache.ts",
+    "file/src/main/externalApis/node-cache.ts.html",
+    "src/main/externalApis/node-cache.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/rx.ts",
+    "file/src/main/externalApis/rx.ts.html",
+    "src/main/externalApis/rx.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/weather.ts",
+    "file/src/main/externalApis/weather.ts.html",
+    "src/main/externalApis/weather.ts",
+    "file"
+  ],
+  [
+    "src/main/externalapis/worldcup.ts",
+    "file/src/main/externalApis/worldCup.ts.html",
+    "src/main/externalApis/worldCup.ts",
+    "file"
+  ],
+  [
+    "src/main/hq.ts",
+    "file/src/main/hq.ts.html",
+    "src/main/hq.ts",
+    "file"
+  ],
+  [
+    "src/main/hq.ts~headquarter#receive",
+    "class/src/main/hq.ts~Headquarter.html#instance-method-receive",
+    "src/main/hq.ts~Headquarter#receive",
+    "method"
+  ],
+  [
+    "src/main/identifysource.ts",
+    "file/src/main/identifySource.ts.html",
+    "src/main/identifySource.ts",
+    "file"
+  ],
+  [
+    "src/main/lib/encrypt.ts",
+    "file/src/main/lib/encrypt.ts.html",
+    "src/main/lib/encrypt.ts",
+    "file"
+  ],
+  [
+    "src/main/lib/string.ts",
+    "file/src/main/lib/string.ts.html",
+    "src/main/lib/string.ts",
+    "file"
+  ],
+  [
+    "src/main/logger/index.ts",
+    "file/src/main/logger/index.ts.html",
+    "src/main/logger/index.ts",
+    "file"
+  ],
+  [
+    "src/main/logger/index.ts~logger#constructor",
+    "class/src/main/logger/index.ts~Logger.html#instance-constructor-constructor",
+    "src/main/logger/index.ts~Logger#constructor",
+    "method"
+  ],
+  [
+    "src/main/logger/index.ts~logger#error",
+    "class/src/main/logger/index.ts~Logger.html#instance-method-error",
+    "src/main/logger/index.ts~Logger#error",
+    "method"
+  ],
+  [
+    "src/main/logger/index.ts~logger#generatedatetimeprefix",
+    "class/src/main/logger/index.ts~Logger.html#instance-method-generateDateTimePrefix",
+    "src/main/logger/index.ts~Logger#generateDateTimePrefix",
+    "method"
+  ],
+  [
+    "src/main/logger/index.ts~logger#info",
+    "class/src/main/logger/index.ts~Logger.html#instance-method-info",
+    "src/main/logger/index.ts~Logger#info",
+    "method"
+  ],
+  [
+    "src/main/logger/index.ts~logger#log",
+    "class/src/main/logger/index.ts~Logger.html#instance-method-log",
+    "src/main/logger/index.ts~Logger#log",
+    "method"
+  ],
+  [
+    "src/main/logger/index.ts~logger#prefixcolor",
+    "class/src/main/logger/index.ts~Logger.html#instance-member-prefixColor",
+    "src/main/logger/index.ts~Logger#prefixColor",
+    "member"
+  ],
+  [
+    "src/main/logger/index.ts~logger#separator",
+    "class/src/main/logger/index.ts~Logger.html#instance-method-separator",
+    "src/main/logger/index.ts~Logger#separator",
+    "method"
+  ],
+  [
+    "src/main/logger/index.ts~logger#warn",
+    "class/src/main/logger/index.ts~Logger.html#instance-method-warn",
+    "src/main/logger/index.ts~Logger#warn",
+    "method"
+  ],
+  [
+    "src/main/messenger/api/generictemplate.ts",
+    "file/src/main/messenger/api/genericTemplate.ts.html",
+    "src/main/messenger/api/genericTemplate.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/graphapi.ts",
+    "file/src/main/messenger/api/graphApi.ts.html",
+    "src/main/messenger/api/graphApi.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/listtemplate.ts",
+    "file/src/main/messenger/api/listTemplate.ts.html",
+    "src/main/messenger/api/listTemplate.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/mediatemplate.ts",
+    "file/src/main/messenger/api/mediaTemplate.ts.html",
+    "src/main/messenger/api/mediaTemplate.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/message.ts",
+    "file/src/main/messenger/api/message.ts.html",
+    "src/main/messenger/api/message.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/parser.ts",
+    "file/src/main/messenger/api/parser.ts.html",
+    "src/main/messenger/api/parser.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/quickreply.ts",
+    "file/src/main/messenger/api/quickReply.ts.html",
+    "src/main/messenger/api/quickReply.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/sendimage.ts",
+    "file/src/main/messenger/api/sendImage.ts.html",
+    "src/main/messenger/api/sendImage.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/senderaction.ts",
+    "file/src/main/messenger/api/senderAction.ts.html",
+    "src/main/messenger/api/senderAction.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/api/utility.ts",
+    "file/src/main/messenger/api/utility.ts.html",
+    "src/main/messenger/api/utility.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/fbrequest.ts",
+    "file/src/main/messenger/fbrequest.ts.html",
+    "src/main/messenger/fbrequest.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/preprocess.ts",
+    "file/src/main/messenger/preprocess.ts.html",
+    "src/main/messenger/preprocess.ts",
+    "file"
+  ],
+  [
+    "src/main/messenger/respond.ts",
+    "file/src/main/messenger/respond.ts.html",
+    "src/main/messenger/respond.ts",
+    "file"
+  ],
+  [
+    "src/main/model/cache.ts",
+    "file/src/main/model/cache.ts.html",
+    "src/main/model/cache.ts",
+    "file"
+  ],
+  [
+    "src/main/model/database/firebasedb.ts",
+    "file/src/main/model/database/firebasedb.ts.html",
+    "src/main/model/database/firebasedb.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/db.ts",
+    "file/src/main/model/mongoDB/db.ts.html",
+    "src/main/model/mongoDB/db.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/doc.ts",
+    "file/src/main/model/mongoDB/doc.ts.html",
+    "src/main/model/mongoDB/doc.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/entity.ts",
+    "file/src/main/model/mongoDB/entity.ts.html",
+    "src/main/model/mongoDB/entity.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/index.ts",
+    "file/src/main/model/mongoDB/index.ts.html",
+    "src/main/model/mongoDB/index.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/listtemplatebutton.ts",
+    "file/src/main/model/mongoDB/listTemplateButton.ts.html",
+    "src/main/model/mongoDB/listTemplateButton.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/location.ts",
+    "file/src/main/model/mongoDB/location.ts.html",
+    "src/main/model/mongoDB/location.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/name.ts",
+    "file/src/main/model/mongoDB/name.ts.html",
+    "src/main/model/mongoDB/name.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/response.ts",
+    "file/src/main/model/mongoDB/response.ts.html",
+    "src/main/model/mongoDB/response.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/singlecascadetext.ts",
+    "file/src/main/model/mongoDB/singleCascadeText.ts.html",
+    "src/main/model/mongoDB/singleCascadeText.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/text.ts",
+    "file/src/main/model/mongoDB/text.ts.html",
+    "src/main/model/mongoDB/text.ts",
+    "file"
+  ],
+  [
+    "src/main/model/mongodb/user.ts",
+    "file/src/main/model/mongoDB/user.ts.html",
+    "src/main/model/mongoDB/user.ts",
+    "file"
+  ],
+  [
+    "src/main/preprocess.ts",
+    "file/src/main/preprocess.ts.html",
+    "src/main/preprocess.ts",
+    "file"
+  ],
+  [
+    "src/main/respond.ts",
+    "file/src/main/respond.ts.html",
+    "src/main/respond.ts",
+    "file"
+  ],
+  [
+    "src/main/retrieveorcreateuser.ts",
+    "file/src/main/retrieveOrCreateUser.ts.html",
+    "src/main/retrieveOrCreateUser.ts",
+    "file"
+  ],
+  [
+    "src/main/telegram/api/image.ts",
+    "file/src/main/telegram/api/image.ts.html",
+    "src/main/telegram/api/image.ts",
+    "file"
+  ],
+  [
+    "src/main/telegram/api/index.ts",
+    "file/src/main/telegram/api/index.ts.html",
+    "src/main/telegram/api/index.ts",
+    "file"
+  ],
+  [
+    "src/main/telegram/api/message.ts",
+    "file/src/main/telegram/api/message.ts.html",
+    "src/main/telegram/api/message.ts",
+    "file"
+  ],
+  [
+    "src/main/telegram/index.ts",
+    "file/src/main/telegram/index.ts.html",
+    "src/main/telegram/index.ts",
+    "file"
+  ],
+  [
+    "src/main/telegram/preprocess.ts",
+    "file/src/main/telegram/preprocess.ts.html",
+    "src/main/telegram/preprocess.ts",
+    "file"
+  ],
+  [
+    "src/main/telegram/respond.ts",
+    "file/src/main/telegram/respond.ts.html",
+    "src/main/telegram/respond.ts",
+    "file"
+  ],
+  [
+    "src/main/types/json.d.ts",
+    "file/src/main/types/json.d.ts.html",
+    "src/main/types/json.d.ts",
+    "file"
+  ],
+  [
+    "src/main/types/model.d.ts",
+    "file/src/main/types/model.d.ts.html",
+    "src/main/types/model.d.ts",
+    "file"
+  ],
+  [
+    "src/main/types/platform.d.ts",
+    "file/src/main/types/platform.d.ts.html",
+    "src/main/types/platform.d.ts",
+    "file"
+  ],
+  [
+    "src/main/utils/account.ts",
+    "file/src/main/utils/account.ts.html",
+    "src/main/utils/account.ts",
+    "file"
+  ],
+  [
+    "src/main/utils/array.ts",
+    "file/src/main/utils/array.ts.html",
+    "src/main/utils/array.ts",
+    "file"
+  ],
+  [
+    "src/main/utils/object.ts",
+    "file/src/main/utils/object.ts.html",
+    "src/main/utils/object.ts",
+    "file"
+  ],
+  [
+    "src/main/utils/string.ts",
+    "file/src/main/utils/string.ts.html",
+    "src/main/utils/string.ts",
+    "file"
+  ],
+  [
+    "src/main/utils/timer.ts",
+    "file/src/main/utils/timer.ts.html",
+    "src/main/utils/timer.ts",
+    "file"
   ]
 ]

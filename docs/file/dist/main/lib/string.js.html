@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">dist/main/lib/string.js | potts-reborn</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  </ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">dist/main/lib/string.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&quot;use strict&quot;;
+var __awaiter = (this &amp;&amp; this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator[&quot;throw&quot;](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, &quot;__esModule&quot;, { value: true });
+const moment_1 = require(&quot;../externalApis/moment&quot;);
+const array_1 = require(&quot;../utils/array&quot;);
+/**
+ * Handle unknown queries
+ * @param name user name
+ */
+const randomConfusedMessage = (name) =&gt; {
+    const prefixes = [
+        &apos;Hmmmm  &apos;,
+        &apos;err.. &apos;,
+        &apos;Ayay  &apos;,
+    ];
+    const suffixes = [
+        &apos;I am not really sure about that..&apos;,
+        &apos;idk&apos;,
+        &apos;let me think&apos;,
+    ];
+    const n = name ? name : &apos;friend&apos;;
+    return `${array_1.randomIndex(prefixes)} ${n}, ${array_1.randomIndex(suffixes)}`;
+};
+exports.randomConfusedMessage = randomConfusedMessage;
+/**
+ * Generate good bye message
+ * @param name user name
+ */
+const randomByeMessage = (name) =&gt; {
+    const suffixes = [
+        &apos;Have a good day!&apos;,
+        &apos;Hope to talk to you again soon mate&apos;,
+        &apos;Smell ya later ;)&apos;,
+    ];
+    const prefixes = [&apos;Good bye&apos;, &apos;Baii&apos;, &apos;Bye bye&apos;, &apos;Aye aye&apos;];
+    const n = name ? name : &apos;friend&apos;;
+    return `${array_1.randomIndex(prefixes)}, ${n}! ${array_1.randomIndex(suffixes)}`;
+};
+exports.randomByeMessage = randomByeMessage;
+/**
+ * Generate reply to compliment
+ * @param name user name
+ */
+const randomResponseToComplimentMessage = (name) =&gt; {
+    const suffixes = [
+        &apos;I really appreciate it!&apos;,
+        &apos;I\&apos;m touched..&apos;,
+        &apos;FeelsGoodMan&apos;,
+    ];
+    const prefixes = [&apos;Thanks&apos;, &apos;Ty&apos;, &apos;woah&apos;, &apos;Aye aye&apos;];
+    const n = name ? name : &apos;friend&apos;;
+    return `${array_1.randomIndex(prefixes)}, ${n}! ${array_1.randomIndex(suffixes)}`;
+};
+exports.randomResponseToComplimentMessage = randomResponseToComplimentMessage;
+/**
+ * Response to thanks
+ * @param name user name
+ */
+const randomResponseToThanksMessage = (name) =&gt; {
+    const prefixes = [&apos;No problemo&apos;, &apos;Np&apos;, &apos;Aye&apos;, &apos;Aye aye&apos;];
+    const suffixes = [
+        &apos;Glad I could help!&apos;,
+        &apos;Hope to be of service again~&apos;,
+        &apos;&#xAF;\\_(&#x30C4;)_/&#xAF;&apos;,
+    ];
+    const n = name ? name : &apos;friend&apos;;
+    return `${array_1.randomIndex(prefixes)}, ${n}! ${array_1.randomIndex(suffixes)}`;
+};
+exports.randomResponseToThanksMessage = randomResponseToThanksMessage;
+/**
+ * Greeting suffix
+ */
+const randomGreetingSuffix = () =&gt; {
+    const suffixes = [&apos;What\&apos;s up man!~&apos;, &apos;How are you doing!&apos;, &apos;Such a nice day isn\&apos;t it?&apos;, &apos;Here\&apos;s a photo you might like: &apos;];
+    return array_1.randomIndex(suffixes);
+};
+exports.randomGreetingSuffix = randomGreetingSuffix;
+/**
+ * Greeting prefix
+ * @param name user name
+ */
+const randomGreetingPrefix = (name) =&gt; __awaiter(this, void 0, void 0, function* () {
+    const prefixes = [
+        &apos;Greetings&apos;,
+        &apos;Yo&apos;,
+        &apos;Hello&apos;,
+        `Good ${yield moment_1.getNingOfTheDay()}`,
+    ];
+    const n = name ? name : &apos;friend&apos;;
+    return `${array_1.randomIndex(prefixes)}, ${n}!`;
+});
+exports.randomGreetingPrefix = randomGreetingPrefix;
+const possibleYay = [
+    &apos;Yoshhh!&apos;,
+    &apos;Ez&apos;,
+    &apos;Hue hue hue&apos;,
+    &apos;Ye :&gt;&apos;,
+    &apos;Nice la&apos;,
+];
+exports.possibleYay = possibleYay;
+const possibleNay = [
+    &apos;Sorry :&lt;&apos;,
+    &apos;NANI&apos;,
+    &apos;Mada Mada&apos;,
+    &apos;...&apos;,
+];
+exports.possibleNay = possibleNay;
+//# sourceMappingURL=string.js.map</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

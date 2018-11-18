@@ -17,7 +17,6 @@ export default class App {
 	private headquarter
 	/**
 	 * Constructor for main REST API
-	 * @return an App instance
 	 */
 	constructor(port: string | number) {
 		this.headquarter = new hq()

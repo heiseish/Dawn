@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">dist/main/externalApis/news.js | potts-reborn</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  </ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">dist/main/externalApis/news.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&quot;use strict&quot;;
+var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
+    return (mod &amp;&amp; mod.__esModule) ? mod : { &quot;default&quot;: mod };
+};
+Object.defineProperty(exports, &quot;__esModule&quot;, { value: true });
+const newsapi_1 = __importDefault(require(&quot;newsapi&quot;));
+const environment_1 = require(&quot;../environment&quot;);
+const newsapi = new newsapi_1.default(environment_1.NEWSAPI_KEY);
+const array_1 = require(&quot;../utils/array&quot;);
+const string_1 = require(&quot;../utils/string&quot;);
+const GOOD_SOURCES = &apos;bbc-news,the-verge,bbc-sport,bloomberg,business-insider,business-insider-uk,cnn,espn,google-news,mtv-news,the-economist,the-new-york-times,the-washington-post&apos;;
+const MAP_TOPIC_TO_CATEGORY = {
+    sport: &apos;sports&apos;,
+    health: &apos;health&apos;,
+    business: &apos;business&apos;,
+    entertain: &apos;entertainment&apos;,
+    general: &apos;general&apos;,
+    technolog: &apos;technology&apos;,
+    scienc: &apos;science&apos;,
+};
+if (!environment_1.NEWSAPI_KEY) {
+    throw new Error(&apos;missing NEWSAPI_KEY&apos;);
+}
+/**
+ * Get top headlines
+ * @param {any} user
+ */
+const getAllHeadlines = (user) =&gt; {
+    let text = user.lastText;
+    if (text.indexOf(&apos;&quot;&apos;) !== -1) {
+        text = string_1.replaceAllSubstring(text, &apos;&quot;&apos;, &apos;&#x201C;&apos;, &apos;&#x201D;&apos;, &apos;SHOW&apos;, &apos;NEWS&apos;, &apos;WITH&apos;, &apos;ABOUT&apos;, &apos;ON&apos;);
+        return new Promise((resolve) =&gt; getHeadlinesWithQuery(text).then((articles) =&gt; resolve(articles)));
+    }
+    else {
+        const common = array_1.getCommonMembersFromTwoArrays(Object.keys(MAP_TOPIC_TO_CATEGORY), user.text[user.text.length - 1].tokenizedText);
+        const category = MAP_TOPIC_TO_CATEGORY[common[0]] || null;
+        if (category) {
+            return new Promise((resolve) =&gt; getHeadlinesWithCategory(category).then((articles) =&gt; resolve(articles)));
+        }
+        else {
+            return new Promise((resolve) =&gt; getRandomTop5Headlines().then((articles) =&gt; resolve(articles)));
+        }
+    }
+};
+exports.getAllHeadlines = getAllHeadlines;
+/**
+ * Get a random headline and return the title along with the message
+ */
+const getRandomHeadlines = () =&gt; {
+    return new Promise((resolve) =&gt; {
+        newsapi.v2
+            .topHeadlines({
+            sources: &apos;techcrunch&apos;,
+            language: &apos;en&apos;,
+        })
+            .then((response) =&gt; {
+            const article = response.articles[Math.floor(Math.random() * response.articles.length)];
+            resolve({
+                answerable: true,
+                simpleText: `Random news: ${article.title}`,
+                image: article.urlToImage,
+                url: article.url,
+            });
+        });
+    });
+};
+exports.getRandomHeadlines = getRandomHeadlines;
+/**
+ * Search for articles containing key words
+ * @param {string} keyword
+ */
+const getHeadlinesWithQuery = (keyword) =&gt; {
+    return new Promise((res) =&gt; {
+        newsapi.v2
+            .topHeadlines({
+            sources: GOOD_SOURCES,
+            q: keyword,
+            language: &apos;en&apos;,
+        })
+            .then((response) =&gt; res(response.articles));
+    });
+};
+exports.getHeadlinesWithQuery = getHeadlinesWithQuery;
+/**
+ * Search for articles in this category
+ * @param {string | null} category
+ */
+const getHeadlinesWithCategory = (category) =&gt; {
+    return new Promise((res) =&gt; {
+        newsapi.v2
+            .topHeadlines({
+            category,
+            language: &apos;en&apos;,
+            country: &apos;us&apos;,
+        })
+            .then((response) =&gt; res(response.articles));
+    });
+};
+exports.getHeadlinesWithCategory = getHeadlinesWithCategory;
+/**
+ * Get random top headlines articles
+ */
+const getRandomTop5Headlines = () =&gt; {
+    return new Promise((res) =&gt; {
+        newsapi.v2
+            .topHeadlines({
+            sources: GOOD_SOURCES,
+            language: &apos;en&apos;,
+        })
+            .then((response) =&gt; res(response.articles));
+    });
+};
+exports.getRandomTop5Headlines = getRandomTop5Headlines;
+//# sourceMappingURL=news.js.map</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

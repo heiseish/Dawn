@@ -65,18 +65,18 @@ const containsObjectWithNameAttribute = (arr: any[], attribute: string, key: str
 
 /**
  * Return a random member of an array
- * @param {T[]} array
- * @return {T} an element inside the array
+ * @param {any[]} array
+ * @return an element inside the array
  */
-const randomIndex = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)]
+const randomIndex = <T extends {}>(array: T[]) => array[Math.floor(Math.random() * array.length)]
 
 /**
  * Remove an element from array
- * @param array Array to be process
- * @param member elemen to be removed
+ * @param {any[]}array Array to be process
+ * @param {any} member elemen to be removed
  * @return a new array that doesn't have the old element
  */
-const removeFromArray  = <T>(array: T[], member: T): T[] => {
+const removeFromArray  = <T extends {}>(array: T[], member: T) => {
 	const index = array.indexOf(member)
 	if (index > -1) { array.splice(index, 1) }
 	return array

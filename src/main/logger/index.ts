@@ -60,8 +60,12 @@ class Logger {
 		console.log(chalk.yellow(text))
 	}
 
+	/**
+	 * Generate date and time prefix for logging
+	 */
 	private generateDateTimePrefix() {
-		if (process.env.NODE_ENV === 'production') { return '' } else { return '[' + this.prefixColor(new Date().toString()) + ']' }
+		if (process.env.NODE_ENV === 'production') return ''
+		else return '[' + this.prefixColor(new Date().toString()) + ']'
 	}
 	/**
 	 * Logging out the text with prefix color

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">dist/main/externalApis/marked.js | potts-reborn</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  </ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">dist/main/externalApis/marked.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&quot;use strict&quot;;
+var __awaiter = (this &amp;&amp; this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator[&quot;throw&quot;](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
+    return (mod &amp;&amp; mod.__esModule) ? mod : { &quot;default&quot;: mod };
+};
+Object.defineProperty(exports, &quot;__esModule&quot;, { value: true });
+const marked_1 = __importDefault(require(&quot;marked&quot;));
+const os_1 = __importDefault(require(&quot;os&quot;));
+const gists_1 = require(&quot;./gists&quot;);
+marked_1.default.setOptions({
+    renderer: new marked_1.default.Renderer(),
+    gfm: true,
+    tables: true,
+    breaks: true,
+    pedantic: false,
+    sanitize: false,
+    smartLists: true,
+    smartypants: false,
+    xhtml: false,
+});
+const GIST_ID = &apos;522028088e49110b4511d4cabea361f9&apos;;
+const MANUAL_DESC = &apos;An automatically generated and updated help manual of Serena bot&apos;;
+const ICON = &apos;![Imgur](https://i.imgur.com/JQheM1b.png)&apos;;
+/**
+ * Generate help manual
+ * @param actions array of executable object
+ */
+const generateHelpManual = (actions) =&gt; __awaiter(this, void 0, void 0, function* () {
+    try {
+        const fileString = yield generateFileString(actions);
+        const opts = {
+            description: MANUAL_DESC,
+            public: true,
+            files: {
+                &apos;manual.md&apos;: {
+                    content: fileString,
+                },
+            },
+        };
+        const result = yield gists_1.createGist(opts);
+        return result;
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
+});
+exports.generateHelpManual = generateHelpManual;
+/**
+ *  A function to update the list manual with the manual containing all the functions available
+ * @param actions
+ */
+const updateHelpManual = (actions) =&gt; __awaiter(this, void 0, void 0, function* () {
+    try {
+        const fileString = yield generateFileString(actions);
+        const opts = {
+            id: GIST_ID,
+            files: {
+                &apos;manual.md&apos;: {
+                    content: fileString,
+                },
+            },
+        };
+        const result = yield gists_1.editGist(opts);
+        return result;
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
+});
+exports.updateHelpManual = updateHelpManual;
+/**
+ * A function to generate a file string with all actions listed
+ * @param actions
+ */
+const generateFileString = (actions) =&gt; {
+    const linebr = os_1.default.EOL + os_1.default.EOL;
+    let fileString = `# Help manual for Serena bot ${linebr}`;
+    fileString += MANUAL_DESC + linebr;
+    fileString += &apos;### Notation:&apos; + ICON + linebr;
+    fileString += &apos;Intent: The service that Serena could execute/respond to.&apos;
+        + &apos;Ask questions along with line of the intent and the bot should be able to answer&apos; + linebr;
+    fileString += &apos;Description: more details about the service.&apos; + linebr;
+    fileString += &apos;***&apos; + linebr;
+    for (const action of actions) {
+        fileString += &apos;- __Intent:__ `&apos; + action.name + &apos;` &apos; + linebr;
+        fileString += `&gt; __Description:__ ${action.description} ${linebr}`;
+    }
+    return fileString;
+};
+//# sourceMappingURL=marked.js.map</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

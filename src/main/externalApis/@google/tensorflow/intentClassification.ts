@@ -3,6 +3,12 @@ import '@tensorflow/tfjs-node'
 import { characterLevelEmbed, toWordIntent } from './utils'
 let model = null
 const MODEL_FILE_PATH = 'file://dist/main/externalApis/@google/tensorflow/model.json'
+
+/**
+ * Predict the intent of a message
+ * @param {string} s 
+ * @return {{intent: string, confidence: number}}
+ */
 const predict = async (s: string): Promise<{intent: string, confidence: number}> => {
 	try {
 		if (!model) { model = await tf.loadModel(MODEL_FILE_PATH) }
