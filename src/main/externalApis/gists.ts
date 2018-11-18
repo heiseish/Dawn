@@ -9,8 +9,7 @@ const gists = new Gists({
 const editGist = (opts: any): Promise<any> => {
 	return new Promise((resolve, reject) => {
 		gists.edit(opts, (err, res) =>  {
-			if (err) reject(err)
-			else resolve(res)
+			if (err) { reject(err) } else { resolve(res) }
 		})
 	})
 }
@@ -18,8 +17,7 @@ const editGist = (opts: any): Promise<any> => {
 const createGist = (opts: Object): Promise<any> => {
 	return new Promise((resolve, reject) => {
 		gists.create(opts, (err, res) =>  {
-			if (err) reject(err) 
-			else resolve(res)
+			if (err) { reject(err) } else { resolve(res) }
 		})
 	})
 }

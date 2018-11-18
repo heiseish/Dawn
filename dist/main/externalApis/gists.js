@@ -12,10 +12,12 @@ const gists = new gists_1.default({
 const editGist = (opts) => {
     return new Promise((resolve, reject) => {
         gists.edit(opts, (err, res) => {
-            if (err)
+            if (err) {
                 reject(err);
-            else
+            }
+            else {
                 resolve(res);
+            }
         });
     });
 };
@@ -23,10 +25,12 @@ exports.editGist = editGist;
 const createGist = (opts) => {
     return new Promise((resolve, reject) => {
         gists.create(opts, (err, res) => {
-            if (err)
+            if (err) {
                 reject(err);
-            else
+            }
+            else {
                 resolve(res);
+            }
         });
     });
 };

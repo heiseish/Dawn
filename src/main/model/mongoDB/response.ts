@@ -1,4 +1,4 @@
-import mongoose from './db.js'
+import mongoose from './db'
 import singleCascadeTextSchema from './singleCascadeText'
 
 const Schema = mongoose.Schema

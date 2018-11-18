@@ -20,7 +20,7 @@ else if (!environment_1.TWITTER_ACCESS_TOKEN_KEY) {
 else if (!environment_1.TWITTER_ACCESS_TOKEN_SECRET) {
     throw new Error('missing TWITTER_ACCESS_TOKEN_SECRET');
 }
-let client = new twitter_1.default({
+const client = new twitter_1.default({
     consumer_key: environment_1.TWITTER_CONSUMER_KEY,
     consumer_secret: environment_1.TWITTER_CONSUMER_SECRET,
     access_token_key: environment_1.TWITTER_ACCESS_TOKEN_KEY,

@@ -46,7 +46,7 @@ export default class App {
 	 */
 	private loadFacebookEndpoint(): void {
 		this.express.get('/fb', (req, res) => {
-			if (!FB_VERIFY_TOKEN) { throw new Error('missing FB_VERIFY_TOKEN') }
+			if (!FB_VERIFY_TOKEN) throw new Error('missing FB_VERIFY_TOKEN')
 			if (req.query['hub.mode'] === 'subscribe' &&
 			  req.query['hub.verify_token'] === FB_VERIFY_TOKEN) { res.status(200).send(req.query['hub.challenge']) } else { res.sendStatus(403) }
 		})
@@ -62,7 +62,7 @@ export default class App {
 	private loadTelegramEndpoint(): void {
 		telegramBot.on('message', (msg) => {
 			const result = telegramPreprocess(msg)
-			if (result) { this.headquarter.receive('telegram', msg) }
+			if (result) this.headquarter.receive('telegram', msg)
 		})
 	}
 
@@ -70,7 +70,7 @@ export default class App {
 	 * Endpoint for streaming API
 	 */
 	private loadStreamingEndpoint(): void {
-		if (process.env.NODE_ENV === 'production') setUpStreamingApi()
+		if (process.env.NODE_ENV === 'production') { setUpStreamingApi() }
 	}
 
 }

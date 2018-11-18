@@ -1,6 +1,6 @@
-import Logger from '../../logger'
 import idx from 'idx'
 import { formatTimeForListTemplate } from '../../externalApis/moment'
+import Logger from '../../logger'
 
 /**
  * Parse News API articles to display on facebook messenger list template.

@@ -1,6 +1,6 @@
-import mongoose from './db.js'
+import mongoose from './db'
 const Schema = mongoose.Schema
-let textSchema = new Schema({
+const textSchema = new Schema({
 	correctlyResponded: { type: Boolean, default: false, index: true},
 	originalText: String,
 	tokenizedText: [String],

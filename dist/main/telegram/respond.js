@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const api_1 = require("./api");
 const string_1 = require("../lib/string");
+const api_1 = require("./api");
 /**
 * Respond in telegram
 * @param {any} payload
@@ -26,8 +26,9 @@ exports.default = (payload, user) => __awaiter(this, void 0, void 0, function* (
         }
         if (response.simpleText) {
             yield api_1.tlgMessage(chat, response.simpleText, true, msgId);
-            if (response.image)
+            if (response.image) {
                 yield api_1.tlgImage(chat, response.image);
+            }
         }
         else if (response.cascadeText) {
             for (const i of response.cascadeText) {

@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const logger_1 = __importDefault(require("./logger"));
-const user_1 = __importDefault(require("./model/mongoDB/user"));
 const graphApi_1 = require("./messenger/api/graphApi");
 const cache_1 = require("./model/cache");
+const user_1 = __importDefault(require("./model/mongoDB/user"));
 /**
 * Return a partial unique userId from incoming event to identify user
 * @param {supportedPlatform} platform supported platform currently

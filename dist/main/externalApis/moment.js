@@ -8,12 +8,15 @@ const getNingOfTheDay = () => {
     const now = parseInt(moment_timezone_1.default()
         .tz('Asia/Singapore')
         .format('H'));
-    if (now < 12)
+    if (now < 12) {
         return 'morning';
-    else if (now < 18)
+    }
+    else if (now < 18) {
         return 'afternoon';
-    else
+    }
+    else {
         return 'evening';
+    }
 };
 exports.getNingOfTheDay = getNingOfTheDay;
 const formatTimeForListTemplate = (time) => {

@@ -1,18 +1,16 @@
 import idx from  'idx'
 import { Observable } from 'rxjs'
-import { client } from './@twitter'
 import Logger from '../logger'
 import firebase from '../model/database/firebasedb'
 import { getPlatformAndId } from './../utils/account'
+import { client } from './@twitter'
 
 // @messenger
 import MesMessage from '../messenger/api/message'
 import MesSendImage from '../messenger/api/sendImage'
 
-//@telegram
-import { tlgMessage, tlgImage }   from '../telegram/api/'
-
-
+// @telegram
+import { tlgImage, tlgMessage }   from '../telegram/api/'
 
 const POKEMONGO_TWITTER = '2839430431'
 const WYK_TWITTER = '44680622'
@@ -34,7 +32,7 @@ interface OberservableTweet {
 class Streaming {
 	public listOfAudience: ListOfAudience | null
 	public twitterStreaming: any
-	
+
 	constructor(listOfAudience: ListOfAudience = []) {
 		this.listOfAudience = listOfAudience || null
 
@@ -103,12 +101,12 @@ const setUpStreamingApi = (): void => {
 	firebase.database().ref('restricted_access/streaming/').on('value', (snap) => {
 		const result = snap.val()
 		let audience: ListOfAudience
-		if (Array.isArray(result)) { 
-			audience = result 
-		} else if (typeof result === 'object') { 
-			audience = Object.values(result) 
+		if (Array.isArray(result)) {
+			audience = result
+		} else if (typeof result === 'object') {
+			audience = Object.values(result)
 		}
-		if (StreamingInstance.isStreaming()) StreamingInstance.stopStreaming()
+		if (StreamingInstance.isStreaming()) { StreamingInstance.stopStreaming() }
 		StreamingInstance = new Streaming(audience)
 	}, (err) => {
 		Logger.error(err)

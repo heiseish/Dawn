@@ -10,7 +10,8 @@ exports.default = (msg) => {
         || msg.text.indexOf('@openAImatchThis_bot') !== -1) {
         return msg.text.replace('@openAImatchThis_bot ', '');
     }
-    else
+    else {
         return null;
+    }
 };
 //# sourceMappingURL=preprocess.js.map

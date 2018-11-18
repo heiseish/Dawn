@@ -18,14 +18,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __importDefault(require("lodash/core"));
 const moji_translate_1 = __importDefault(require("moji-translate"));
+const request_promise_1 = __importDefault(require("request-promise"));
 const string_1 = require("../utils/string");
 const CacheProvider = __importStar(require("./node-cache"));
-const request_promise_1 = __importDefault(require("request-promise"));
-const core_1 = __importDefault(require("lodash/core"));
 const MAX_COUNTRY_LENGTH = 10;
 const MAX_GOALS_LENGTH = 2;
-let options = {
+const options = {
     uri: 'http://worldcup.sfg.io/matches',
     headers: {
         'User-Agent': 'Request-Promise',

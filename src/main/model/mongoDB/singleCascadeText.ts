@@ -1,4 +1,4 @@
-import mongoose from './db.js'
+import mongoose from './db'
 import listTemplateButtonSchema from './listTemplateButton'
 const Schema = mongoose.Schema
 export default new Schema({

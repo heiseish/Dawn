@@ -9,35 +9,6 @@ class Logger {
     constructor() {
         this.prefixColor = chalk_1.default.magenta;
     }
-    generateDateTimePrefix() {
-        if (process.env.NODE_ENV === 'production')
-            return '';
-        else
-            return '[' + this.prefixColor(new Date().toString()) + ']';
-    }
-    /**
-     * Logging out the text with prefix color
-     * @param text text to log
-     * @param color color of primary text
-     */
-    log(text, level) {
-        let color;
-        switch (level) {
-            case 'info':
-                color = chalk_1.default.green;
-                break;
-            case 'error':
-                color = chalk_1.default.red;
-                break;
-            case 'warn':
-                color = chalk_1.default.yellow;
-                break;
-            default:
-                color = chalk_1.default.white;
-        }
-        console.log(this.generateDateTimePrefix()
-            + color(`${level}: `) + chalk_1.default.cyan(text));
-    }
     /**
     * log the info
     * @param text Text to display
@@ -65,8 +36,9 @@ class Logger {
             };
             return { stop };
         }
-        else
+        else {
             this.log(text, 'info');
+        }
     }
     /**
      * Logging the warning text
@@ -88,6 +60,37 @@ class Logger {
     */
     separator(text) {
         console.log(chalk_1.default.yellow(text));
+    }
+    generateDateTimePrefix() {
+        if (process.env.NODE_ENV === 'production') {
+            return '';
+        }
+        else {
+            return '[' + this.prefixColor(new Date().toString()) + ']';
+        }
+    }
+    /**
+     * Logging out the text with prefix color
+     * @param text text to log
+     * @param color color of primary text
+     */
+    log(text, level) {
+        let color;
+        switch (level) {
+            case 'info':
+                color = chalk_1.default.green;
+                break;
+            case 'error':
+                color = chalk_1.default.red;
+                break;
+            case 'warn':
+                color = chalk_1.default.yellow;
+                break;
+            default:
+                color = chalk_1.default.white;
+        }
+        console.log(this.generateDateTimePrefix()
+            + color(`${level}: `) + chalk_1.default.cyan(text));
     }
 }
 exports.default = new Logger();

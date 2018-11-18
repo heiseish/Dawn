@@ -72,8 +72,9 @@ class App {
      * Endpoint for streaming API
      */
     loadStreamingEndpoint() {
-        if (process.env.NODE_ENV === 'production')
+        if (process.env.NODE_ENV === 'production') {
             rx_1.default();
+        }
     }
 }
 exports.default = App;

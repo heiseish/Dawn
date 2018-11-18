@@ -66,7 +66,7 @@ const getHeadlinesWithQuery = (keyword: string): Promise<any[]> => {
 				q: keyword,
 				language: 'en',
 			})
-			.then(response => res(response.articles))
+			.then((response) => res(response.articles))
 	})
 }
 
@@ -82,7 +82,7 @@ const getHeadlinesWithCategory = (category: string | null): Promise<any[]> => {
 				language: 'en',
 				country: 'us',
 			})
-			.then(response => res(response.articles))
+			.then((response) => res(response.articles))
 	})
 }
 

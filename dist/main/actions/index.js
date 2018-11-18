@@ -3,16 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const greet_1 = __importDefault(require("./greet"));
-const worldCup_1 = __importDefault(require("./worldCup"));
-const news_1 = __importDefault(require("./news"));
-const compliment_1 = __importDefault(require("./compliment"));
-const thanks_1 = __importDefault(require("./thanks"));
 const bye_1 = __importDefault(require("./bye"));
-const replyToDocument_1 = __importDefault(require("./replyToDocument"));
-const weather_1 = __importDefault(require("./weather"));
-const pkmGo_1 = __importDefault(require("./pkmGo"));
+const compliment_1 = __importDefault(require("./compliment"));
+const greet_1 = __importDefault(require("./greet"));
 const help_1 = __importDefault(require("./help"));
+const news_1 = __importDefault(require("./news"));
+const pkmGo_1 = __importDefault(require("./pkmGo"));
+const replyToDocument_1 = __importDefault(require("./replyToDocument"));
+const thanks_1 = __importDefault(require("./thanks"));
+const weather_1 = __importDefault(require("./weather"));
+const worldCup_1 = __importDefault(require("./worldCup"));
 exports.default = [
     {
         name: 'greetings',

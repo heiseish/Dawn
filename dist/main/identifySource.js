@@ -11,9 +11,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const string_1 = require("./utils/string");
 const idx_1 = __importDefault(require("idx"));
 const logger_1 = __importDefault(require("./logger"));
+const string_1 = require("./utils/string");
 /**
  * Return a partial unique userId from incoming event to identify user
  * @param {supportedPlatform} platform supported platform currently

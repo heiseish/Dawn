@@ -9,7 +9,7 @@ const PYTORCH_SERVER = 'https://converseserver.herokuapp.com/conversation/'
 const converse = (sentence: string): Promise<string> => {
 	return new Promise((response, reject) => {
 		request(PYTORCH_SERVER + sentence, async (error, res, body) => {
-			if (error) reject(error)
+			if (error) { reject(error) }
 			response(body)
 		})
 	})

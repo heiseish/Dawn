@@ -20,8 +20,9 @@ const MAP_ICON_TO_PICTURE = {
     'partly-cloudy-day': '1018932811609464',
     'partly-cloudy-night': '1018933201609425',
 };
-if (!environment_1.DARKSKY_KEY)
+if (!environment_1.DARKSKY_KEY) {
     throw new Error('missing DARKSKY_KEY');
+}
 // Initialize
 const forecast = new forecast_1.default({
     service: 'darksky',

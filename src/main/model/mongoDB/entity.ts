@@ -1,4 +1,4 @@
-import mongoose from './db.js'
+import mongoose from './db'
 const Schema = mongoose.Schema
 export default new Schema({
 	lastIntent: String,

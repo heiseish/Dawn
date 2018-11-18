@@ -11,10 +11,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __importDefault(require("lodash/core"));
 const news_1 = require("../externalApis/news");
 const array_1 = require("../utils/array");
 const utils_1 = require("./utils");
-const core_1 = __importDefault(require("lodash/core"));
 const NO_ARTICLE_FOUND = 'Sorry no article found :<';
 /**
  * Send news to user

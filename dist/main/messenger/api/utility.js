@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fbrequest_1 = require("../fbrequest");
-const logger_1 = __importDefault(require("../../logger"));
 const idx_1 = __importDefault(require("idx"));
+const logger_1 = __importDefault(require("../../logger"));
+const fbrequest_1 = require("../fbrequest");
 /**
  *
  * @param url URL of the media to be uploaded
@@ -13,8 +13,9 @@ const idx_1 = __importDefault(require("idx"));
  */
 const uploadMedia = (url, type) => {
     return new Promise((resolve) => {
-        if (!url)
+        if (!url) {
             resolve(null);
+        }
         const opts = {
             form: {
                 message: {

@@ -1,6 +1,6 @@
 declare type supportedPlatform = 'messenger' | 'telegram'
 
-declare type MessengerTextMedia = {
+declare interface MessengerTextMedia {
 	type: 'image' | 'video'
 	url?: string
 	id?: string | number | null
@@ -8,4 +8,4 @@ declare type MessengerTextMedia = {
 declare type MessengerTextButton = {
 	title?: string,
 	url?: string,
-} | null
+} | null	

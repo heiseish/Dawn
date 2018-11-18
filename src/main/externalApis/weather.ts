@@ -17,7 +17,7 @@ const MAP_ICON_TO_PICTURE = {
 	'partly-cloudy-night': '1018933201609425',
 }
 
-if (!DARKSKY_KEY) throw new Error('missing DARKSKY_KEY')
+if (!DARKSKY_KEY) { throw new Error('missing DARKSKY_KEY') }
 // Initialize
 const forecast = new Forecast({
 	service: 'darksky',

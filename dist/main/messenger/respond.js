@@ -11,12 +11,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const message_1 = __importDefault(require("./api/message"));
-const listTemplate_1 = __importDefault(require("./api/listTemplate"));
-const mediaTemplate_1 = __importDefault(require("./api/mediaTemplate"));
-const quickReply_1 = __importDefault(require("./api/quickReply"));
 const string_1 = require("../lib/string");
 const timer_1 = require("../utils/timer");
+const listTemplate_1 = __importDefault(require("./api/listTemplate"));
+const mediaTemplate_1 = __importDefault(require("./api/mediaTemplate"));
+const message_1 = __importDefault(require("./api/message"));
+const quickReply_1 = __importDefault(require("./api/quickReply"));
 const TIME_WAITED_BEFORE_CONFIRMING = 3000;
 /**
 * Respond in facebook messenger
@@ -57,7 +57,7 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
                 message_1.default(fbId, topArticle.title, () => {
                     const media = {
                         type: 'image',
-                        url: topArticle.image_url
+                        url: topArticle.image_url,
                     };
                     let button = null;
                     if (topArticle.buttons[0].url) {

@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const environment_1 = require("../environment");
 const request_1 = __importDefault(require("request"));
+const environment_1 = require("../environment");
 const messaging = request_1.default.defaults({
     uri: 'https://graph.facebook.com/v2.6/me/messages',
     method: 'POST',

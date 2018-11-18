@@ -45,7 +45,7 @@ const flush = (): void => myCache.flushAll()
 /**
  * Close the cache
  */
-const close = (): void=> myCache.close()
+const close = (): void => myCache.close()
 
 export {
 	save,

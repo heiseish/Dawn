@@ -1,8 +1,8 @@
-import { containsObjectWithNameAttribute } from './utils/array'
-import actions from './actions'
 import chalk from 'chalk'
-import Logger from './logger'
+import actions from './actions'
 import { converse } from './externalApis/@facebook/pytorch/'
+import Logger from './logger'
+import { containsObjectWithNameAttribute } from './utils/array'
 /**
 * Return a partial unique userId from incoming event to identify user
 * @param {supportedPlatform} platform supported platform currently

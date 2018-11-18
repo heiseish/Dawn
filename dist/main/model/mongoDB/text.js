@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const db_js_1 = __importDefault(require("./db.js"));
-const Schema = db_js_1.default.Schema;
-let textSchema = new Schema({
+const db_1 = __importDefault(require("./db"));
+const Schema = db_1.default.Schema;
+const textSchema = new Schema({
     correctlyResponded: { type: Boolean, default: false, index: true },
     originalText: String,
     tokenizedText: [String],
@@ -48,6 +48,6 @@ textSchema.statics.deleteAll = function () {
         }
     });
 };
-const Text = db_js_1.default.model('Text', textSchema);
+const Text = db_1.default.model('Text', textSchema);
 exports.Text = Text;
 //# sourceMappingURL=text.js.map

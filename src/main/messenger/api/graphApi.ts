@@ -1,9 +1,8 @@
-import{ FB_PAGE_TOKEN } from '../../environment'
 import graph from 'fbgraph'
+import { FB_PAGE_TOKEN } from '../../environment'
 
 graph.setAccessToken(FB_PAGE_TOKEN)
 graph.setVersion('2.6')
-
 
 /**
  * Get the user first and last name
@@ -24,5 +23,5 @@ const getUserName = (sender: string): Promise<{firstName: string, lastName: stri
 }
 
 export {
-	getUserName
+	getUserName,
 }

@@ -16,11 +16,12 @@ exports.default = (chatId, url, reply, messageId) => __awaiter(this, void 0, voi
     try {
         if (reply) {
             return yield __1.default.sendPhoto(chatId, url, {
-                reply_to_message_id: messageId
+                reply_to_message_id: messageId,
             });
         }
-        else
+        else {
             return yield __1.default.sendPhoto(chatId, url);
+        }
     }
     catch (e) {
         return Promise.reject(e);

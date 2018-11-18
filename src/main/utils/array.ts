@@ -1,11 +1,11 @@
 /**
  * Check duplicate of a sorted array.
- * @param {arr[]} a
+ * @param {any[]} a
  * @return true if there are duplicated. False otherwise
  */
 const checkDuplicates = (a: any[]): boolean => {
 	for (let i = 0; i < a.length - 1; i++) {
-		if (a[i] === a[i + 1]) return true
+		if (a[i] === a[i + 1]) { return true }
 	}
 	return false
 }
@@ -60,7 +60,7 @@ const containsObjectWithNameAttribute = (arr: any[], attribute: string, key: str
 			return object
 		}
 	}
-	return null
+	return false
 }
 
 /**

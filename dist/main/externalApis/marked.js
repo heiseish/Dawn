@@ -12,8 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const marked_1 = __importDefault(require("marked"));
-const gists_1 = require("./gists");
 const os_1 = __importDefault(require("os"));
+const gists_1 = require("./gists");
 marked_1.default.setOptions({
     renderer: new marked_1.default.Renderer(),
     gfm: true,

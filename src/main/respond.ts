@@ -1,5 +1,5 @@
-import Logger from './logger'
 import { translate } from './externalApis/@google/translate'
+import Logger from './logger'
 import respondMessenger from './messenger/respond'
 import respondTelegram from './telegram/respond'
 /**
@@ -16,13 +16,13 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 			case 'telegram':
 			await respondTelegram(payload, user)
 			break
-			
+
 			case 'messenger':
 			await respondMessenger(user)
 			break
 
 			default:
-			
+
 		}
 		log.stop('Responded.')
 	} catch (e) {
@@ -50,5 +50,5 @@ const prepareResponseForSending = async (user: userType): Promise<userType> => {
 	} catch (e) {
 		return Promise.reject(e)
 	}
-	
+
 }

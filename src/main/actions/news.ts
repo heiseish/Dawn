@@ -1,7 +1,7 @@
+import _ from 'lodash/core'
 import { getAllHeadlines } from '../externalApis/news'
 import { shuffle } from '../utils/array'
 import { parseArticles } from './utils'
-import _ from 'lodash/core'
 const NO_ARTICLE_FOUND = 'Sorry no article found :<'
 
 /**

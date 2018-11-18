@@ -1,10 +1,10 @@
 import Logger from './logger'
-import UserDB from './model/mongoDB/user'
 import { getUserName } from './messenger/api/graphApi'
 import {
 	getUser,
 	saveUser,
 } from './model/cache'
+import UserDB from './model/mongoDB/user'
 
 /**
 * Return a partial unique userId from incoming event to identify user

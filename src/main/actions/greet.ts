@@ -1,7 +1,7 @@
 import getCatFact from '../externalApis/catFact'
 import { getRandomHeadlines } from '../externalApis/news'
-import { randomIndex } from '../utils/array'
 import { randomGreetingPrefix, randomGreetingSuffix} from '../lib/string'
+import { randomIndex } from '../utils/array'
 
 const RANDOM_IMAGE_URL = 'https://picsum.photos/1200/1000/?random'
 
@@ -13,7 +13,6 @@ const possibleGreetLines = [
 	randomGreetingSuffix,
 	getRandomHeadlines,
 ]
-
 
 /**
  * Greet user

@@ -1,13 +1,13 @@
-import greet from './greet'
-import worldCup from './worldCup'
-import news from './news'
-import compliment from './compliment'
-import thanks from './thanks'
 import bye from './bye'
-import replyToDocument from './replyToDocument'
-import weather from './weather'
-import pkmGo from './pkmGo'
+import compliment from './compliment'
+import greet from './greet'
 import help from './help'
+import news from './news'
+import pkmGo from './pkmGo'
+import replyToDocument from './replyToDocument'
+import thanks from './thanks'
+import weather from './weather'
+import worldCup from './worldCup'
 export default [
 	{
 		name: 'greetings',

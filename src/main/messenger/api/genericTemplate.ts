@@ -1,7 +1,6 @@
 import Logger from '../../logger'
 import { messaging } from '../fbrequest'
 
-
 /**
  * Send generic template
  * @param senderId ID of sender
@@ -12,8 +11,8 @@ import { messaging } from '../fbrequest'
  * @param urlButton link that should be invoked when clicking on the buttons
  * @param cb callback function when opt is executed
  */
-export default async (senderId: string, text: string, subtitle?: string, urlMedia?: string, 
-		imageId?: string, urlButton?: string, cb?: (err: any, data: any) => any): Promise<void>  => {
+export default async (senderId: string, text: string, subtitle?: string, urlMedia?: string,
+		                    imageId?: string, urlButton?: string, cb?: (err: any, data: any) => any): Promise<void>  => {
 	const opts = {
 		form: {
 			recipient: {

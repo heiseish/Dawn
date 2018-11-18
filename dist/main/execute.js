@@ -11,11 +11,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const array_1 = require("./utils/array");
-const actions_1 = __importDefault(require("./actions"));
 const chalk_1 = __importDefault(require("chalk"));
-const logger_1 = __importDefault(require("./logger"));
+const actions_1 = __importDefault(require("./actions"));
 const pytorch_1 = require("./externalApis/@facebook/pytorch/");
+const logger_1 = __importDefault(require("./logger"));
+const array_1 = require("./utils/array");
 /**
 * Return a partial unique userId from incoming event to identify user
 * @param {supportedPlatform} platform supported platform currently

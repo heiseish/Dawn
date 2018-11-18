@@ -1,16 +1,16 @@
 import Twitter from 'twitter'
 import {
-	TWITTER_CONSUMER_KEY,
-	TWITTER_CONSUMER_SECRET,
 	TWITTER_ACCESS_TOKEN_KEY,
 	TWITTER_ACCESS_TOKEN_SECRET,
+	TWITTER_CONSUMER_KEY,
+	TWITTER_CONSUMER_SECRET,
 } from '../../environment'
 
 /**
  * Check if keys are present
  */
-if (!TWITTER_CONSUMER_KEY) { 
-	throw new Error('missing TWITTER_CONSUMER_KEY') 
+if (!TWITTER_CONSUMER_KEY) {
+	throw new Error('missing TWITTER_CONSUMER_KEY')
 } else if (!TWITTER_CONSUMER_SECRET) {
 	throw new Error('missing TWITTER_CONSUMER_SECRET')
 } else if (!TWITTER_ACCESS_TOKEN_KEY) {
@@ -19,7 +19,7 @@ if (!TWITTER_CONSUMER_KEY) {
 	throw new Error('missing TWITTER_ACCESS_TOKEN_SECRET')
 }
 
-let client = new Twitter({
+const client = new Twitter({
 	consumer_key: TWITTER_CONSUMER_KEY,
 	consumer_secret: TWITTER_CONSUMER_SECRET,
 	access_token_key: TWITTER_ACCESS_TOKEN_KEY,

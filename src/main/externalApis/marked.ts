@@ -1,6 +1,6 @@
 import marked from 'marked'
-import { editGist, createGist} from './gists'
 import os from 'os'
+import { createGist, editGist} from './gists'
 
 marked.setOptions({
 	renderer: new marked.Renderer(),
@@ -21,9 +21,9 @@ const ICON = '![Imgur](https://i.imgur.com/JQheM1b.png)'
  * Generate help manual
  * @param actions array of executable object
  */
-const generateHelpManual = async (actions: any[]):Promise<string> => {
+const generateHelpManual = async (actions: any[]): Promise<string> => {
 	try {
-		const fileString:string = await generateFileString(actions)
+		const fileString: string = await generateFileString(actions)
 		const opts = {
 			description: MANUAL_DESC,
 			public: true,
@@ -42,7 +42,7 @@ const generateHelpManual = async (actions: any[]):Promise<string> => {
 
 /**
  *  A function to update the list manual with the manual containing all the functions available
- * @param actions 
+ * @param actions
  */
 const updateHelpManual = async (actions: any[]): Promise<string> => {
 	try {
@@ -64,9 +64,9 @@ const updateHelpManual = async (actions: any[]): Promise<string> => {
 
 /**
  * A function to generate a file string with all actions listed
- * @param actions 
+ * @param actions
  */
-const generateFileString = (actions: any[]):string => {
+const generateFileString = (actions: any[]): string => {
 	const linebr = os.EOL + os.EOL
 	let fileString = `# Help manual for Serena bot ${linebr}`
 	fileString += MANUAL_DESC + linebr

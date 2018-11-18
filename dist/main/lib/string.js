@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const array_1 = require("../utils/array");
 const moment_1 = require("../externalApis/moment");
+const array_1 = require("../utils/array");
 /**
  * Handle unknown queries
  * @param name user name

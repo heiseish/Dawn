@@ -7,37 +7,6 @@ class Logger {
 		this.prefixColor = chalk.magenta
 	}
 
-	private generateDateTimePrefix() {
-		if (process.env.NODE_ENV === 'production') return ''
-		else return '[' + this.prefixColor(new Date().toString()) + ']'
-	}
-	/**
-	 * Logging out the text with prefix color
-	 * @param text text to log
-	 * @param color color of primary text
-	 */
-	private log(text: string, level?: 'info' | 'error' | 'warn') {
-		let color
-		switch (level) {
-			case 'info':
-			color = chalk.green
-			break
-			
-			case 'error':
-			color = chalk.red
-			break
-
-			case 'warn':
-			color = chalk.yellow
-			break
-			
-			default:
-			color = chalk.white
-		}
-		console.log(this.generateDateTimePrefix()
-		+ color(`${level}: `) + chalk.cyan(text))
-	}
-	
 	/**
 	* log the info
 	* @param text Text to display
@@ -49,7 +18,7 @@ class Logger {
 				text: this.generateDateTimePrefix()
 				+ chalk.green('info: ') + chalk.cyan(text),
 				spinner: 'arc',
-				
+
 			})
 			spinner.start()
 			/**
@@ -65,22 +34,22 @@ class Logger {
 				})
 			}
 			return { stop }
-		} else this.log(text, 'info')
+		} else { this.log(text, 'info') }
 	}
-	
+
 	/**
 	 * Logging the warning text
 	 * @param text warning text
 	 */
-	public warn(text:string) {
+	public warn(text: string) {
 		this.log(text, 'warn')
 	}
-	
+
 	/**
 	 * Logging the error text
 	 * @param text error text
 	 */
-	public error(text:string) {
+	public error(text: string) {
 		this.log(text, 'error')
 	}
 	/**
@@ -89,6 +58,36 @@ class Logger {
 	*/
 	public separator(text: string) {
 		console.log(chalk.yellow(text))
+	}
+
+	private generateDateTimePrefix() {
+		if (process.env.NODE_ENV === 'production') { return '' } else { return '[' + this.prefixColor(new Date().toString()) + ']' }
+	}
+	/**
+	 * Logging out the text with prefix color
+	 * @param text text to log
+	 * @param color color of primary text
+	 */
+	private log(text: string, level?: 'info' | 'error' | 'warn') {
+		let color
+		switch (level) {
+			case 'info':
+			color = chalk.green
+			break
+
+			case 'error':
+			color = chalk.red
+			break
+
+			case 'warn':
+			color = chalk.yellow
+			break
+
+			default:
+			color = chalk.white
+		}
+		console.log(this.generateDateTimePrefix()
+		+ color(`${level}: `) + chalk.cyan(text))
 	}
 }
 

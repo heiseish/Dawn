@@ -11,8 +11,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("./logger"));
 const translate_1 = require("./externalApis/@google/translate");
+const logger_1 = __importDefault(require("./logger"));
 const respond_1 = __importDefault(require("./messenger/respond"));
 const respond_2 = __importDefault(require("./telegram/respond"));
 /**

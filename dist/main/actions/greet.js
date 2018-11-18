@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const catFact_1 = __importDefault(require("../externalApis/catFact"));
 const news_1 = require("../externalApis/news");
-const array_1 = require("../utils/array");
 const string_1 = require("../lib/string");
+const array_1 = require("../utils/array");
 const RANDOM_IMAGE_URL = 'https://picsum.photos/1200/1000/?random';
 /**
 * Randomize which function to call as suffix

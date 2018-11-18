@@ -77,7 +77,7 @@ const getHeadlinesWithQuery = (keyword) => {
             q: keyword,
             language: 'en',
         })
-            .then(response => res(response.articles));
+            .then((response) => res(response.articles));
     });
 };
 exports.getHeadlinesWithQuery = getHeadlinesWithQuery;
@@ -93,7 +93,7 @@ const getHeadlinesWithCategory = (category) => {
             language: 'en',
             country: 'us',
         })
-            .then(response => res(response.articles));
+            .then((response) => res(response.articles));
     });
 };
 exports.getHeadlinesWithCategory = getHeadlinesWithCategory;

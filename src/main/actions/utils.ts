@@ -1,6 +1,6 @@
-import Logger from '../logger'
 import idx from 'idx'
 import { formatTimeForListTemplate } from '../externalApis/moment'
+import Logger from '../logger'
 
 /**
  * Parse articles to become viewable formats
@@ -9,7 +9,7 @@ import { formatTimeForListTemplate } from '../externalApis/moment'
  */
 const parseArticles = (items: any[]): cascadeTextType  => {
 	let elements = [], i = 0
-	if (items.length > 4) Logger.error('Trying to send list template message with more than 4 particles')
+	if (items.length > 4) { Logger.error('Trying to send list template message with more than 4 particles') }
 	for (const item of items) {
 		elements[i] = {}
 		elements[i].title  = item.title

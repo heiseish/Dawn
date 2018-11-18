@@ -5,7 +5,7 @@ let model = null
 const MODEL_FILE_PATH = 'file://dist/main/externalApis/@google/tensorflow/model.json'
 const predict = async (s: string): Promise<{intent: string, confidence: number}> => {
 	try {
-		if (!model) model = await tf.loadModel(MODEL_FILE_PATH)
+		if (!model) { model = await tf.loadModel(MODEL_FILE_PATH) }
 		const x = []
 		x.push(characterLevelEmbed(s))
 		const inputTensor: tf.Tensor<tf.Rank.R3> = tf.tensor3d(x)

@@ -9,8 +9,7 @@ export default (): Promise<string> => {
 		request(catFactUrl, (error, res, body) => {
 			try {
 				const result = JSON.parse(body)
-				if (error) { reject(error) }
-				else if (result.fact.length >= 320) {
+				if (error) { reject(error) } else if (result.fact.length >= 320) {
 					response('Cat is an animal😺')
 				} else {
 					let fact: string = result.fact[0].toLowerCase() + result.fact.substring(1)

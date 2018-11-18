@@ -1,5 +1,3 @@
-// @flow
-'use strict'
 /**
  * Wait for a certain amount to time to execute some function. Clean up version of setTimeOut
  * @param {number} time Amount of miniseconds to wait
@@ -12,5 +10,5 @@ const waitToDo = (time: number, cb: () => void): void => {
 }
 
 export {
-	waitToDo
+	waitToDo,
 }

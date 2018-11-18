@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../logger"));
 const idx_1 = __importDefault(require("idx"));
 const moment_1 = require("../externalApis/moment");
+const logger_1 = __importDefault(require("../logger"));
 /**
  * Parse articles to become viewable formats
  * @param items articles
@@ -13,8 +13,9 @@ const moment_1 = require("../externalApis/moment");
  */
 const parseArticles = (items) => {
     let elements = [], i = 0;
-    if (items.length > 4)
+    if (items.length > 4) {
         logger_1.default.error('Trying to send list template message with more than 4 particles');
+    }
     for (const item of items) {
         elements[i] = {};
         elements[i].title = item.title;

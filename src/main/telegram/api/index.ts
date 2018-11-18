@@ -1,5 +1,5 @@
-import tlgMessage from './message'
 import tlgImage from './image'
+import tlgMessage from './message'
 
 export {
 	tlgMessage,

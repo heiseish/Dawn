@@ -1,5 +1,5 @@
-import { FB_PAGE_TOKEN } from '../environment'
 import request from 'request'
+import { FB_PAGE_TOKEN } from '../environment'
 const messaging: any = request.defaults({
 	uri: 'https://graph.facebook.com/v2.6/me/messages',
 	method: 'POST',

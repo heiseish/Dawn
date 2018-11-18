@@ -1,8 +1,8 @@
-import Logger from './logger'
-import { tokenizeText } from './utils/string'
-import { predict } from './externalApis/@google/tensorflow/intentClassification'
 import idx from 'idx'
+import { predict } from './externalApis/@google/tensorflow/intentClassification'
+import Logger from './logger'
 import { TextDB } from './model/mongoDB'
+import { tokenizeText } from './utils/string'
 const CLASSIFY_CONFIDENCE_THRESHOLD = 0.9
 
 /**
@@ -21,15 +21,14 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 			entity,
 			sentiment,
 		} = getInformationFromMessage(platform, payload)
-		
-		
+
 		if (document) {
 			user.entity.lastIntent = 'sendDocument'
 			user.lastDoc = document
 		} else if (text) {
 			user.locale = checkLang()
 			user.lastText = text
-			const intent = await findIntent(text) 
+			const intent = await findIntent(text)
 			if (typeof intent === 'string') {
 				user.entity = {
 					lastIntent: intent,
@@ -41,7 +40,7 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 					sentiment,
 				}
 			}
-			if (!user.text) user.text = [] 
+			if (!user.text) { user.text = [] }
 			const newText = new TextDB({
 				orignalText: text,
 				tokenizeText: tokenizeText(text),
@@ -84,7 +83,7 @@ const getInformationFromMessage = (platform: supportedPlatform, payload: any): I
 			sentiment: 'neutral',
 		}
 		break
-		
+
 		case 'messenger':
 		if (idx(payload, (_) => _.message.quick_reply)) {
 			const Msgpayload = idx(payload, (_) => _.message.quick_reply.payload)
@@ -105,20 +104,20 @@ const getInformationFromMessage = (platform: supportedPlatform, payload: any): I
 					type: 'image',
 				}
 				break
-				
+
 				case 'video':
 				info.document = {
 					type: 'video',
 				}
 				break
-				
+
 				case 'audio':
 				// message(senderId, await speechToText(payload.message.attachments[0].payload.url))
 				info.document = {
 					type: 'audio',
 				}
 				break
-				
+
 				case 'location':
 				info.document = {
 					type: 'location',
@@ -127,14 +126,14 @@ const getInformationFromMessage = (platform: supportedPlatform, payload: any): I
 				}
 				break
 				default:
-				
+
 			}
 		}
 		break
-		
+
 		default:
 	}
-	
+
 	return info
 }
 
@@ -155,7 +154,7 @@ const findIntent = async (text: string): Promise<string | Error> => {
 	} catch (e) {
 		return Promise.reject(e)
 	}
-	
+
 }
 
 /**

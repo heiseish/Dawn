@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const giphy_1 = __importDefault(require("../externalApis/giphy"));
 const geocoder_1 = __importDefault(require("geocoder"));
 const idx_1 = __importDefault(require("idx"));
-const array_1 = require("../utils/array");
+const giphy_1 = __importDefault(require("../externalApis/giphy"));
 const string_1 = require("../lib/string");
+const array_1 = require("../utils/array");
 /**
  * Handle document from messenger
  * @param {userType} user

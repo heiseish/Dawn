@@ -16,12 +16,11 @@ declare interface messengerEntitiesType {
 	sentiment?: any
 }
 
-
 declare interface databaseTextType {
-	[n : number]: {
+	[n: number]: {
 		originalText: string,
 		tokenizedText: {
-			[n : number]: string,
+			[n: number]: string,
 		},
 		timeStamp: number,
 	}
@@ -47,10 +46,10 @@ declare interface userType {
 	}
 	lastDoc?: {
 		value?: number | string,
-		type?: 'image' | 'video' | 'location' | 'QUICK_REPLY' | 'audio'
+		type?: 'image' | 'video' | 'location' | 'QUICK_REPLY' | 'audio',
 	}
 	lastText?: string
-	text?: Array<Text>
+	text?: Text[]
 	entity?: {
 		lastIntent?: string,
 		sentiment?: string,
@@ -62,22 +61,21 @@ declare interface userType {
 		image?: string,
 		cascadeText?: cascadeTextType,
 		multipleText?: string[],
-		url?: string
+		url?: string,
 	}
 	locale: string
 }
 
-declare type cascadeTextType = {
+declare type cascadeTextType = Array<{
 	title: string,
 	image: string,
 	image_url: string,
-	buttons: cascadeTextButton[]
-}[]
+	buttons: cascadeTextButton[],
+}>
 
-declare type cascadeTextButton = {
+declare interface cascadeTextButton {
 	title: string,
 	type: 'web_url',
 	url: string,
 	webview_height_ratio: 'tall' | 'short',
 }
-

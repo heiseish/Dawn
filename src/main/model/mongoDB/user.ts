@@ -1,10 +1,10 @@
-import mongoose from './db.js'
-import { textSchema } from './text'
+import mongoose from './db'
 import docSchema from './doc'
 import entitySchema from './entity'
 import locationSchema from './location'
 import nameSchema from './name'
 import responseSchema from './response'
+import { textSchema } from './text'
 
 const Schema = mongoose.Schema
 const userSchema = new Schema({

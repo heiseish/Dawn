@@ -1,5 +1,5 @@
-import { messaging } from '../fbrequest'
 import Logger from '../../logger'
+import { messaging } from '../fbrequest'
 
 /**
  * Show typing on animation

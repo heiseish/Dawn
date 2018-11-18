@@ -1,4 +1,4 @@
-if (process.env.NODE_ENV === 'production') require('dotenv').load()
+if (process.env.NODE_ENV === 'production') { require('dotenv').load() }
 import cryptoJSON from 'crypto-json'
 
 const cipher = process.env.CIPHER
@@ -24,7 +24,7 @@ const encrypt = (object: any) =>  {
  * @param {any} object
  */
 const decrypt = (object: any) => {
-	if (typeof object !== 'object') throw new Error('Cannot decrypt non-object: ' + object)
+	if (typeof object !== 'object') { throw new Error('Cannot decrypt non-object: ' + object) }
 	return cryptoJSON.decrypt(object, passKey, {
 		algorithm: cipher,
 		encoding,

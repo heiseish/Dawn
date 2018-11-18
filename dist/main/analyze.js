@@ -11,11 +11,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("./logger"));
-const string_1 = require("./utils/string");
-const intentClassification_1 = require("./externalApis/@google/tensorflow/intentClassification");
 const idx_1 = __importDefault(require("idx"));
+const intentClassification_1 = require("./externalApis/@google/tensorflow/intentClassification");
+const logger_1 = __importDefault(require("./logger"));
 const mongoDB_1 = require("./model/mongoDB");
+const string_1 = require("./utils/string");
 const CLASSIFY_CONFIDENCE_THRESHOLD = 0.9;
 /**
 * Return the text or document along with the intent of the message
@@ -48,8 +48,9 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
                     sentiment,
                 };
             }
-            if (!user.text)
+            if (!user.text) {
                 user.text = [];
+            }
             const newText = new mongoDB_1.TextDB({
                 orignalText: text,
                 tokenizeText: string_1.tokenizeText(text),

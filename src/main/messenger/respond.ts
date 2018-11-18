@@ -1,12 +1,11 @@
-import message from './api/message'
-import sendListTemplate from './api/listTemplate'
-import sendMediaTemplate from './api/mediaTemplate'
-import sendQuickReply from './api/quickReply'
 import { randomConfusedMessage } from '../lib/string'
 import { waitToDo } from '../utils/timer'
+import sendListTemplate from './api/listTemplate'
+import sendMediaTemplate from './api/mediaTemplate'
+import message from './api/message'
+import sendQuickReply from './api/quickReply'
 
 const TIME_WAITED_BEFORE_CONFIRMING = 3000
-
 
 /**
 * Respond in facebook messenger
@@ -38,7 +37,7 @@ export default async (user: userType): Promise<void> => {
 			}
 			await sendMediaTemplate(fbId, media, button)
 			await message(fbId, response.simpleText)
-			
+
 		} else if (response.cascadeText) {
 			if (response.cascadeText.length == 1) {
 				const topArticle = response.cascadeText[0]
@@ -46,7 +45,7 @@ export default async (user: userType): Promise<void> => {
 				message(fbId, topArticle.title, () => {
 					const media: MessengerTextMedia = {
 						type: 'image',
-						url: topArticle.image_url
+						url: topArticle.image_url,
 					}
 					let button: MessengerTextButton = null
 
@@ -68,7 +67,7 @@ export default async (user: userType): Promise<void> => {
 	} catch (e) {
 		return Promise.reject(e)
 	}
-	
+
 }
 
 /**

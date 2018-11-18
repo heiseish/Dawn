@@ -1,13 +1,13 @@
-import mojiTranslate from 'moji-translate'
-import { padRight, padLeft } from '../utils/string'
-import * as CacheProvider from './node-cache'
-import rp from 'request-promise'
 import _ from 'lodash/core'
+import mojiTranslate from 'moji-translate'
+import rp from 'request-promise'
+import { padLeft, padRight } from '../utils/string'
+import * as CacheProvider from './node-cache'
 
 const MAX_COUNTRY_LENGTH = 10
 const MAX_GOALS_LENGTH = 2
 
-let options = {
+const options = {
 	uri: 'http://worldcup.sfg.io/matches',
 	headers: {
 		'User-Agent': 'Request-Promise',

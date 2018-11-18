@@ -1,6 +1,6 @@
-import { generateRandomId } from './utils/string'
 import idx from 'idx'
 import Logger from './logger'
+import { generateRandomId } from './utils/string'
 /**
  * Return a partial unique userId from incoming event to identify user
  * @param {supportedPlatform} platform supported platform currently

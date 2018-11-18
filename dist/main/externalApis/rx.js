@@ -5,14 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const idx_1 = __importDefault(require("idx"));
 const rxjs_1 = require("rxjs");
-const _twitter_1 = require("./@twitter");
 const logger_1 = __importDefault(require("../logger"));
 const firebasedb_1 = __importDefault(require("../model/database/firebasedb"));
 const account_1 = require("./../utils/account");
+const _twitter_1 = require("./@twitter");
 // @messenger
 const message_1 = __importDefault(require("../messenger/api/message"));
 const sendImage_1 = __importDefault(require("../messenger/api/sendImage"));
-//@telegram
+// @telegram
 const api_1 = require("../telegram/api/");
 const POKEMONGO_TWITTER = '2839430431';
 const WYK_TWITTER = '44680622';
@@ -90,8 +90,9 @@ const setUpStreamingApi = () => {
         else if (typeof result === 'object') {
             audience = Object.values(result);
         }
-        if (StreamingInstance.isStreaming())
+        if (StreamingInstance.isStreaming()) {
             StreamingInstance.stopStreaming();
+        }
         StreamingInstance = new Streaming(audience);
     }, (err) => {
         logger_1.default.error(err);

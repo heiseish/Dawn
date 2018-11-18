@@ -19,8 +19,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const CacheProvider = __importStar(require("../externalApis/node-cache"));
-const mongoDB_1 = require("./mongoDB");
 const logger_1 = __importDefault(require("../logger"));
+const mongoDB_1 = require("./mongoDB");
 CacheProvider.myCache.on('expired', (key, value) => {
     try {
         logger_1.default.info('Account in cache expiring, saving to database..');
@@ -38,8 +38,9 @@ CacheProvider.myCache.on('expired', (key, value) => {
 const getUser = (id) => __awaiter(this, void 0, void 0, function* () {
     try {
         const account = yield CacheProvider.get(id);
-        if (account !== undefined)
+        if (account !== undefined) {
             return account;
+        }
         else {
             const user = yield mongoDB_1.UserDB.findUser(id);
             if (user) {

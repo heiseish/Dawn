@@ -3,14 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const db_js_1 = __importDefault(require("./db.js"));
-const text_1 = require("./text");
+const db_1 = __importDefault(require("./db"));
 const doc_1 = __importDefault(require("./doc"));
 const entity_1 = __importDefault(require("./entity"));
 const location_1 = __importDefault(require("./location"));
 const name_1 = __importDefault(require("./name"));
 const response_1 = __importDefault(require("./response"));
-const Schema = db_js_1.default.Schema;
+const text_1 = require("./text");
+const Schema = db_1.default.Schema;
 const userSchema = new Schema({
     id: { type: String, require: true, unique: true, index: true },
     name: name_1.default,
@@ -96,5 +96,5 @@ userSchema.statics.deleteUser = function (id) {
         });
     });
 };
-exports.default = db_js_1.default.model('User', userSchema);
+exports.default = db_1.default.model('User', userSchema);
 //# sourceMappingURL=user.js.map

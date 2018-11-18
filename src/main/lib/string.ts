@@ -1,5 +1,5 @@
-import { randomIndex } from '../utils/array'
 import { getNingOfTheDay } from '../externalApis/moment'
+import { randomIndex } from '../utils/array'
 
 /**
  * Handle unknown queries
@@ -93,7 +93,7 @@ const randomGreetingPrefix = async (name: string | null) => {
 	return `${randomIndex(prefixes)}, ${n}!`
 }
 
-const possibleYay:string[] = [
+const possibleYay: string[] = [
 	'Yoshhh!',
 	'Ez',
 	'Hue hue hue',
@@ -101,7 +101,7 @@ const possibleYay:string[] = [
 	'Nice la',
 ]
 
-const possibleNay:string[] = [
+const possibleNay: string[] = [
 	'Sorry :<',
 	'NANI',
 	'Mada Mada',

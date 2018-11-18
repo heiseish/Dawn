@@ -21,8 +21,9 @@ const PYTORCH_SERVER = 'https://converseserver.herokuapp.com/conversation/';
 const converse = (sentence) => {
     return new Promise((response, reject) => {
         request_1.default(PYTORCH_SERVER + sentence, (error, res, body) => __awaiter(this, void 0, void 0, function* () {
-            if (error)
+            if (error) {
                 reject(error);
+            }
             response(body);
         }));
     });

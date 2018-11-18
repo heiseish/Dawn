@@ -2,13 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Check duplicate of a sorted array.
- * @param {arr[]} a
+ * @param {any[]} a
  * @return true if there are duplicated. False otherwise
  */
 const checkDuplicates = (a) => {
     for (let i = 0; i < a.length - 1; i++) {
-        if (a[i] === a[i + 1])
+        if (a[i] === a[i + 1]) {
             return true;
+        }
     }
     return false;
 };
@@ -64,7 +65,7 @@ const containsObjectWithNameAttribute = (arr, attribute, key = 'name') => {
             return object;
         }
     }
-    return null;
+    return false;
 };
 exports.containsObjectWithNameAttribute = containsObjectWithNameAttribute;
 /**

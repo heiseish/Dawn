@@ -1,6 +1,6 @@
 import * as CacheProvider from '../externalApis/node-cache'
-import { UserDB } from './mongoDB'
 import Logger from '../logger'
+import { UserDB } from './mongoDB'
 
 CacheProvider.myCache.on('expired', (key, value) => {
 	try {
@@ -19,8 +19,7 @@ CacheProvider.myCache.on('expired', (key, value) => {
 const getUser = async (id: string): Promise<any | Error> => {
 	try {
 		const account = await CacheProvider.get(id)
-		if (account !== undefined) return account
-		else {
+		if (account !== undefined) { return account } else {
 			const user = await UserDB.findUser(id)
 			if (user) {
 				return typeof user.toObject === 'function' ? user.toObject() : user

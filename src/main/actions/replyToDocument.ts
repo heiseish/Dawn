@@ -1,8 +1,8 @@
-import getRandomGif from '../externalApis/giphy'
 import geocoder from 'geocoder'
 import idx from 'idx'
+import getRandomGif from '../externalApis/giphy'
+import { possibleNay, possibleYay } from '../lib/string'
 import { randomIndex } from '../utils/array'
-import { possibleYay, possibleNay } from '../lib/string'
 
 /**
  * Handle document from messenger
