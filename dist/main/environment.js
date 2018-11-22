@@ -44,4 +44,6 @@ const MONGO_DB_URI = process.env.MONGO_DB_URI;
 exports.MONGO_DB_URI = MONGO_DB_URI;
 const CACHE_DURATION = process.env.CACHE_DURATION;
 exports.CACHE_DURATION = CACHE_DURATION;
+const NASA_APIKEY = process.env.NASA_APIKEY;
+exports.NASA_APIKEY = NASA_APIKEY;
 //# sourceMappingURL=environment.js.map

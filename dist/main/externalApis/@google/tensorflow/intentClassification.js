@@ -20,6 +20,11 @@ require("@tensorflow/tfjs-node");
 const utils_1 = require("./utils");
 let model = null;
 const MODEL_FILE_PATH = 'file://dist/main/externalApis/@google/tensorflow/model.json';
+/**
+ * Predict the intent of a message
+ * @param {string} s
+ * @return {{intent: string, confidence: number}}
+ */
 const predict = (s) => __awaiter(this, void 0, void 0, function* () {
     try {
         if (!model) {

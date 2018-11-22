@@ -4,7 +4,7 @@ import * as testCache from '../helpers/nodeCache'
 describe('Node-cache', function() {
 	testCache.useInTest()
 
-	describe('save()', function() {
+	describe('#save()', function() {
 		it('Should save document to memory', async function() {
 			const cache = this.cache
 			const res = await cache.save('first key', 'first value')

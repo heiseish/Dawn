@@ -70,15 +70,15 @@ const containsObjectWithNameAttribute = (arr, attribute, key = 'name') => {
 exports.containsObjectWithNameAttribute = containsObjectWithNameAttribute;
 /**
  * Return a random member of an array
- * @param {T[]} array
- * @return {T} an element inside the array
+ * @param {any[]} array
+ * @return an element inside the array
  */
 const randomIndex = (array) => array[Math.floor(Math.random() * array.length)];
 exports.randomIndex = randomIndex;
 /**
  * Remove an element from array
- * @param array Array to be process
- * @param member elemen to be removed
+ * @param {any[]}array Array to be process
+ * @param {any} member elemen to be removed
  * @return a new array that doesn't have the old element
  */
 const removeFromArray = (array, member) => {
