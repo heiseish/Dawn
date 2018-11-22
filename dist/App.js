@@ -88,15 +88,15 @@ class App {
     * Set up nasa news retriever scheduler for every moning
     */
     setUpMorningSchedule() {
-        // if (process.env.NODE_ENV === 'production') {
-        node_schedule_1.default.scheduleJob({ hour: 15, minute: 3 }, () => __awaiter(this, void 0, void 0, function* () {
-            let nasa = yield _nasa_1.default();
-            streaming_1.default({
-                text: nasa.explanation,
-                image: nasa.url
-            });
-        }));
-        // }
+        if (process.env.NODE_ENV === 'production') {
+            node_schedule_1.default.scheduleJob({ hour: 8 }, () => __awaiter(this, void 0, void 0, function* () {
+                let nasa = yield _nasa_1.default();
+                streaming_1.default({
+                    text: nasa.explanation,
+                    image: nasa.url
+                });
+            }));
+        }
     }
 }
 exports.default = App;

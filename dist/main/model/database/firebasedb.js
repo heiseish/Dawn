@@ -13,9 +13,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const admin = __importStar(require("firebase-admin"));
 const encrypt_1 = require("../../lib/encrypt");
 const account_json_1 = __importDefault(require("./account.json"));
-const firebase = process.env.NODE_ENV !== 'production' ? admin.initializeApp({
+exports.default = admin.initializeApp({
     credential: admin.credential.cert(encrypt_1.decrypt(account_json_1.default)),
     databaseURL: 'https://mvpapp-1ba71.firebaseio.com',
-}) : undefined;
-exports.default = firebase;
+});
 //# sourceMappingURL=firebasedb.js.map
