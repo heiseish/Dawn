@@ -7,15 +7,15 @@ import { tlgImage, tlgMessage }   from '../telegram/api/'
 
 
 interface StreamableObject {
-	text: string,
-	image: string
+	text?: string,
+	image?: string
 }
 /**
  * 
  * @param toStream object to stream
  */
 const stream = (toStream: StreamableObject):void => {
-	firebase.database().ref('restricted_access/streaming/').on('value', (snap) => {
+	firebase.database().ref('restricted_access/streaming/').once('value').then(snap => {
 		const result = snap.val()
 		let audience
 		if (Array.isArray(result)) audience = result
@@ -33,7 +33,7 @@ const stream = (toStream: StreamableObject):void => {
 				message = tlgMessage
 				image = tlgImage
 			}
-			message(id, toStream.text)
+			if (toStream.text) message(id, toStream.text)
 			if (toStream.image) image(id, toStream.image) 
 		}
 	}, (err) => {

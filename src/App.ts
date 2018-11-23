@@ -83,7 +83,7 @@ export default class App {
 	*/
 	private setUpMorningSchedule():void {
 		if (process.env.NODE_ENV === 'production') {
-			schedule.scheduleJob({hour: 8}, async () => {
+			schedule.scheduleJob({hour: 8, minute: 0}, async () => {
 				let nasa = await getDailyNasaNews()
 				stream({
 					text: nasa.explanation,
