@@ -14,7 +14,7 @@ const api_1 = require("../telegram/api/");
  * @param toStream object to stream
  */
 const stream = (toStream) => {
-    firebasedb_1.default.database().ref('restricted_access/streaming/').on('value', (snap) => {
+    firebasedb_1.default.database().ref('restricted_access/streaming/').once('value').then(snap => {
         const result = snap.val();
         let audience;
         if (Array.isArray(result))
@@ -32,7 +32,8 @@ const stream = (toStream) => {
                 message = api_1.tlgMessage;
                 image = api_1.tlgImage;
             }
-            message(id, toStream.text);
+            if (toStream.text)
+                message(id, toStream.text);
             if (toStream.image)
                 image(id, toStream.image);
         }

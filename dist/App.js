@@ -34,6 +34,11 @@ class App {
         this.express.listen(port);
         this.express.use(body_parser_1.default.json());
         this.express.use(body_parser_1.default.urlencoded({ extended: true }));
+    }
+    /**
+     * Fire up endpoint listener
+     */
+    startServer() {
         this.loadFacebookEndpoint();
         this.loadPingEndpoints();
         this.loadStreamingEndpoint();
@@ -89,7 +94,7 @@ class App {
     */
     setUpMorningSchedule() {
         if (process.env.NODE_ENV === 'production') {
-            node_schedule_1.default.scheduleJob({ hour: 8 }, () => __awaiter(this, void 0, void 0, function* () {
+            node_schedule_1.default.scheduleJob('30 08 * * *', () => __awaiter(this, void 0, void 0, function* () {
                 let nasa = yield _nasa_1.default();
                 streaming_1.default({
                     text: nasa.explanation,

@@ -10,4 +10,5 @@ if (process.env.NODE_ENV !== 'production') {
 const App_1 = __importDefault(require("./App"));
 const environment_1 = require("./main/environment");
 const app = new App_1.default(environment_1.PORT);
+app.startServer();
 //# sourceMappingURL=index.js.map

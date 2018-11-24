@@ -29,14 +29,18 @@ export default class App {
 		this.express.listen(port)
 		this.express.use(bodyParser.json())
 		this.express.use(bodyParser.urlencoded({extended: true}))
-		
+	}
+	
+	/**
+	 * Fire up endpoint listener
+	 */
+	public startServer():void {
 		this.loadFacebookEndpoint()
 		this.loadPingEndpoints()
 		this.loadStreamingEndpoint()
 		this.loadTelegramEndpoint()
 		this.setUpMorningSchedule()
 	}
-	
 	/**
 	* Endpoint for ping related service
 	*/
@@ -83,7 +87,7 @@ export default class App {
 	*/
 	private setUpMorningSchedule():void {
 		if (process.env.NODE_ENV === 'production') {
-			schedule.scheduleJob({hour: 8, minute: 0}, async () => {
+			schedule.scheduleJob('30 08 * * *', async () => {
 				let nasa = await getDailyNasaNews()
 				stream({
 					text: nasa.explanation,
