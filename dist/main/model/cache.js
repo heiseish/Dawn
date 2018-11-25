@@ -7,69 +7,116 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const CacheProvider = __importStar(require("../externalApis/node-cache"));
 const logger_1 = __importDefault(require("../logger"));
-const mongoDB_1 = require("./mongoDB");
-CacheProvider.myCache.on('expired', (key, value) => {
-    try {
-        logger_1.default.info('Account in cache expiring, saving to database..');
-        mongoDB_1.UserDB.updateUser(key, value);
-    }
-    catch (e) {
-        logger_1.default.error(e);
-    }
-});
-/**
- * Try to get user from cache. If not retrieve user from database
- * @param id id of user
- * @return promise that contains the user
- */
-const getUser = (id) => __awaiter(this, void 0, void 0, function* () {
-    try {
-        const account = yield CacheProvider.get(id);
-        if (account !== undefined) {
-            return account;
-        }
-        else {
-            const user = yield mongoDB_1.UserDB.findUser(id);
-            if (user) {
-                return typeof user.toObject === 'function' ? user.toObject() : user;
+const node_cache_1 = __importDefault(require("node-cache"));
+const environment_1 = require("../environment");
+const numericCacheDuration = parseInt(environment_1.CACHE_DURATION);
+class Cache {
+    constructor(UserDB) {
+        /**
+        * Flush all data
+        */
+        this.flush = () => {
+            this.cache.flushAll();
+        };
+        /**
+        * Close the cache
+        */
+        this.close = () => {
+            logger_1.default.warn('Closing cache...');
+            this.cache.close();
+        };
+        /**
+        * Try to get user from cache. If not retrieve user from database
+        * @param id id of user
+        * @return promise that contains the user
+        */
+        this.getUser = (id) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const account = yield this.get(id);
+                if (account !== undefined) {
+                    return account;
+                }
+                else {
+                    const user = yield this.UserDB.findUser(id);
+                    return user;
+                }
             }
+            catch (e) {
+                return Promise.reject(e);
+            }
+        });
+        /**
+        * Save user to cache
+        * @param id id of user
+        * @param user user object
+        * @return promise that contains the response YES if succeeded. NO otherwise.
+        */
+        this.saveUser = (id, user) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.save(id, user);
+            }
+            catch (e) {
+                return Promise.reject(e);
+            }
+        });
+        this.cache = new node_cache_1.default({ stdTTL: numericCacheDuration, checkperiod: numericCacheDuration + 10 });
+        this.UserDB = UserDB;
+        this.cache.on('expired', (key, value) => {
+            try {
+                logger_1.default.info('Account in cache expiring, saving to database..');
+                this.UserDB.updateUser(key, value);
+            }
+            catch (e) {
+                logger_1.default.error(e);
+            }
+        });
+    }
+    /**
+    * Save data to cache. Successful if returned 'OK'
+    * @param {string} key
+    * @param {any} data
+    */
+    save(key, data) {
+        return new Promise((resolve, reject) => {
+            if (!key)
+                reject('Missing key');
+            else if (!data)
+                reject('Missing data');
             else {
-                return null;
+                this.cache.set(key, data, (err, success) => {
+                    if (err)
+                        reject(err);
+                    else if (!err && success)
+                        resolve('OK');
+                });
             }
-        }
+        });
     }
-    catch (e) {
-        return Promise.reject(e);
+    /**
+    * Get data from cache. Return undefined if data not found.
+    * @param {string} key
+    */
+    get(key) {
+        return new Promise((resolve, reject) => {
+            if (!key)
+                reject('Missing key');
+            else {
+                this.cache.get(key, (err, value) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(value);
+                    }
+                });
+            }
+        });
     }
-});
-exports.getUser = getUser;
-/**
- * Save user to cache
- * @param id id of user
- * @param user user object
- * @return promise that contains the response YES if succeeded. NO otherwise.
- */
-const saveUser = (id, user) => __awaiter(this, void 0, void 0, function* () {
-    try {
-        user = typeof user.toObject === 'function' ? user.toObject() : user;
-        return yield CacheProvider.save(id, user);
-    }
-    catch (e) {
-        return Promise.reject(e);
-    }
-});
-exports.saveUser = saveUser;
+}
+exports.default = Cache;
 //# sourceMappingURL=cache.js.map

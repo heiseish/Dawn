@@ -1,13 +1,16 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const db_1 = __importDefault(require("./db"));
-const Schema = db_1.default.Schema;
-exports.default = new Schema({
-    lat: Number || String,
-    long: Number || String,
-    formattedAddress: String,
-}, { strict: false, _id: false });
+/**
+* Create a location schema
+* @param mongoose mongodb connection
+*/
+const createLocationSchema = (mongoose) => {
+    const Schema = mongoose.Schema;
+    return new Schema({
+        lat: Number || String,
+        long: Number || String,
+        formattedAddress: String,
+    }, { strict: false, _id: false });
+};
+exports.default = createLocationSchema;
 //# sourceMappingURL=location.js.map

@@ -18,12 +18,6 @@ describe('NASA Api 🌌', function () {
 			.to.be.an('object')
 		})
 		
-		it('Returned object should have copyright property', function() {
-			expect(this.nasa)
-			.to.have.property('copyright')
-			.that.is.a('string')
-		})
-		
 		it('Returned object should have url property', function() {
 			expect(this.nasa)
 			.to.have.property('url')

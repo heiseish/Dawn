@@ -1,45 +1,54 @@
 import bodyParser from 'body-parser'
 import express from 'express'
-
+import Logger from './main/logger'
 import { FB_VERIFY_TOKEN } from './main/environment'
-import setUpStreamingApi from  './main/externalApis/rx'
-import schedule from 'node-schedule'
-import getDailyNasaNews from './main/externalApis/@nasa'
-import stream from './main/streaming'
-import hq from './main/hq'
+
+import TwitterStreaming from  './main/streaming/twitter'
+import MorningNasa from './main/streaming/morningNasa'
+import CodeforceStream from './main/streaming/codeforce'
+
+import Headquarter from './main/hq'
 import {
 	messengerPreprocess,
 	telegramPreprocess,
 } from './main/preprocess'
 import telegramBot from './main/telegram'
-import { Stream } from 'stream';
-
+import Firebase from './main/model/firebase'
+import MongoDB from './main/model/mongoDB'
+import Sweeper from './main/sweeper'
+import Cache from './main/model/cache';
 /**
 * REST API
 */
 export default class App {
 	private express
 	private headquarter
+	private streams
+	private firebase
+	private mongodb
+	private UserDB
+	private cache
+	private sweeper
 	/**
 	* Constructor for main REST API
 	*/
-	constructor(port: string | number) {
-		this.headquarter = new hq()
+	constructor() {
+		this.sweeper = new Sweeper()
+		this.setUpDatabase()
+		this.headquarter = new Headquarter()
 		this.express = express()
-		this.express.listen(port)
-		this.express.use(bodyParser.json())
-		this.express.use(bodyParser.urlencoded({extended: true}))
 	}
 	
 	/**
-	 * Fire up endpoint listener
-	 */
-	public startServer():void {
-		this.loadFacebookEndpoint()
-		this.loadPingEndpoints()
-		this.loadStreamingEndpoint()
-		this.loadTelegramEndpoint()
-		this.setUpMorningSchedule()
+	* Establish connection to database
+	*/
+	private async setUpDatabase():Promise<void> {
+		this.firebase = new Firebase()
+		this.mongodb = new MongoDB()
+		this.UserDB = await this.mongodb.users
+		this.cache = new Cache(this.UserDB)
+		this.sweeper.add(this.cache.close)
+		this.sweeper.add(this.firebase.terminateConnection)
 	}
 	/**
 	* Endpoint for ping related service
@@ -60,7 +69,8 @@ export default class App {
 			req.query['hub.verify_token'] === FB_VERIFY_TOKEN) { res.status(200).send(req.query['hub.challenge']) } else { res.sendStatus(403) }
 		})
 		this.express.post('/fb', (req, res) => {
-			messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event))
+			messengerPreprocess(req.body.entry[0].messaging, 
+					(event) => this.headquarter.receive('messenger', event, this.mongodb.users, this.cache))
 			res.sendStatus(200)
 		})
 	}
@@ -71,30 +81,47 @@ export default class App {
 	private loadTelegramEndpoint(): void {
 		telegramBot.on('message', (msg) => {
 			const result = telegramPreprocess(msg)
-			if (result) this.headquarter.receive('telegram', msg)
+			if (result) this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache)
 		})
 	}
 	
 	/**
-	* Endpoint for streaming API
+	* 
+	* @param {string[]} people list of people to send to
 	*/
-	private loadStreamingEndpoint(): void {
-		if (process.env.NODE_ENV === 'production') setUpStreamingApi()
+	private loadStreamingEndpoint(people: string[]): void {
+		// if (process.env.NODE_ENV === 'production') {
+			this.streams = []
+			this.streams.push(new TwitterStreaming())
+			this.streams.push(new MorningNasa())
+			this.streams.push(new CodeforceStream(this.firebase))
+			
+			for (let st of this.streams) st.startStreaming(people)
+			for (let st of this.streams) this.sweeper.add(st.stopStreaming)
+		// }
 	}
 	
 	/**
-	* Set up nasa news retriever scheduler for every moning
+	* Configure setting for express
+	* @param {string | number} port port that express should be listening to
 	*/
-	private setUpMorningSchedule():void {
-		if (process.env.NODE_ENV === 'production') {
-			schedule.scheduleJob('30 08 * * *', async () => {
-				let nasa = await getDailyNasaNews()
-				stream({
-					text: nasa.explanation,
-					image: nasa.url
-				})
-			});
-		}
+	public configureExpress(port: string | number):void {
+		this.express.listen(port)
+		this.express.use(bodyParser.json())
+		this.express.use(bodyParser.urlencoded({extended: true}))
 	}
+	/**
+	* Fire up endpoint listener
+	* @throws error if express is appropriately set up beforehand.
+	*/
+	public async startServer():Promise<void> {
+		if (!this.express) throw new Error('Express is not set up when firing endpoint listener')
+		this.loadFacebookEndpoint()
+		this.loadPingEndpoints()
+		this.loadTelegramEndpoint()
+		
+		this.loadStreamingEndpoint(await this.firebase.getStreamingAudience())
+	}
+	
 	
 }

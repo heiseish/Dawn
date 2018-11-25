@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "src/App.ts",
-    "content": "import bodyParser from 'body-parser'\nimport express from 'express'\nimport { FB_VERIFY_TOKEN } from './main/environment'\nimport setUpStreamingApi from  './main/externalApis/rx'\nimport hq from './main/hq'\nimport {\n\tmessengerPreprocess,\n\ttelegramPreprocess,\n} from './main/preprocess'\nimport telegramBot from './main/telegram'\n\n/**\n * REST API\n */\nexport default class App {\n\tprivate express: express\n\tprivate headquarter\n\t/**\n\t * Constructor for main REST API\n\t */\n\tconstructor(port: string | number) {\n\t\tthis.headquarter = new hq()\n\t\tthis.express = express()\n\t\tthis.express.listen(port)\n\t\tthis.express.use(bodyParser.json())\n\t\tthis.express.use(bodyParser.urlencoded({extended: true}))\n\n\t\tthis.loadFacebookEndpoint()\n\t\tthis.loadPingEndpoints()\n\t\tthis.loadStreamingEndpoint()\n\t\tthis.loadTelegramEndpoint()\n\t}\n\n\t/**\n\t * Endpoint for ping related service\n\t */\n\tprivate loadPingEndpoints(): void {\n\t\tthis.express.get('/', (req, res) =>  res.status(200).json({ name: 'potts-backend' }))\n\t\tthis.express.get('/ping', (req, res) => res.sendStatus(200))\n\n\t}\n\n\t/**\n\t * Endpoint for facebook messenger\n\t */\n\tprivate loadFacebookEndpoint(): void {\n\t\tthis.express.get('/fb', (req, res) => {\n\t\t\tif (!FB_VERIFY_TOKEN) throw new Error('missing FB_VERIFY_TOKEN')\n\t\t\tif (req.query['hub.mode'] === 'subscribe' &&\n\t\t\t  req.query['hub.verify_token'] === FB_VERIFY_TOKEN) { res.status(200).send(req.query['hub.challenge']) } else { res.sendStatus(403) }\n\t\t})\n\t\tthis.express.post('/fb', (req, res) => {\n\t\t\tmessengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event))\n\t\t\tres.sendStatus(200)\n\t\t})\n\t}\n\n\t/**\n\t * Endpoint for telegram\n\t */\n\tprivate loadTelegramEndpoint(): void {\n\t\ttelegramBot.on('message', (msg) => {\n\t\t\tconst result = telegramPreprocess(msg)\n\t\t\tif (result) this.headquarter.receive('telegram', msg)\n\t\t})\n\t}\n\n\t/**\n\t * Endpoint for streaming API\n\t */\n\tprivate loadStreamingEndpoint(): void {\n\t\tif (process.env.NODE_ENV === 'production') { setUpStreamingApi() }\n\t}\n\n}\n",
+    "content": "import bodyParser from 'body-parser'\nimport express from 'express'\n\nimport { FB_VERIFY_TOKEN } from './main/environment'\nimport TwitterStreaming from  './main/streaming/twitter'\nimport schedule from 'node-schedule'\nimport getDailyNasaNews from './main/externalApis/@nasa'\nimport stream from './main/streaming'\nimport hq from './main/hq'\nimport {\n\tmessengerPreprocess,\n\ttelegramPreprocess,\n} from './main/preprocess'\nimport telegramBot from './main/telegram'\nimport initiateConnectionToFirebase from './main/model/firebase'\n\n/**\n* REST API\n*/\nexport default class App {\n\tprivate express\n\tprivate headquarter\n\tprivate firebase\n\tprivate streams\n\t/**\n\t* Constructor for main REST API\n\t* @param {string | number} port port that express should be listening to\n\t*/\n\tconstructor(port: string | number) {\n\t\tthis.headquarter = new hq()\n\t\tthis.express = express()\n\t\tthis.express.listen(port)\n\t\tthis.express.use(bodyParser.json())\n\t\tthis.express.use(bodyParser.urlencoded({extended: true}))\n\n\t\tthis.firebase = initiateConnectionToFirebase()\n\t}\n\t\n\t/**\n\t * Fire up endpoint listener\n\t */\n\tpublic startServer():void {\n\t\tthis.loadFacebookEndpoint()\n\t\tthis.loadPingEndpoints()\n\t\tthis.loadTelegramEndpoint()\n\n\t\tthis.loadStreamingEndpoint(this.firebase)\n\t\tthis.setUpMorningSchedule(this.firebase)\n\t}\n\t/**\n\t* Endpoint for ping related service\n\t*/\n\tprivate loadPingEndpoints(): void {\n\t\tthis.express.get('/', (req, res) =>  res.status(200).json({ name: 'potts-backend' }))\n\t\tthis.express.get('/ping', (req, res) => res.sendStatus(200))\n\t\t\n\t}\n\t\n\t/**\n\t* Endpoint for facebook messenger\n\t*/\n\tprivate loadFacebookEndpoint(): void {\n\t\tthis.express.get('/fb', (req, res) => {\n\t\t\tif (!FB_VERIFY_TOKEN) throw new Error('missing FB_VERIFY_TOKEN')\n\t\t\tif (req.query['hub.mode'] === 'subscribe' &&\n\t\t\treq.query['hub.verify_token'] === FB_VERIFY_TOKEN) { res.status(200).send(req.query['hub.challenge']) } else { res.sendStatus(403) }\n\t\t})\n\t\tthis.express.post('/fb', (req, res) => {\n\t\t\tmessengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event))\n\t\t\tres.sendStatus(200)\n\t\t})\n\t}\n\t\n\t/**\n\t* Endpoint for telegram\n\t*/\n\tprivate loadTelegramEndpoint(): void {\n\t\ttelegramBot.on('message', (msg) => {\n\t\t\tconst result = telegramPreprocess(msg)\n\t\t\tif (result) this.headquarter.receive('telegram', msg)\n\t\t})\n\t}\n\t\n\t/**\n\t * \n\t * @param firebase ref to firebase module\n\t */\n\tprivate loadStreamingEndpoint(firebase: any): void {\n\t\tif (process.env.NODE_ENV === 'production') {\n\t\t\tthis.streams = []\n\t\t\tthis.streams.push(new TwitterStreaming())\n\n\t\t\tfor (let st of this.streams) st.startStreaming()\n\n\t\t\tprocess.on('SIGINT', () => {\n\t\t\t\tfor (let st of this.streams) st.stopStreaming()\n\t\t\t\tprocess.exit(0)\n\t\t\t})\n\t\t}\n\t}\n\n\t\n\t/**\n\t * \n\t * @param firebase ref to firebase module\n\t */\n\tprivate setUpMorningSchedule(firebase: any):void {\n\t\tif (process.env.NODE_ENV === 'production') {\n\t\t\tschedule.scheduleJob('30 08 * * *', async () => {\n\t\t\t\tlet nasa = await getDailyNasaNews()\n\t\t\t\tstream({\n\t\t\t\t\ttext: nasa.explanation,\n\t\t\t\t\timage: nasa.url\n\t\t\t\t}, firebase)\n\t\t\t});\n\t\t}\n\t}\n\t\n}\n",
     "static": true,
     "longname": "/Users/heiseish/Projects/pottsRb/src/App.ts",
     "access": "public",
@@ -586,7 +586,7 @@
     "importPath": "potts-reborn/src/App.ts",
     "importStyle": "App",
     "description": "REST API",
-    "lineNumber": 15,
+    "lineNumber": 20,
     "interface": false
   },
   {
@@ -600,7 +600,20 @@
     "longname": "src/App.ts~App#constructor",
     "access": "public",
     "description": "Constructor for main REST API",
-    "lineNumber": 18
+    "lineNumber": 23,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string ",
+          " number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "port",
+        "description": "port that express should be listening to"
+      }
+    ]
   },
   {
     "__docId__": 51,
@@ -611,7 +624,7 @@
     "longname": "src/App.ts~App#headquarter",
     "access": "public",
     "description": null,
-    "lineNumber": 19,
+    "lineNumber": 24,
     "undocument": true,
     "type": {
       "types": [
@@ -628,7 +641,7 @@
     "longname": "src/App.ts~App#express",
     "access": "public",
     "description": null,
-    "lineNumber": 20,
+    "lineNumber": 25,
     "undocument": true,
     "type": {
       "types": [
@@ -638,6 +651,38 @@
   },
   {
     "__docId__": 53,
+    "kind": "member",
+    "name": "firebase",
+    "memberof": "src/App.ts~App",
+    "static": false,
+    "longname": "src/App.ts~App#firebase",
+    "access": "public",
+    "description": null,
+    "lineNumber": 29,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 54,
+    "kind": "method",
+    "name": "startServer",
+    "memberof": "src/App.ts~App",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/App.ts~App#startServer",
+    "access": "public",
+    "description": "Fire up endpoint listener",
+    "lineNumber": 42,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 55,
     "kind": "method",
     "name": "loadPingEndpoints",
     "memberof": "src/App.ts~App",
@@ -647,12 +692,12 @@
     "longname": "src/App.ts~App#loadPingEndpoints",
     "access": "public",
     "description": "Endpoint for ping related service",
-    "lineNumber": 37,
+    "lineNumber": 53,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 54,
+    "__docId__": 56,
     "kind": "method",
     "name": "loadFacebookEndpoint",
     "memberof": "src/App.ts~App",
@@ -662,12 +707,12 @@
     "longname": "src/App.ts~App#loadFacebookEndpoint",
     "access": "public",
     "description": "Endpoint for facebook messenger",
-    "lineNumber": 46,
+    "lineNumber": 62,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 55,
+    "__docId__": 57,
     "kind": "method",
     "name": "loadTelegramEndpoint",
     "memberof": "src/App.ts~App",
@@ -677,12 +722,12 @@
     "longname": "src/App.ts~App#loadTelegramEndpoint",
     "access": "public",
     "description": "Endpoint for telegram",
-    "lineNumber": 61,
+    "lineNumber": 77,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 56,
+    "__docId__": 58,
     "kind": "method",
     "name": "loadStreamingEndpoint",
     "memberof": "src/App.ts~App",
@@ -691,16 +736,70 @@
     "static": false,
     "longname": "src/App.ts~App#loadStreamingEndpoint",
     "access": "public",
-    "description": "Endpoint for streaming API",
-    "lineNumber": 71,
-    "params": [],
+    "description": "",
+    "lineNumber": 102,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "firebase",
+        "description": "ref to firebase module"
+      }
+    ],
     "return": null
   },
   {
-    "__docId__": 57,
+    "__docId__": 59,
+    "kind": "member",
+    "name": "streams",
+    "memberof": "src/App.ts~App",
+    "static": false,
+    "longname": "src/App.ts~App#streams",
+    "access": "public",
+    "description": null,
+    "lineNumber": 104,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 60,
+    "kind": "method",
+    "name": "setUpMorningSchedule",
+    "memberof": "src/App.ts~App",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/App.ts~App#setUpMorningSchedule",
+    "access": "public",
+    "description": "",
+    "lineNumber": 127,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "firebase",
+        "description": "ref to firebase module"
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 61,
     "kind": "file",
     "name": "src/index.ts",
-    "content": "import dotenv from 'dotenv'\nif (process.env.NODE_ENV !== 'production') { dotenv.load() }\nimport App from './App'\nimport { PORT } from './main/environment'\nconst app = new App(PORT)\n",
+    "content": "import dotenv from 'dotenv'\nif (process.env.NODE_ENV !== 'production') dotenv.load()\nimport App from './App'\nimport { PORT } from './main/environment'\nconst app = new App(PORT)\napp.startServer()",
     "static": true,
     "longname": "/Users/heiseish/Projects/pottsRb/src/index.ts",
     "access": "public",
@@ -708,7 +807,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 58,
+    "__docId__": 62,
     "kind": "variable",
     "name": "app",
     "memberof": "src/index.ts",
@@ -719,7 +818,7 @@
     "importPath": "potts-reborn/src/index.ts",
     "importStyle": null,
     "description": null,
-    "lineNumber": 7,
+    "lineNumber": 6,
     "undocument": true,
     "type": {
       "types": [
@@ -729,7 +828,7 @@
     "ignore": true
   },
   {
-    "__docId__": 59,
+    "__docId__": 63,
     "kind": "file",
     "name": "src/main/actions/bye.ts",
     "content": "import { randomByeMessage } from '../lib/string'\n\n/**\n * Reply to good bye message\n * @param {userType} user\n * @return updated user\n */\nexport default async (user: userType): Promise<userType> => {\n\tuser.response = {\n\t\tsimpleText: randomByeMessage(user.name.first),\n\t\tanswerable: true,\n\t}\n\treturn user\n}\n",
@@ -740,7 +839,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 60,
+    "__docId__": 64,
     "kind": "function",
     "name": "bye",
     "memberof": "src/main/actions/bye.ts",
@@ -776,7 +875,7 @@
     }
   },
   {
-    "__docId__": 61,
+    "__docId__": 65,
     "kind": "file",
     "name": "src/main/actions/compliment.ts",
     "content": "import { randomResponseToComplimentMessage } from '../lib/string'\n/**\n * Reply to people's compliment\n * @param {userType} user\n * @return updated user\n */\nexport default (user: userType): userType => {\n\tuser.response = {\n\t\tsimpleText: randomResponseToComplimentMessage(user.name.first),\n\t\tanswerable: true,\n\t}\n\treturn user\n}\n",
@@ -787,7 +886,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 62,
+    "__docId__": 66,
     "kind": "function",
     "name": "compliment",
     "memberof": "src/main/actions/compliment.ts",
@@ -823,7 +922,7 @@
     }
   },
   {
-    "__docId__": 63,
+    "__docId__": 67,
     "kind": "file",
     "name": "src/main/actions/greet.ts",
     "content": "import getCatFact from '../externalApis/catFact'\nimport { getRandomHeadlines } from '../externalApis/news'\nimport { randomGreetingPrefix, randomGreetingSuffix} from '../lib/string'\nimport { randomIndex } from '../utils/array'\n\nconst RANDOM_IMAGE_URL = 'https://picsum.photos/1200/1000/?random'\n\n/**\n* Randomize which function to call as suffix\n*/\nconst possibleGreetLines = [\n\tgetCatFact,\n\trandomGreetingSuffix,\n\tgetRandomHeadlines,\n]\n\n/**\n * Greet user\n * @param user user to greet\n * @return promise containing the updated user\n */\nexport default async (user: userType): Promise<userType> => {\n\ttry {\n\t\tlet SUFFIX\n\t\tconst PREFIX = await randomGreetingPrefix(user.name.first)\n\t\tSUFFIX = await randomIndex(possibleGreetLines)()\n\t\tif (SUFFIX !== null && typeof SUFFIX === 'object') {\n\t\t\tuser.response = SUFFIX\n\t\t} else if (SUFFIX === 'Here\\'s a photo you might like: ') {\n\t\t\tuser.response =  {\n\t\t\t\tsimpleText: `${PREFIX} ${SUFFIX}`,\n\t\t\t\timage: RANDOM_IMAGE_URL,\n\t\t\t\tanswerable: true,\n\n\t\t\t}\n\t\t\t\t\t\t\t\t\t} else {\n\t\t\tuser.response =  {\n\t\t\t\tsimpleText: `${PREFIX} ${SUFFIX}`,\n\t\t\t\tanswerable: true,\n\n\t\t\t}\n\t\t\t\t\t\t\t\t\t}\n\t\treturn user\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n",
@@ -834,7 +933,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 64,
+    "__docId__": 68,
     "kind": "variable",
     "name": "RANDOM_IMAGE_URL",
     "memberof": "src/main/actions/greet.ts",
@@ -855,7 +954,7 @@
     "ignore": true
   },
   {
-    "__docId__": 65,
+    "__docId__": 69,
     "kind": "variable",
     "name": "possibleGreetLines",
     "memberof": "src/main/actions/greet.ts",
@@ -875,7 +974,7 @@
     "ignore": true
   },
   {
-    "__docId__": 66,
+    "__docId__": 70,
     "kind": "function",
     "name": "greet",
     "memberof": "src/main/actions/greet.ts",
@@ -911,7 +1010,7 @@
     }
   },
   {
-    "__docId__": 67,
+    "__docId__": 71,
     "kind": "file",
     "name": "src/main/actions/help.ts",
     "content": "const MANUAL_LINK = 'https://gist.github.com/MadaraUCH/522028088e49110b4511d4cabea361f9'\n/**\n * Retrieve the help manual for user\n * @param {userType} user\n * @return updated user\n */\nexport default (user: userType): userType => {\n\tuser.response = {\n\t\tsimpleText: 'You may find the help manual here: ' + MANUAL_LINK,\n\t\tanswerable: true,\n\t}\n\treturn user\n}\n",
@@ -922,7 +1021,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 68,
+    "__docId__": 72,
     "kind": "variable",
     "name": "MANUAL_LINK",
     "memberof": "src/main/actions/help.ts",
@@ -943,7 +1042,7 @@
     "ignore": true
   },
   {
-    "__docId__": 69,
+    "__docId__": 73,
     "kind": "function",
     "name": "help",
     "memberof": "src/main/actions/help.ts",
@@ -979,7 +1078,7 @@
     }
   },
   {
-    "__docId__": 70,
+    "__docId__": 74,
     "kind": "file",
     "name": "src/main/actions/index.ts",
     "content": "import bye from './bye'\nimport compliment from './compliment'\nimport greet from './greet'\nimport help from './help'\nimport news from './news'\nimport pkmGo from './pkmGo'\nimport replyToDocument from './replyToDocument'\nimport thanks from './thanks'\nimport weather from './weather'\nimport worldCup from './worldCup'\nexport default [\n\t{\n\t\tname: 'greetings',\n\t\texecute: greet,\n\t\tdescription: 'Greet people.',\n\t},\n\t{\n\t\tname: 'worldCup',\n\t\texecute: worldCup,\n\t\tdescription: 'Return World Cup schedule for today!',\n\t},\n\t{\n\t\tname: 'news',\n\t\texecute: news,\n\t\tdescription: 'Show some top news headlines!',\n\t},\n\t{\n\t\tname: 'compliment',\n\t\texecute: compliment,\n\t\tdescription: 'Reply to people paying compliment',\n\t},\n\t{\n\t\tname: 'bye',\n\t\texecute: bye,\n\t\tdescription: 'Reply to people bidding good bye',\n\t},\n\t{\n\t\tname: 'thanks',\n\t\texecute: thanks,\n\t\tdescription: 'Reply to people thanking',\n\t},\n\t{\n\t\tname: 'replyToDocument',\n\t\texecute: replyToDocument,\n\t\tdescription: 'Reply to people sending files',\n\t},\n\t{\n\t\tname: 'weather',\n\t\texecute: weather,\n\t\tdescription: 'Forecast weather',\n\t},\n\t{\n\t\tname: 'pkmGO',\n\t\texecute: pkmGo,\n\t\tdescription: 'Show latest tweets by Pokemon Go on Twitter.',\n\t},\n\t{\n\t\tname: 'help',\n\t\texecute: help,\n\t\tdescription: 'Return help manual for the bot.',\n\t},\n]\n",
@@ -990,7 +1089,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 71,
+    "__docId__": 75,
     "kind": "file",
     "name": "src/main/actions/news.ts",
     "content": "import _ from 'lodash/core'\nimport { getAllHeadlines } from '../externalApis/news'\nimport { shuffle } from '../utils/array'\nimport { parseArticles } from './utils'\nconst NO_ARTICLE_FOUND = 'Sorry no article found :<'\n\n/**\n * Send news to user\n * @param {userType} user\n */\nexport default async (user: userType): Promise<userType | Error> => {\n\ttry {\n\t\tconst articles = shuffle(await getAllHeadlines(user)).slice(0, 4)\n\t\tif (!_.isEmpty(articles)) {\n\t\t\tconst parsedArticles = parseArticles(articles)\n\t\t\tuser.response = {\n\t\t\t\tcascadeText: parsedArticles,\n\t\t\t\tanswerable: true,\n\t\t\t}\n\t\t\treturn user\n\t\t} else {\n\t\t\tuser.response = {\n\t\t\t\tanswerable: true,\n\t\t\t\tsimpleText: NO_ARTICLE_FOUND,\n\t\t\t}\n\t\t\treturn user\n\t\t}\n\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n",
@@ -1001,7 +1100,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 72,
+    "__docId__": 76,
     "kind": "variable",
     "name": "NO_ARTICLE_FOUND",
     "memberof": "src/main/actions/news.ts",
@@ -1022,7 +1121,7 @@
     "ignore": true
   },
   {
-    "__docId__": 73,
+    "__docId__": 77,
     "kind": "function",
     "name": "news",
     "memberof": "src/main/actions/news.ts",
@@ -1055,7 +1154,7 @@
     }
   },
   {
-    "__docId__": 74,
+    "__docId__": 78,
     "kind": "file",
     "name": "src/main/actions/pkmGo.ts",
     "content": "import { getTwitterStatus } from '../externalApis/@twitter'\nconst POKEMONGO_SCREEN_NAME = '@PokemonGoApp'\n\n/**\n * Get pokemon go tweets for user\n * @param {userType} user\n * @return promise containing the updated response or error\n */\nexport default async (user: userType): Promise<userType | Error> => {\n\ttry {\n\t\tconst conf = `Here's the news from ${POKEMONGO_SCREEN_NAME}`\n\t\tconst tweets = await getTwitterStatus(POKEMONGO_SCREEN_NAME)\n\t\tconst texts = [conf]\n\t\tfor (const tweet of tweets) {\n\t\t\ttexts.push(tweet.text)\n\t\t}\n\t\tuser.response =  {\n\t\t\tmultipleText: texts,\n\t\t\tanswerable: true,\n\t\t}\n\t\treturn user\n\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n",
@@ -1066,7 +1165,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 75,
+    "__docId__": 79,
     "kind": "variable",
     "name": "POKEMONGO_SCREEN_NAME",
     "memberof": "src/main/actions/pkmGo.ts",
@@ -1087,7 +1186,7 @@
     "ignore": true
   },
   {
-    "__docId__": 76,
+    "__docId__": 80,
     "kind": "function",
     "name": "pkmGo",
     "memberof": "src/main/actions/pkmGo.ts",
@@ -1123,7 +1222,7 @@
     }
   },
   {
-    "__docId__": 77,
+    "__docId__": 81,
     "kind": "file",
     "name": "src/main/actions/replyToDocument.ts",
     "content": "import geocoder from 'geocoder'\nimport idx from 'idx'\nimport getRandomGif from '../externalApis/giphy'\nimport { possibleNay, possibleYay } from '../lib/string'\nimport { randomIndex } from '../utils/array'\n\n/**\n * Handle document from messenger\n * @param {userType} user\n * @return updated user\n */\nexport default (user: userType): Promise<userType> => {\n\treturn new Promise((resolve, reject) => {\n\t\tswitch (user.lastDoc.type) {\n\t\tcase 'image':\n\t\t\tgetRandomGif()\n\t\t\t\t.then((res) => {\n\t\t\t\t\tuser.response = {\n\t\t\t\t\t\tanswerable: true,\n\t\t\t\t\t\timage:  res,\n\t\t\t\t\t}\n\t\t\t\t})\n\t\t\t\t.catch((err) => reject(err))\n\t\t\tbreak\n\n\t\tcase 'video':\n\t\t\tuser.response = {\n\t\t\t\tanswerable: true,\n\t\t\t\tsimpleText: 'Nice video!',\n\t\t\t}\n\t\t\tbreak\n\n\t\tcase 'location':\n\t\t\tgeocoder.reverseGeocode(user.lastLocation.lat, user.lastLocation.long, (err, data) => {\n\t\t\t\tif (err) { reject(err) }\n\t\t\t\tconst lastLocation = typeof user.toObject === 'function' ? user.toObject().lastLocation : user.lastLocation\n\t\t\t\tuser.lastLocation = {\n\t\t\t\t\t...lastLocation,\n\t\t\t\t\tformattedAddress: idx(data, (_) => _.results[0].formatted_address),\n\t\t\t\t}\n\t\t\t\tuser.response = {\n\t\t\t\t\tsimpleText: 'I see that you are @ ' + idx(data, (_) => _.results[0].formatted_address) + ' right now!',\n\t\t\t\t\tanswerable: true,\n\t\t\t\t}\n\t\t\t})\n\t\t\tbreak\n\n\t\tcase 'QUICK_REPLY':\n\t\t\tif (user.lastDoc.value === 'INCORRECT_SERVICE') {\n\t\t\t\tuser.text[user.text.length - 1].correctlyAnswered = false\n\t\t\t\tuser.response = {\n\t\t\t\t\tsimpleText: randomIndex(possibleNay),\n\t\t\t\t\tanswerable: true,\n\t\t\t\t}\n\t\t\t} else {\n\t\t\t\tuser.response = {\n\t\t\t\t\tsimpleText: randomIndex(possibleYay),\n\t\t\t\t\tanswerable: true,\n\t\t\t\t}\n\t\t\t}\n\t\t\tbreak\n\n\t\tcase 'audio':\n\t\t\tuser.response = {\n\t\t\t\tanswerable: true,\n\t\t\t\tsimpleText: 'Nice voice!',\n\n\t\t\t}\n\t\t\tbreak\n\n\t\tdefault:\n\t\t\tresolve(user)\n\t\t}\n\t\tresolve(user)\n\t})\n}\n",
@@ -1134,7 +1233,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 78,
+    "__docId__": 82,
     "kind": "function",
     "name": "replyToDocument",
     "memberof": "src/main/actions/replyToDocument.ts",
@@ -1170,7 +1269,7 @@
     }
   },
   {
-    "__docId__": 79,
+    "__docId__": 83,
     "kind": "file",
     "name": "src/main/actions/thanks.ts",
     "content": "import { randomResponseToThanksMessage } from '../lib/string'\n/**\n * Reply to people thanking\n * @param {userType} user\n * @return parsed User\n */\nexport default (user: userType): userType => {\n\tuser.response = {\n\t\tsimpleText: randomResponseToThanksMessage(user.name.first),\n\t\tanswerable: true,\n\t}\n\treturn user\n}\n",
@@ -1181,7 +1280,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 80,
+    "__docId__": 84,
     "kind": "function",
     "name": "thanks",
     "memberof": "src/main/actions/thanks.ts",
@@ -1217,7 +1316,7 @@
     }
   },
   {
-    "__docId__": 81,
+    "__docId__": 85,
     "kind": "file",
     "name": "src/main/actions/utils.ts",
     "content": "import idx from 'idx'\nimport { formatTimeForListTemplate } from '../externalApis/moment'\nimport Logger from '../logger'\n\n/**\n * Parse articles to become viewable formats\n * @param items articles\n * @return parsed article\n */\nconst parseArticles = (items: any[]): cascadeTextType  => {\n\tlet elements = [], i = 0\n\tif (items.length > 4) { Logger.error('Trying to send list template message with more than 4 particles') }\n\tfor (const item of items) {\n\t\telements[i] = {}\n\t\telements[i].title  = item.title\n\t\telements[i].subtitle =\n\t\t`${idx(item, (_) => _.source.name)}\\n${formatTimeForListTemplate(item.publishedAt)}`\n\t\telements[i].image_url = item.urlToImage\n\t\telements[i].buttons = [\n\t\t\t{\n\t\t\t\ttitle: 'View',\n\t\t\t\ttype: 'web_url',\n\t\t\t\turl: item.url,\n\t\t\t\twebview_height_ratio: 'tall',\n\t\t\t},\n\t\t]\n\t\ti++\n\t}\n\treturn elements\n}\n\nexport {\n\tparseArticles,\n}\n",
@@ -1228,7 +1327,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 82,
+    "__docId__": 86,
     "kind": "function",
     "name": "parseArticles",
     "memberof": "src/main/actions/utils.ts",
@@ -1264,7 +1363,7 @@
     }
   },
   {
-    "__docId__": 83,
+    "__docId__": 87,
     "kind": "file",
     "name": "src/main/actions/weather.ts",
     "content": "import { getWeatherMessage } from '../externalApis/weather'\n\n/**\n * Inform user of the current weather\n * @param {userType} user\n * @return PRomise containing updated user\n */\nexport default (user: userType): Promise<userType |  Error> => {\n\treturn new Promise((resolve, reject) => {\n\t\tgetWeatherMessage().then(({current, summary, imageId}) => {\n\t\t\tuser.response = {\n\t\t\t\tsimpleText: current + summary,\n\t\t\t\timage: imageId,\n\t\t\t\tanswerable: true,\n\n\t\t\t}\n\t\t\tresolve(user)\n\t\t}).catch((err) => {\n\t\t\treject(err)\n\t\t})\n\t})\n}\n",
@@ -1275,7 +1374,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 84,
+    "__docId__": 88,
     "kind": "function",
     "name": "weather",
     "memberof": "src/main/actions/weather.ts",
@@ -1311,7 +1410,7 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 89,
     "kind": "file",
     "name": "src/main/actions/worldCup.ts",
     "content": "import getWCSchedule from '../externalApis/worldCup'\n/**\n * Return today world cup schedule\n * @param {userType} user\n * @return Promise containing updated response\n */\nexport default async (user: userType): Promise<userType | Error> => {\n\ttry {\n\t\tconst message = await getWCSchedule()\n\t\tuser.response = {\n\t\t\tanswerable: true,\n\t\t\tsimpleText: message,\n\t\t}\n\t\treturn user\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n",
@@ -1322,7 +1421,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 86,
+    "__docId__": 90,
     "kind": "function",
     "name": "worldCup",
     "memberof": "src/main/actions/worldCup.ts",
@@ -1358,10 +1457,10 @@
     }
   },
   {
-    "__docId__": 87,
+    "__docId__": 91,
     "kind": "file",
     "name": "src/main/analyze.ts",
-    "content": "import idx from 'idx'\nimport { predict } from './externalApis/@google/tensorflow/intentClassification'\nimport Logger from './logger'\nimport { TextDB } from './model/mongoDB'\nimport { tokenizeText } from './utils/string'\nconst CLASSIFY_CONFIDENCE_THRESHOLD = 0.9\n\n/**\n* Return the text or document along with the intent of the message\n* @param {supportedPlatform} platform\n* @param {any} payload\n* @param {userType} user\n* @return updated user\n*/\nconst analyze = async (platform: supportedPlatform, payload: any, user: userType): Promise<userType> => {\n\tconst log = Logger.info('Analyzing...', true)\n\ttry {\n\t\tconst {\n\t\t\ttext,\n\t\t\tdocument,\n\t\t\tentity,\n\t\t\tsentiment,\n\t\t} = getInformationFromMessage(platform, payload)\n\n\t\tif (document) {\n\t\t\tuser.entity.lastIntent = 'sendDocument'\n\t\t\tuser.lastDoc = document\n\t\t} else if (text) {\n\t\t\tuser.locale = checkLang()\n\t\t\tuser.lastText = text\n\t\t\tconst intent = await findIntent(text)\n\t\t\tif (typeof intent === 'string') {\n\t\t\t\tuser.entity = {\n\t\t\t\t\tlastIntent: intent,\n\t\t\t\t\tsentiment,\n\t\t\t\t}\n\t\t\t} else {\n\t\t\t\tuser.entity = {\n\t\t\t\t\tlastIntent: 'unknown',\n\t\t\t\t\tsentiment,\n\t\t\t\t}\n\t\t\t}\n\t\t\tif (!user.text) { user.text = [] }\n\t\t\tconst newText = new TextDB({\n\t\t\t\torignalText: text,\n\t\t\t\ttokenizeText: tokenizeText(text),\n\t\t\t})\n\t\t\tuser.text.push(newText)\n\t\t\treturn user\n\t\t}\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t} finally {\n\t\tlog.stop('Analyzed.')\n\t}\n}\nexport default analyze\n\ninterface Info {\n\ttext: any\n\tdocument: any\n\tentity: any\n\tsentiment: any\n}\n/**\n* Get the information from the message sent by user\n* @param {supportedPlatform} platform\n* @param {any} payload\n* @return Info object\n*/\nconst getInformationFromMessage = (platform: supportedPlatform, payload: any): Info => {\n\tlet info: Info = {\n\t\ttext: null,\n\t\tdocument: null,\n\t\tentity: null,\n\t\tsentiment: 'neutral',\n\t}\n\tswitch (platform) {\n\t\tcase 'telegram':\n\t\tinfo =  {\n\t\t\ttext: payload.text || null,\n\t\t\tdocument: payload.document || payload.photo || null,\n\t\t\tentity: payload.document || payload.photo ? 'replyToDocument' : null,\n\t\t\tsentiment: 'neutral',\n\t\t}\n\t\tbreak\n\n\t\tcase 'messenger':\n\t\tif (idx(payload, (_) => _.message.quick_reply)) {\n\t\t\tconst Msgpayload = idx(payload, (_) => _.message.quick_reply.payload)\n\t\t\tif ( Msgpayload === 'CORRECT_SERVICE' || Msgpayload === 'INCORRECT_SERVICE') {\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'QUICK_REPLY',\n\t\t\t\t\tvalue: Msgpayload,\n\t\t\t\t}\n\t\t\t}\n\t\t} else if (idx(payload, (_) => _.message.text)) {\n\t\t\tinfo.text = payload.message.text\n\t\t\tinfo.entity = null\n\t\t} else if (idx(payload, (_) => _.message.attachments)) {\n\t\t\tinfo.entity = 'replyToDocument'\n\t\t\tswitch (payload.message.attachments[0].type) {\n\t\t\t\tcase 'image':\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'image',\n\t\t\t\t}\n\t\t\t\tbreak\n\n\t\t\t\tcase 'video':\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'video',\n\t\t\t\t}\n\t\t\t\tbreak\n\n\t\t\t\tcase 'audio':\n\t\t\t\t// message(senderId, await speechToText(payload.message.attachments[0].payload.url))\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'audio',\n\t\t\t\t}\n\t\t\t\tbreak\n\n\t\t\t\tcase 'location':\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'location',\n\t\t\t\t\tlat: idx(payload, (_) => _.message.attachments[0].payload.coordinates.lat),\n\t\t\t\t\tlong: idx(payload, (_) => _.message.attachments[0].payload.coordinates.long),\n\t\t\t\t}\n\t\t\t\tbreak\n\t\t\t\tdefault:\n\n\t\t\t}\n\t\t}\n\t\tbreak\n\n\t\tdefault:\n\t}\n\n\treturn info\n}\n\n/**\n* Find the intent in the text message from the convo\n* @param {string} text\n* @return intent of the text\n*/\nconst findIntent = async (text: string): Promise<string | Error> => {\n\ttry {\n\t\tconst result = await predict(text)\n\t\tlet {\n\t\t\tintent,\n\t\t\tconfidence,\n\t\t} = result\n\t\tintent = confidence >= CLASSIFY_CONFIDENCE_THRESHOLD ? intent : null\n\t\treturn intent\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n\n/**\n* //TODO\n*/\nconst checkLang = (): string => 'en'\n",
+    "content": "import idx from 'idx'\nimport { predict } from './externalApis/@google/tensorflow/intentClassification'\nimport Logger from './logger'\nimport { TextDB } from './model/mongoDB'\nimport { tokenizeText } from './utils/string'\nconst CLASSIFY_CONFIDENCE_THRESHOLD = 0.9\n\n/**\n* Return the text or document along with the intent of the message\n* @param {supportedPlatform} platform\n* @param {any} payload\n* @param {userType} user\n* @return updated user\n*/\nexport default async (platform: supportedPlatform, payload: any, user: userType): Promise<userType> => {\n\tconst log = Logger.info('Analyzing...', true)\n\ttry {\n\t\tconst {\n\t\t\ttext,\n\t\t\tdocument,\n\t\t\tentity,\n\t\t\tsentiment,\n\t\t} = getInformationFromMessage(platform, payload)\n\n\t\tif (document) {\n\t\t\tuser.entity.lastIntent = 'sendDocument'\n\t\t\tuser.lastDoc = document\n\t\t} else if (text) {\n\t\t\tuser.locale = checkLang()\n\t\t\tuser.lastText = text\n\t\t\tconst intent = await findIntent(text)\n\t\t\tif (typeof intent === 'string') {\n\t\t\t\tuser.entity = {\n\t\t\t\t\tlastIntent: intent,\n\t\t\t\t\tsentiment,\n\t\t\t\t}\n\t\t\t} else {\n\t\t\t\tuser.entity = {\n\t\t\t\t\tlastIntent: 'unknown',\n\t\t\t\t\tsentiment,\n\t\t\t\t}\n\t\t\t}\n\t\t\tif (!user.text) { user.text = [] }\n\t\t\tconst newText = new TextDB({\n\t\t\t\torignalText: text,\n\t\t\t\ttokenizeText: tokenizeText(text),\n\t\t\t})\n\t\t\tuser.text.push(newText)\n\t\t\treturn user\n\t\t}\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t} finally {\n\t\tlog.stop('Analyzed.')\n\t}\n}\n\ninterface Info {\n\ttext: any\n\tdocument: any\n\tentity: any\n\tsentiment: any\n}\n/**\n* Get the information from the message sent by user\n* @param {supportedPlatform} platform\n* @param {any} payload\n* @return Info object\n*/\nconst getInformationFromMessage = (platform: supportedPlatform, payload: any): Info => {\n\tlet info: Info = {\n\t\ttext: null,\n\t\tdocument: null,\n\t\tentity: null,\n\t\tsentiment: 'neutral',\n\t}\n\tswitch (platform) {\n\t\tcase 'telegram':\n\t\tinfo =  {\n\t\t\ttext: payload.text || null,\n\t\t\tdocument: payload.document || payload.photo || null,\n\t\t\tentity: payload.document || payload.photo ? 'replyToDocument' : null,\n\t\t\tsentiment: 'neutral',\n\t\t}\n\t\tbreak\n\n\t\tcase 'messenger':\n\t\tif (idx(payload, (_) => _.message.quick_reply)) {\n\t\t\tconst Msgpayload = idx(payload, (_) => _.message.quick_reply.payload)\n\t\t\tif ( Msgpayload === 'CORRECT_SERVICE' || Msgpayload === 'INCORRECT_SERVICE') {\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'QUICK_REPLY',\n\t\t\t\t\tvalue: Msgpayload,\n\t\t\t\t}\n\t\t\t}\n\t\t} else if (idx(payload, (_) => _.message.text)) {\n\t\t\tinfo.text = payload.message.text\n\t\t\tinfo.entity = null\n\t\t} else if (idx(payload, (_) => _.message.attachments)) {\n\t\t\tinfo.entity = 'replyToDocument'\n\t\t\tswitch (payload.message.attachments[0].type) {\n\t\t\t\tcase 'image':\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'image',\n\t\t\t\t}\n\t\t\t\tbreak\n\n\t\t\t\tcase 'video':\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'video',\n\t\t\t\t}\n\t\t\t\tbreak\n\n\t\t\t\tcase 'audio':\n\t\t\t\t// message(senderId, await speechToText(payload.message.attachments[0].payload.url))\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'audio',\n\t\t\t\t}\n\t\t\t\tbreak\n\n\t\t\t\tcase 'location':\n\t\t\t\tinfo.document = {\n\t\t\t\t\ttype: 'location',\n\t\t\t\t\tlat: idx(payload, (_) => _.message.attachments[0].payload.coordinates.lat),\n\t\t\t\t\tlong: idx(payload, (_) => _.message.attachments[0].payload.coordinates.long),\n\t\t\t\t}\n\t\t\t\tbreak\n\t\t\t\tdefault:\n\n\t\t\t}\n\t\t}\n\t\tbreak\n\n\t\tdefault:\n\t}\n\n\treturn info\n}\n\n/**\n* Find the intent in the text message from the convo\n* @param {string} text\n* @return intent of the text\n*/\nconst findIntent = async (text: string): Promise<string | Error> => {\n\ttry {\n\t\tconst result = await predict(text)\n\t\tlet {\n\t\t\tintent,\n\t\t\tconfidence,\n\t\t} = result\n\t\tintent = confidence >= CLASSIFY_CONFIDENCE_THRESHOLD ? intent : null\n\t\treturn intent\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n\n/**\n* //TODO\n*/\nconst checkLang = (): string => 'en'\n",
     "static": true,
     "longname": "/Users/heiseish/Projects/pottsRb/src/main/analyze.ts",
     "access": "public",
@@ -1369,7 +1468,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 88,
+    "__docId__": 92,
     "kind": "variable",
     "name": "CLASSIFY_CONFIDENCE_THRESHOLD",
     "memberof": "src/main/analyze.ts",
@@ -1390,110 +1489,7 @@
     "ignore": true
   },
   {
-    "__docId__": 89,
-    "kind": "function",
-    "name": "getInformationFromMessage",
-    "memberof": "src/main/analyze.ts",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/main/analyze.ts~getInformationFromMessage",
-    "access": "public",
-    "export": false,
-    "importPath": "potts-reborn/src/main/analyze.ts",
-    "importStyle": null,
-    "description": "Get the information from the message sent by user",
-    "lineNumber": 63,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "supportedPlatform"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "platform",
-        "description": ""
-      },
-      {
-        "nullable": null,
-        "types": [
-          "any"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "payload",
-        "description": ""
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "*"
-      ],
-      "spread": false,
-      "description": "Info object"
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 90,
-    "kind": "function",
-    "name": "findIntent",
-    "memberof": "src/main/analyze.ts",
-    "generator": false,
-    "async": true,
-    "static": true,
-    "longname": "src/main/analyze.ts~findIntent",
-    "access": "public",
-    "export": false,
-    "importPath": "potts-reborn/src/main/analyze.ts",
-    "importStyle": null,
-    "description": "Find the intent in the text message from the convo",
-    "lineNumber": 132,
-    "params": [
-      {
-        "nullable": null,
-        "types": [
-          "string"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "text",
-        "description": ""
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "*"
-      ],
-      "spread": false,
-      "description": "intent of the text"
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 91,
-    "kind": "function",
-    "name": "checkLang",
-    "memberof": "src/main/analyze.ts",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/main/analyze.ts~checkLang",
-    "access": "public",
-    "export": false,
-    "importPath": "potts-reborn/src/main/analyze.ts",
-    "importStyle": null,
-    "description": "//TODO",
-    "lineNumber": 146,
-    "params": [],
-    "return": null,
-    "ignore": true
-  },
-  {
-    "__docId__": 92,
+    "__docId__": 93,
     "kind": "function",
     "name": "analyze",
     "memberof": "src/main/analyze.ts",
@@ -1549,10 +1545,113 @@
     }
   },
   {
-    "__docId__": 93,
+    "__docId__": 94,
+    "kind": "function",
+    "name": "getInformationFromMessage",
+    "memberof": "src/main/analyze.ts",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/main/analyze.ts~getInformationFromMessage",
+    "access": "public",
+    "export": false,
+    "importPath": "potts-reborn/src/main/analyze.ts",
+    "importStyle": null,
+    "description": "Get the information from the message sent by user",
+    "lineNumber": 62,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "supportedPlatform"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "platform",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "any"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "payload",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "Info object"
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 95,
+    "kind": "function",
+    "name": "findIntent",
+    "memberof": "src/main/analyze.ts",
+    "generator": false,
+    "async": true,
+    "static": true,
+    "longname": "src/main/analyze.ts~findIntent",
+    "access": "public",
+    "export": false,
+    "importPath": "potts-reborn/src/main/analyze.ts",
+    "importStyle": null,
+    "description": "Find the intent in the text message from the convo",
+    "lineNumber": 131,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "text",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "intent of the text"
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 96,
+    "kind": "function",
+    "name": "checkLang",
+    "memberof": "src/main/analyze.ts",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/main/analyze.ts~checkLang",
+    "access": "public",
+    "export": false,
+    "importPath": "potts-reborn/src/main/analyze.ts",
+    "importStyle": null,
+    "description": "//TODO",
+    "lineNumber": 145,
+    "params": [],
+    "return": null,
+    "ignore": true
+  },
+  {
+    "__docId__": 97,
     "kind": "file",
     "name": "src/main/environment.ts",
-    "content": "const FB_PAGE_ID = process.env.FB_PAGE_ID\nconst FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN\nconst FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN\nconst DARKSKY_KEY = process.env.DARKSKY_KEY\nconst NEWSAPI_KEY = process.env.NEWSAPI_KEY\nconst UNSPLASH_ID = process.env.UNSPLASH_ID\nconst UNSPLASH_SECRET = process.env.UNSPLASH_SECRET\nconst TWITTER_CONSUMER_KEY = process.env.TWITTER_CONSUMER_KEY\nconst TWITTER_CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET\nconst TWITTER_ACCESS_TOKEN_KEY = process.env.TWITTER_ACCESS_TOKEN_KEY\nconst TWITTER_ACCESS_TOKEN_SECRET = process.env.TWITTER_ACCESS_TOKEN_SECRET\nconst GIT_ID = process.env.GIT_ID\nconst GIT_PW = process.env.GIT_PW\nconst ADMIN_ID = '1200016940105472'\nconst ZAMZAR_APIKEY = process.env.ZAMZAR_APIKEY\nconst GOOGLE_APPLICATION_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS\nconst GOOGLE_PROJECT_ID = 'elevated-honor-135514'\nconst TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN\nconst PORT = process.env.PORT || 8445\nconst PGURI = process.env.PGURI\nconst MONGO_DB_URI = process.env.MONGO_DB_URI\nconst CACHE_DURATION = process.env.CACHE_DURATION\nexport {\n\tFB_PAGE_ID,\n\tFB_VERIFY_TOKEN,\n\tFB_PAGE_TOKEN,\n\tDARKSKY_KEY,\n\tNEWSAPI_KEY,\n\tUNSPLASH_ID,\n\tUNSPLASH_SECRET,\n\n\tTWITTER_CONSUMER_KEY,\n\tTWITTER_CONSUMER_SECRET,\n\tTWITTER_ACCESS_TOKEN_KEY,\n\tTWITTER_ACCESS_TOKEN_SECRET,\n\n\tGIT_ID,\n\tGIT_PW,\n\tADMIN_ID,\n\tZAMZAR_APIKEY,\n\tGOOGLE_APPLICATION_CREDENTIALS,\n\tGOOGLE_PROJECT_ID,\n\tTELEGRAM_TOKEN,\n\tPORT,\n\tPGURI,\n\tMONGO_DB_URI,\n\tCACHE_DURATION,\n}\n",
+    "content": "const FB_PAGE_ID = process.env.FB_PAGE_ID\nconst FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN\nconst FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN\nconst DARKSKY_KEY = process.env.DARKSKY_KEY\nconst NEWSAPI_KEY = process.env.NEWSAPI_KEY\nconst UNSPLASH_ID = process.env.UNSPLASH_ID\nconst UNSPLASH_SECRET = process.env.UNSPLASH_SECRET\nconst TWITTER_CONSUMER_KEY = process.env.TWITTER_CONSUMER_KEY\nconst TWITTER_CONSUMER_SECRET = process.env.TWITTER_CONSUMER_SECRET\nconst TWITTER_ACCESS_TOKEN_KEY = process.env.TWITTER_ACCESS_TOKEN_KEY\nconst TWITTER_ACCESS_TOKEN_SECRET = process.env.TWITTER_ACCESS_TOKEN_SECRET\nconst GIT_ID = process.env.GIT_ID\nconst GIT_PW = process.env.GIT_PW\nconst ADMIN_ID = '1200016940105472'\nconst ZAMZAR_APIKEY = process.env.ZAMZAR_APIKEY\nconst GOOGLE_APPLICATION_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS\nconst GOOGLE_PROJECT_ID = 'elevated-honor-135514'\nconst TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN\nconst PORT = process.env.PORT || 8445\nconst PGURI = process.env.PGURI\nconst MONGO_DB_URI = process.env.MONGO_DB_URI\nconst CACHE_DURATION = process.env.CACHE_DURATION\nconst NASA_APIKEY = process.env.NASA_APIKEY\nexport {\n\tFB_PAGE_ID,\n\tFB_VERIFY_TOKEN,\n\tFB_PAGE_TOKEN,\n\tDARKSKY_KEY,\n\tNEWSAPI_KEY,\n\tUNSPLASH_ID,\n\tUNSPLASH_SECRET,\n\n\tTWITTER_CONSUMER_KEY,\n\tTWITTER_CONSUMER_SECRET,\n\tTWITTER_ACCESS_TOKEN_KEY,\n\tTWITTER_ACCESS_TOKEN_SECRET,\n\n\tGIT_ID,\n\tGIT_PW,\n\tADMIN_ID,\n\tZAMZAR_APIKEY,\n\tGOOGLE_APPLICATION_CREDENTIALS,\n\tGOOGLE_PROJECT_ID,\n\tTELEGRAM_TOKEN,\n\tPORT,\n\tPGURI,\n\tMONGO_DB_URI,\n\tCACHE_DURATION,\n\tNASA_APIKEY\n}\n",
     "static": true,
     "longname": "/Users/heiseish/Projects/pottsRb/src/main/environment.ts",
     "access": "public",
@@ -1560,7 +1659,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 94,
+    "__docId__": 98,
     "kind": "variable",
     "name": "FB_PAGE_ID",
     "memberof": "src/main/environment.ts",
@@ -1580,7 +1679,7 @@
     }
   },
   {
-    "__docId__": 95,
+    "__docId__": 99,
     "kind": "variable",
     "name": "FB_VERIFY_TOKEN",
     "memberof": "src/main/environment.ts",
@@ -1600,7 +1699,7 @@
     }
   },
   {
-    "__docId__": 96,
+    "__docId__": 100,
     "kind": "variable",
     "name": "FB_PAGE_TOKEN",
     "memberof": "src/main/environment.ts",
@@ -1620,7 +1719,7 @@
     }
   },
   {
-    "__docId__": 97,
+    "__docId__": 101,
     "kind": "variable",
     "name": "DARKSKY_KEY",
     "memberof": "src/main/environment.ts",
@@ -1640,7 +1739,7 @@
     }
   },
   {
-    "__docId__": 98,
+    "__docId__": 102,
     "kind": "variable",
     "name": "NEWSAPI_KEY",
     "memberof": "src/main/environment.ts",
@@ -1660,7 +1759,7 @@
     }
   },
   {
-    "__docId__": 99,
+    "__docId__": 103,
     "kind": "variable",
     "name": "UNSPLASH_ID",
     "memberof": "src/main/environment.ts",
@@ -1680,7 +1779,7 @@
     }
   },
   {
-    "__docId__": 100,
+    "__docId__": 104,
     "kind": "variable",
     "name": "UNSPLASH_SECRET",
     "memberof": "src/main/environment.ts",
@@ -1700,7 +1799,7 @@
     }
   },
   {
-    "__docId__": 101,
+    "__docId__": 105,
     "kind": "variable",
     "name": "TWITTER_CONSUMER_KEY",
     "memberof": "src/main/environment.ts",
@@ -1720,7 +1819,7 @@
     }
   },
   {
-    "__docId__": 102,
+    "__docId__": 106,
     "kind": "variable",
     "name": "TWITTER_CONSUMER_SECRET",
     "memberof": "src/main/environment.ts",
@@ -1740,7 +1839,7 @@
     }
   },
   {
-    "__docId__": 103,
+    "__docId__": 107,
     "kind": "variable",
     "name": "TWITTER_ACCESS_TOKEN_KEY",
     "memberof": "src/main/environment.ts",
@@ -1760,7 +1859,7 @@
     }
   },
   {
-    "__docId__": 104,
+    "__docId__": 108,
     "kind": "variable",
     "name": "TWITTER_ACCESS_TOKEN_SECRET",
     "memberof": "src/main/environment.ts",
@@ -1780,7 +1879,7 @@
     }
   },
   {
-    "__docId__": 105,
+    "__docId__": 109,
     "kind": "variable",
     "name": "GIT_ID",
     "memberof": "src/main/environment.ts",
@@ -1800,7 +1899,7 @@
     }
   },
   {
-    "__docId__": 106,
+    "__docId__": 110,
     "kind": "variable",
     "name": "GIT_PW",
     "memberof": "src/main/environment.ts",
@@ -1820,7 +1919,7 @@
     }
   },
   {
-    "__docId__": 107,
+    "__docId__": 111,
     "kind": "variable",
     "name": "ADMIN_ID",
     "memberof": "src/main/environment.ts",
@@ -1840,7 +1939,7 @@
     }
   },
   {
-    "__docId__": 108,
+    "__docId__": 112,
     "kind": "variable",
     "name": "ZAMZAR_APIKEY",
     "memberof": "src/main/environment.ts",
@@ -1860,7 +1959,7 @@
     }
   },
   {
-    "__docId__": 109,
+    "__docId__": 113,
     "kind": "variable",
     "name": "GOOGLE_APPLICATION_CREDENTIALS",
     "memberof": "src/main/environment.ts",
@@ -1880,7 +1979,7 @@
     }
   },
   {
-    "__docId__": 110,
+    "__docId__": 114,
     "kind": "variable",
     "name": "GOOGLE_PROJECT_ID",
     "memberof": "src/main/environment.ts",
@@ -1900,7 +1999,7 @@
     }
   },
   {
-    "__docId__": 111,
+    "__docId__": 115,
     "kind": "variable",
     "name": "TELEGRAM_TOKEN",
     "memberof": "src/main/environment.ts",
@@ -1920,7 +2019,7 @@
     }
   },
   {
-    "__docId__": 112,
+    "__docId__": 116,
     "kind": "variable",
     "name": "PORT",
     "memberof": "src/main/environment.ts",
@@ -1940,7 +2039,7 @@
     }
   },
   {
-    "__docId__": 113,
+    "__docId__": 117,
     "kind": "variable",
     "name": "PGURI",
     "memberof": "src/main/environment.ts",
@@ -1960,7 +2059,7 @@
     }
   },
   {
-    "__docId__": 114,
+    "__docId__": 118,
     "kind": "variable",
     "name": "MONGO_DB_URI",
     "memberof": "src/main/environment.ts",
@@ -1980,7 +2079,7 @@
     }
   },
   {
-    "__docId__": 115,
+    "__docId__": 119,
     "kind": "variable",
     "name": "CACHE_DURATION",
     "memberof": "src/main/environment.ts",
@@ -2000,7 +2099,27 @@
     }
   },
   {
-    "__docId__": 116,
+    "__docId__": 120,
+    "kind": "variable",
+    "name": "NASA_APIKEY",
+    "memberof": "src/main/environment.ts",
+    "static": true,
+    "longname": "src/main/environment.ts~NASA_APIKEY",
+    "access": "public",
+    "export": true,
+    "importPath": "potts-reborn/src/main/environment.ts",
+    "importStyle": "{NASA_APIKEY}",
+    "description": null,
+    "lineNumber": 23,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 121,
     "kind": "file",
     "name": "src/main/execute.ts",
     "content": "import chalk from 'chalk'\nimport actions from './actions'\nimport { converse } from './externalApis/@facebook/pytorch/'\nimport Logger from './logger'\nimport { containsObjectWithNameAttribute } from './utils/array'\n/**\n* Return a partial unique userId from incoming event to identify user\n* @param {supportedPlatform} platform supported platform currently\n* @param {any} payload\n* @return updated user\n*/\nexport default async (platform: supportedPlatform, payload: any, user: userType): Promise<userType> => {\n\ttry {\n\t\tconst log = Logger.info('Executing', true)\n\t\tlet action\n\t\tswitch (platform) {\n\t\tcase 'telegram':\n\t\t\taction = containsObjectWithNameAttribute(actions, user.entity.lastIntent)\n\t\t\tbreak\n\t\tcase 'messenger':\n\t\t\taction = containsObjectWithNameAttribute(actions, user.entity.lastIntent)\n\t\t\tbreak\n\t\tdefault:\n\t\t}\n\n\t\tif (action) {\n\t\t\tuser = await action.execute(user)\n\t\t\tlog.stop('Executed with intent: ' + chalk.blue(user.entity.lastIntent) + '.')\n\t\t} else {\n\t\t\tuser.response = {\n\t\t\t\tsimpleText: await converse(user.lastText),\n\t\t\t\tanswerable: true,\n\t\t\t}\n\t\t\tlog.stop('Executed with normal conversing')\n\t\t}\n\t\treturn user\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n",
@@ -2011,7 +2130,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 117,
+    "__docId__": 122,
     "kind": "function",
     "name": "execute",
     "memberof": "src/main/execute.ts",
@@ -2057,7 +2176,7 @@
     }
   },
   {
-    "__docId__": 118,
+    "__docId__": 123,
     "kind": "file",
     "name": "src/main/externalApis/@facebook/pytorch/converse.ts",
     "content": "import request from 'request'\nconst PYTORCH_SERVER = 'https://converseserver.herokuapp.com/conversation/'\n\n/**\n * conversation if intent classified is unclear\n * @param {string} sentence sentence to be replied back to\n * @return {string} reply to the sentence\n */\nconst converse = (sentence: string): Promise<string> => {\n\treturn new Promise((response, reject) => {\n\t\trequest(PYTORCH_SERVER + sentence, async (error, res, body) => {\n\t\t\tif (error) { reject(error) }\n\t\t\tresponse(body)\n\t\t})\n\t})\n}\n\nexport default converse\n",
@@ -2068,7 +2187,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 119,
+    "__docId__": 124,
     "kind": "variable",
     "name": "PYTORCH_SERVER",
     "memberof": "src/main/externalApis/@facebook/pytorch/converse.ts",
@@ -2089,7 +2208,7 @@
     "ignore": true
   },
   {
-    "__docId__": 120,
+    "__docId__": 125,
     "kind": "function",
     "name": "converse",
     "memberof": "src/main/externalApis/@facebook/pytorch/converse.ts",
@@ -2125,7 +2244,7 @@
     }
   },
   {
-    "__docId__": 121,
+    "__docId__": 126,
     "kind": "file",
     "name": "src/main/externalApis/@facebook/pytorch/index.ts",
     "content": "import converse from './converse'\nexport  {\n\tconverse,\n}\n",
@@ -2136,7 +2255,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 122,
+    "__docId__": 127,
     "kind": "file",
     "name": "src/main/externalApis/@google/controller.ts",
     "content": "const USING_TRANSLATION = false\nconst USING_VISION = false\nexport {\n\tUSING_TRANSLATION,\n\tUSING_VISION,\n}\n",
@@ -2147,7 +2266,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 123,
+    "__docId__": 128,
     "kind": "variable",
     "name": "USING_TRANSLATION",
     "memberof": "src/main/externalApis/@google/controller.ts",
@@ -2167,7 +2286,7 @@
     }
   },
   {
-    "__docId__": 124,
+    "__docId__": 129,
     "kind": "variable",
     "name": "USING_VISION",
     "memberof": "src/main/externalApis/@google/controller.ts",
@@ -2187,7 +2306,7 @@
     }
   },
   {
-    "__docId__": 125,
+    "__docId__": 130,
     "kind": "file",
     "name": "src/main/externalApis/@google/speech.ts",
     "content": "import speech from '@google-cloud/speech'\nimport fs from 'fs'\nimport request from 'request'\nimport Logger from '../../logger'\nimport { USING_VISION } from './controller'\nconst TEMP_AUDIO_PATH = 'temp.aac'\n/**\n * Transcribe the audio into text\n * @param {URI of the recorded audio file} AudioUrl\n */\nconst speechToText = (AudioUrl: string): Promise<string> => {\n\treturn new Promise((resolve, reject) => {\n\t\tif (!USING_VISION) { resolve('Nice voice you\\'ve got there!') } else {\n\t\t\tLogger.info('Transcribing speech to text...')\n\t\t\tconst client = new speech.SpeechClient()\n\n\t\t\tgetAudio(AudioUrl).then(() => {\n\t\t\t\tconst file = fs.readFileSync(TEMP_AUDIO_PATH)\n\t\t\t\tconst audioBytes = file.toString('base64')\n\t\t\t\t// The audio file's encoding, sample rate in hertz, and BCP-47 language code\n\t\t\t\tconst audio = {\n\t\t\t\t\tcontent: audioBytes,\n\t\t\t\t}\n\t\t\t\tconst config = {\n\t\t\t\t\tencoding: 'LINEAR16',\n\t\t\t\t\tsampleRateHertz: 16000,\n\t\t\t\t\tlanguageCode: 'en-US',\n\t\t\t\t}\n\t\t\t\tconst request = {\n\t\t\t\t\taudio,\n\t\t\t\t\tconfig,\n\t\t\t\t}\n\n\t\t\t\t// Detects speech in the audio file\n\t\t\t\tclient\n\t\t\t\t\t.recognize(request)\n\t\t\t\t\t.then((data) => {\n\t\t\t\t\t\tconst response = data[0]\n\t\t\t\t\t\tconst transcription = response.results\n\t\t\t\t\t\t\t.map((result) => result.alternatives[0].transcript)\n\t\t\t\t\t\t\t.join('\\n')\n\t\t\t\t\t\tresolve(transcription)\n\t\t\t\t\t})\n\t\t\t\t\t.catch((err) => {\n\t\t\t\t\t\treject(err)\n\t\t\t\t\t})\n\t\t\t})\n\t\t}\n\n\t})\n}\n\nconst getAudio = (AudioUrl: string): Promise<any> => {\n\treturn new Promise((resolve) => {\n\t\trequest.head(AudioUrl, () => {\n\t\t\trequest(AudioUrl).pipe(fs.createWriteStream(TEMP_AUDIO_PATH)).on('close', () => resolve())\n\t\t})\n\t})\n}\n\nexport {\n\tspeechToText,\n}\n",
@@ -2198,7 +2317,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 126,
+    "__docId__": 131,
     "kind": "variable",
     "name": "TEMP_AUDIO_PATH",
     "memberof": "src/main/externalApis/@google/speech.ts",
@@ -2219,7 +2338,7 @@
     "ignore": true
   },
   {
-    "__docId__": 127,
+    "__docId__": 132,
     "kind": "function",
     "name": "getAudio",
     "memberof": "src/main/externalApis/@google/speech.ts",
@@ -2250,7 +2369,7 @@
     "ignore": true
   },
   {
-    "__docId__": 128,
+    "__docId__": 133,
     "kind": "function",
     "name": "speechToText",
     "memberof": "src/main/externalApis/@google/speech.ts",
@@ -2283,7 +2402,7 @@
     }
   },
   {
-    "__docId__": 129,
+    "__docId__": 134,
     "kind": "file",
     "name": "src/main/externalApis/@google/tensorflow/intentClassification.ts",
     "content": "import * as tf from '@tensorflow/tfjs'\nimport '@tensorflow/tfjs-node'\nimport { characterLevelEmbed, toWordIntent } from './utils'\nlet model = null\nconst MODEL_FILE_PATH = 'file://dist/main/externalApis/@google/tensorflow/model.json'\n\n/**\n * Predict the intent of a message\n * @param {string} s \n * @return {{intent: string, confidence: number}}\n */\nconst predict = async (s: string): Promise<{intent: string, confidence: number}> => {\n\ttry {\n\t\tif (!model) { model = await tf.loadModel(MODEL_FILE_PATH) }\n\t\tconst x = []\n\t\tx.push(characterLevelEmbed(s))\n\t\tconst inputTensor: tf.Tensor<tf.Rank.R3> = tf.tensor3d(x)\n\t\tconst res = await model.predict(inputTensor)\n\t\tconst possibility: number[] =  Array.from(res.dataSync())\n\t\tconst maxIdx: number = Math.max(...possibility)\n\t\tconst idx: number = possibility.indexOf(maxIdx)\n\t\tconst intent = toWordIntent(idx)\n\t\treturn {\n\t\t\tintent,\n        \tconfidence: maxIdx,\n\t\t}\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n\nexport {\n\tpredict,\n}\n",
@@ -2294,7 +2413,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 130,
+    "__docId__": 135,
     "kind": "variable",
     "name": "model",
     "memberof": "src/main/externalApis/@google/tensorflow/intentClassification.ts",
@@ -2315,7 +2434,7 @@
     "ignore": true
   },
   {
-    "__docId__": 131,
+    "__docId__": 136,
     "kind": "variable",
     "name": "MODEL_FILE_PATH",
     "memberof": "src/main/externalApis/@google/tensorflow/intentClassification.ts",
@@ -2336,7 +2455,7 @@
     "ignore": true
   },
   {
-    "__docId__": 132,
+    "__docId__": 137,
     "kind": "function",
     "name": "predict",
     "memberof": "src/main/externalApis/@google/tensorflow/intentClassification.ts",
@@ -2372,7 +2491,7 @@
     }
   },
   {
-    "__docId__": 133,
+    "__docId__": 138,
     "kind": "file",
     "name": "src/main/externalApis/@google/tensorflow/utils.ts",
     "content": "const allASCIIletters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,;\\''\nconst numLetters = allASCIIletters.length\n/**\n * Convert intent number to string\n * @param {number} n Number to intent\n * @return {string} intent\n */\nconst toWordIntent = (n: number): string => {\n\tswitch (n) {\n\tcase 0:\n\t\treturn 'greetings'\n\tcase 1:\n\t\treturn 'thanks'\n\tcase 2:\n\t\treturn 'bye'\n\tcase 3:\n\t\treturn 'news'\n\tcase 4:\n\t\treturn 'weather'\n\tcase 5:\n\t\treturn 'worldCup'\n\tcase 6:\n\t\treturn 'pkmGO'\n\tcase 7:\n\t\treturn 'help'\n\tcase 8:\n\t\treturn 'compliment'\n\t}\n\n}\n\n/**\n * Vector array with absolute index of 1-hot vectors\n * @param {Array<number>} sentence of index\n * @return {Array<Array<number>>} array of 1-hot vector\n */\nconst sentenceToOneHotVectors = (sentence: number[]): number[][] => {\n\tconst res = []\n\tfor (const idx of sentence) {\n\t\tconst arr = new Array(numLetters + 1).fill(0)\n\t\tarr[idx] = 1\n\t\tres.push(arr)\n\t}\n\treturn res\n}\n\n/**\n * Convert letter to index based on allASCIIletters\n * @param {string} letter\n */\nconst letterToIndex = (letter: string): number =>  allASCIIletters.indexOf(letter) + 1\n\n/**\n * Convert sentence to array of indices\n * @param sentence\n */\nconst sentenceToIndex = (sentence: string): number[] => {\n\tconst res = []\n\tfor (let i = 0; i < sentence.length; i++) { res.push(letterToIndex(sentence[i])) }\n\treturn res\n}\n\n/**\n * Create a 2-D array of 0z\n * @param row number of row\n * @param col number of col\n */\nconst zeros = (row: number, col: number): number[][] => Array.from(Array(row), (_) => Array(col).fill(0))\n\n/**\n * embed the original string with one-hot vector and 0-filling\n * @param X original string\n */\nconst characterLevelEmbed = (X: string): number[][] => {\n\tconst x: string = X.toLowerCase()\n\tconst xIndices: number[] = sentenceToIndex(X)\n\tconst ohVector: number[][] = sentenceToOneHotVectors(xIndices)\n\tconst toConcat: number[][] = zeros(100 - x.length, numLetters + 1)\n\treturn ohVector.concat(toConcat)\n}\nexport {\n\ttoWordIntent,\n\tcharacterLevelEmbed,\n}\n",
@@ -2383,7 +2502,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 134,
+    "__docId__": 139,
     "kind": "variable",
     "name": "allASCIIletters",
     "memberof": "src/main/externalApis/@google/tensorflow/utils.ts",
@@ -2404,7 +2523,7 @@
     "ignore": true
   },
   {
-    "__docId__": 135,
+    "__docId__": 140,
     "kind": "variable",
     "name": "numLetters",
     "memberof": "src/main/externalApis/@google/tensorflow/utils.ts",
@@ -2425,7 +2544,7 @@
     "ignore": true
   },
   {
-    "__docId__": 136,
+    "__docId__": 141,
     "kind": "function",
     "name": "sentenceToOneHotVectors",
     "memberof": "src/main/externalApis/@google/tensorflow/utils.ts",
@@ -2462,7 +2581,7 @@
     "ignore": true
   },
   {
-    "__docId__": 137,
+    "__docId__": 142,
     "kind": "function",
     "name": "letterToIndex",
     "memberof": "src/main/externalApis/@google/tensorflow/utils.ts",
@@ -2492,7 +2611,7 @@
     "ignore": true
   },
   {
-    "__docId__": 138,
+    "__docId__": 143,
     "kind": "function",
     "name": "sentenceToIndex",
     "memberof": "src/main/externalApis/@google/tensorflow/utils.ts",
@@ -2526,7 +2645,7 @@
     "ignore": true
   },
   {
-    "__docId__": 139,
+    "__docId__": 144,
     "kind": "function",
     "name": "zeros",
     "memberof": "src/main/externalApis/@google/tensorflow/utils.ts",
@@ -2566,7 +2685,7 @@
     "ignore": true
   },
   {
-    "__docId__": 140,
+    "__docId__": 145,
     "kind": "function",
     "name": "toWordIntent",
     "memberof": "src/main/externalApis/@google/tensorflow/utils.ts",
@@ -2602,7 +2721,7 @@
     }
   },
   {
-    "__docId__": 141,
+    "__docId__": 146,
     "kind": "function",
     "name": "characterLevelEmbed",
     "memberof": "src/main/externalApis/@google/tensorflow/utils.ts",
@@ -2635,7 +2754,7 @@
     }
   },
   {
-    "__docId__": 142,
+    "__docId__": 147,
     "kind": "file",
     "name": "src/main/externalApis/@google/translate.ts",
     "content": "import { Translate } from '@google-cloud/translate'\nimport { GOOGLE_APPLICATION_CREDENTIALS, GOOGLE_PROJECT_ID } from '../../environment'\nimport Logger from '../../logger'\nimport { USING_TRANSLATION } from './controller'\n\n/**\n * Translate text using google eapi\n * @param {string} textToTranslate\n * @param {string} languageToTranslateTo\n */\nconst translate = (textToTranslate: string, languageToTranslateTo: string = 'en'): Promise<string> => {\n\treturn new Promise((resolve, reject) => {\n\t\tif (!USING_TRANSLATION) { resolve(textToTranslate) } else {\n\t\t\tLogger.info(`Translating ${textToTranslate} to ${languageToTranslateTo}...`)\n\t\t\tconst PROJECT_ID = GOOGLE_PROJECT_ID\n\t\t\tconst translate = new Translate({\n\t\t\t\tprojectId: PROJECT_ID,\n\t\t\t\tkeyFilename: GOOGLE_APPLICATION_CREDENTIALS,\n\t\t\t})\n\t\t\ttranslate\n\t\t\t\t.translate(textToTranslate, languageToTranslateTo)\n\t\t\t\t.then((results) => resolve(results[0]))\n\t\t\t\t.catch((err) => reject(err))\n\t\t}\n\n\t})\n}\nexport {\n\ttranslate,\n}\n",
@@ -2646,7 +2765,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 143,
+    "__docId__": 148,
     "kind": "function",
     "name": "translate",
     "memberof": "src/main/externalApis/@google/translate.ts",
@@ -2689,7 +2808,78 @@
     }
   },
   {
-    "__docId__": 144,
+    "__docId__": 149,
+    "kind": "file",
+    "name": "src/main/externalApis/@nasa/index.ts",
+    "content": "import { NASA_APIKEY } from '../../environment'\nimport request from 'request'\n\n\nconst NASA_API_URL = 'https://api.nasa.gov/planetary/apod?api_key=' + NASA_APIKEY\n\ninterface nasaApiObject {\n    copyright: string,\n    date: string,\n    explanation: string,\n    hdurl: string,  //image url HD\n    media_type: 'image' | 'video',\n    service_version: 'v1',\n    title: string,\n    url: string\n}\n\n/**\n * @returns an object returned by nasa api\n * @throws error if json not valid or API not accessible\n */\nconst getDailyNasaNews =  ():Promise<nasaApiObject> => {\n\treturn new Promise((resolve, reject) => {\n\t\trequest(NASA_API_URL, (error, res, body) => {\n\t\t\tif (error) return Promise.reject(error)\n\t\t\ttry {\n\t\t\t\tconst result = JSON.parse(body)\n\t\t\t\tresolve(result)\n\t\t\t} catch (e) {\n\t\t\t\treturn Promise.reject(e)\n\t\t\t}\n\n\t\t})\n\t})\n}\n\nexport default getDailyNasaNews\n\n\n",
+    "static": true,
+    "longname": "/Users/heiseish/Projects/pottsRb/src/main/externalApis/@nasa/index.ts",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 150,
+    "kind": "variable",
+    "name": "NASA_API_URL",
+    "memberof": "src/main/externalApis/@nasa/index.ts",
+    "static": true,
+    "longname": "src/main/externalApis/@nasa/index.ts~NASA_API_URL",
+    "access": "public",
+    "export": false,
+    "importPath": "potts-reborn/src/main/externalApis/@nasa/index.ts",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 151,
+    "kind": "function",
+    "name": "getDailyNasaNews",
+    "memberof": "src/main/externalApis/@nasa/index.ts",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/main/externalApis/@nasa/index.ts~getDailyNasaNews",
+    "access": "public",
+    "export": true,
+    "importPath": "potts-reborn/src/main/externalApis/@nasa/index.ts",
+    "importStyle": "getDailyNasaNews",
+    "description": "",
+    "lineNumber": 8,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "an object returned by nasa api"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "an object returned by nasa api"
+    },
+    "throws": [
+      {
+        "types": [
+          "*"
+        ],
+        "description": "error if json not valid or API not accessible"
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 152,
     "kind": "file",
     "name": "src/main/externalApis/@twitter/index.ts",
     "content": "import Twitter from 'twitter'\nimport {\n\tTWITTER_ACCESS_TOKEN_KEY,\n\tTWITTER_ACCESS_TOKEN_SECRET,\n\tTWITTER_CONSUMER_KEY,\n\tTWITTER_CONSUMER_SECRET,\n} from '../../environment'\n\n/**\n * Check if keys are present\n */\nif (!TWITTER_CONSUMER_KEY) {\n\tthrow new Error('missing TWITTER_CONSUMER_KEY')\n} else if (!TWITTER_CONSUMER_SECRET) {\n\tthrow new Error('missing TWITTER_CONSUMER_SECRET')\n} else if (!TWITTER_ACCESS_TOKEN_KEY) {\n\tthrow new Error('missing TWITTER_ACCESS_TOKEN_KEY')\n} else if (!TWITTER_ACCESS_TOKEN_SECRET) {\n\tthrow new Error('missing TWITTER_ACCESS_TOKEN_SECRET')\n}\n\nconst client = new Twitter({\n\tconsumer_key: TWITTER_CONSUMER_KEY,\n\tconsumer_secret: TWITTER_CONSUMER_SECRET,\n\taccess_token_key: TWITTER_ACCESS_TOKEN_KEY,\n\taccess_token_secret: TWITTER_ACCESS_TOKEN_SECRET,\n})\n\n/**\n * Get twitter status from a twitter user\n * @param screenName twitter handle\n */\nconst getTwitterStatus = (screenName: string): Promise<any> => {\n\treturn new Promise((response, reject) => {\n\t\tconst options = {\n\t\t\tscreen_name: screenName,\n\t\t\tcount: 4,\n\t\t}\n\t\tclient.get('statuses/user_timeline', options, (error, tweets) => {\n\t\t\tif (error) { reject(error) }\n\t\t\tresponse(tweets)\n\t\t})\n\t})\n}\n\n/**\n * Get twitter user\n * @param screenName twitter handler\n */\nconst checkAndReturnTwitterUser = (screenName: string): Promise<any> => {\n\treturn new Promise((resolve, reject) => {\n\t\tconst options = {\n\t\t\tscreen_name: screenName,\n\t\t}\n\t\tclient.get('users/lookup', options, (error, data) =>  {\n\t\t\tif (error) { reject(error) }\n\t\t\tresolve(data)\n\t\t})\n\t})\n}\n\nexport {\n\tgetTwitterStatus,\n\tclient,\n\tcheckAndReturnTwitterUser,\n}\n",
@@ -2700,7 +2890,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 145,
+    "__docId__": 153,
     "kind": "function",
     "name": "getTwitterStatus",
     "memberof": "src/main/externalApis/@twitter/index.ts",
@@ -2733,7 +2923,7 @@
     }
   },
   {
-    "__docId__": 146,
+    "__docId__": 154,
     "kind": "variable",
     "name": "client",
     "memberof": "src/main/externalApis/@twitter/index.ts",
@@ -2753,7 +2943,7 @@
     }
   },
   {
-    "__docId__": 147,
+    "__docId__": 155,
     "kind": "function",
     "name": "checkAndReturnTwitterUser",
     "memberof": "src/main/externalApis/@twitter/index.ts",
@@ -2786,7 +2976,7 @@
     }
   },
   {
-    "__docId__": 148,
+    "__docId__": 156,
     "kind": "file",
     "name": "src/main/externalApis/catFact.ts",
     "content": "import request from 'request'\nconst catFactUrl = 'https://catfact.ninja/fact'\n\n/**\n * Retrieve a random cat from cat fact API\n */\nexport default (): Promise<string> => {\n\treturn new Promise((response, reject) => {\n\t\trequest(catFactUrl, (error, res, body) => {\n\t\t\ttry {\n\t\t\t\tconst result = JSON.parse(body)\n\t\t\t\tif (error) { reject(error) } else if (result.fact.length >= 320) {\n\t\t\t\t\tresponse('Cat is an animal😺')\n\t\t\t\t} else {\n\t\t\t\t\tlet fact: string = result.fact[0].toLowerCase() + result.fact.substring(1)\n\t\t\t\t\tfact = fact.substring(0, fact.length - 1)\n\t\t\t\t\tresponse(`Do you know that ${fact}?`)\n\t\t\t\t}\n\t\t\t} catch (e) {\n\t\t\t\treturn Promise.reject(e)\n\t\t\t}\n\n\t\t})\n\t})\n}\n",
@@ -2797,7 +2987,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 149,
+    "__docId__": 157,
     "kind": "variable",
     "name": "catFactUrl",
     "memberof": "src/main/externalApis/catFact.ts",
@@ -2818,7 +3008,7 @@
     "ignore": true
   },
   {
-    "__docId__": 150,
+    "__docId__": 158,
     "kind": "function",
     "name": "catFact",
     "memberof": "src/main/externalApis/catFact.ts",
@@ -2840,7 +3030,7 @@
     }
   },
   {
-    "__docId__": 151,
+    "__docId__": 159,
     "kind": "file",
     "name": "src/main/externalApis/giphy.ts",
     "content": "import request from 'request'\n/**\n * Generate a ranodm gif from Giphi\n */\nexport default (): Promise<string> => {\n\tconst giphy = {\n\t\tbaseURL: 'https://api.giphy.com/v1/gifs/',\n\t\tkey: 'dc6zaTOxFJmzC',\n\t\ttag: 'fail',\n\t\ttype: 'random',\n\t\trating: 'pg-13',\n\t}\n\n\treturn new Promise((resolve, reject) => {\n\t\trequest(giphy.baseURL +\n\t\t\tgiphy.type +\n\t\t\t'?api_key=' +\n\t\t\tgiphy.key +\n\t\t\t'&tag=' +\n\t\t\tgiphy.tag +\n\t\t\t'&rating=' +\n\t\t\tgiphy.rating, (error, res, body) => {\n\t\t\tconst result = JSON.parse(body)\n\t\t\tif (error) { reject(error) } else {\n\t\t\t\tresolve(result.data.image_original_url)\n\t\t\t}\n\t\t})\n\t})\n}\n",
@@ -2851,7 +3041,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 152,
+    "__docId__": 160,
     "kind": "function",
     "name": "giphy",
     "memberof": "src/main/externalApis/giphy.ts",
@@ -2873,7 +3063,7 @@
     }
   },
   {
-    "__docId__": 153,
+    "__docId__": 161,
     "kind": "file",
     "name": "src/main/externalApis/gists.ts",
     "content": "import Gists from 'gists'\nimport { GIT_ID, GIT_PW } from '../environment'\n\nconst gists = new Gists({\n\tusername: GIT_ID,\n\tpassword: GIT_PW,\n})\n\nconst editGist = (opts: any): Promise<any> => {\n\treturn new Promise((resolve, reject) => {\n\t\tgists.edit(opts, (err, res) =>  {\n\t\t\tif (err) { reject(err) } else { resolve(res) }\n\t\t})\n\t})\n}\n\nconst createGist = (opts: Object): Promise<any> => {\n\treturn new Promise((resolve, reject) => {\n\t\tgists.create(opts, (err, res) =>  {\n\t\t\tif (err) { reject(err) } else { resolve(res) }\n\t\t})\n\t})\n}\n\nexport {\n\teditGist,\n\tcreateGist,\n}\n",
@@ -2884,7 +3074,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 154,
+    "__docId__": 162,
     "kind": "variable",
     "name": "gists",
     "memberof": "src/main/externalApis/gists.ts",
@@ -2905,7 +3095,7 @@
     "ignore": true
   },
   {
-    "__docId__": 155,
+    "__docId__": 163,
     "kind": "function",
     "name": "editGist",
     "memberof": "src/main/externalApis/gists.ts",
@@ -2935,7 +3125,7 @@
     }
   },
   {
-    "__docId__": 156,
+    "__docId__": 164,
     "kind": "function",
     "name": "createGist",
     "memberof": "src/main/externalApis/gists.ts",
@@ -2965,7 +3155,7 @@
     }
   },
   {
-    "__docId__": 157,
+    "__docId__": 165,
     "kind": "file",
     "name": "src/main/externalApis/marked.ts",
     "content": "import marked from 'marked'\nimport os from 'os'\nimport { createGist, editGist} from './gists'\n\nmarked.setOptions({\n\trenderer: new marked.Renderer(),\n\tgfm: true,\n\ttables: true,\n\tbreaks: true,\n\tpedantic: false,\n\tsanitize: false,\n\tsmartLists: true,\n\tsmartypants: false,\n\txhtml: false,\n})\nconst GIST_ID = '522028088e49110b4511d4cabea361f9'\nconst MANUAL_DESC = 'An automatically generated and updated help manual of Serena bot'\nconst ICON = '![Imgur](https://i.imgur.com/JQheM1b.png)'\n\n/**\n * Generate help manual\n * @param actions array of executable object\n */\nconst generateHelpManual = async (actions: any[]): Promise<string> => {\n\ttry {\n\t\tconst fileString: string = await generateFileString(actions)\n\t\tconst opts = {\n\t\t\tdescription: MANUAL_DESC,\n\t\t\tpublic: true,\n\t\t\tfiles: {\n\t\t\t\t'manual.md': {\n\t\t\t\t\tcontent: fileString,\n\t\t\t\t},\n\t\t\t},\n\t\t}\n\t\tconst result = await createGist(opts)\n\t\treturn result\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n\n/**\n *  A function to update the list manual with the manual containing all the functions available\n * @param actions\n */\nconst updateHelpManual = async (actions: any[]): Promise<string> => {\n\ttry {\n\t\tconst fileString = await generateFileString(actions)\n\t\tconst opts = {\n\t\t\tid: GIST_ID,\n\t\t\tfiles: {\n\t\t\t\t'manual.md': {\n\t\t\t\t\tcontent: fileString,\n\t\t\t\t},\n\t\t\t},\n\t\t}\n\t\tconst result = await editGist(opts)\n\t\treturn result\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n\n/**\n * A function to generate a file string with all actions listed\n * @param actions\n */\nconst generateFileString = (actions: any[]): string => {\n\tconst linebr = os.EOL + os.EOL\n\tlet fileString = `# Help manual for Serena bot ${linebr}`\n\tfileString += MANUAL_DESC + linebr\n\tfileString += '### Notation:' + ICON + linebr\n\tfileString += 'Intent: The service that Serena could execute/respond to.'\n\t+ 'Ask questions along with line of the intent and the bot should be able to answer' + linebr\n\tfileString += 'Description: more details about the service.' + linebr\n\tfileString += '***' + linebr\n\n\tfor (const action of actions) {\n\t\tfileString += '- __Intent:__ `' + action.name + '` ' + linebr\n\t\tfileString += `> __Description:__ ${action.description} ${linebr}`\n\t}\n\treturn fileString\n}\n\nexport {\n\tgenerateHelpManual,\n\tupdateHelpManual,\n}\n",
@@ -2976,7 +3166,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 158,
+    "__docId__": 166,
     "kind": "variable",
     "name": "GIST_ID",
     "memberof": "src/main/externalApis/marked.ts",
@@ -2997,7 +3187,7 @@
     "ignore": true
   },
   {
-    "__docId__": 159,
+    "__docId__": 167,
     "kind": "variable",
     "name": "MANUAL_DESC",
     "memberof": "src/main/externalApis/marked.ts",
@@ -3018,7 +3208,7 @@
     "ignore": true
   },
   {
-    "__docId__": 160,
+    "__docId__": 168,
     "kind": "variable",
     "name": "ICON",
     "memberof": "src/main/externalApis/marked.ts",
@@ -3039,7 +3229,7 @@
     "ignore": true
   },
   {
-    "__docId__": 161,
+    "__docId__": 169,
     "kind": "function",
     "name": "generateFileString",
     "memberof": "src/main/externalApis/marked.ts",
@@ -3073,7 +3263,7 @@
     "ignore": true
   },
   {
-    "__docId__": 162,
+    "__docId__": 170,
     "kind": "function",
     "name": "generateHelpManual",
     "memberof": "src/main/externalApis/marked.ts",
@@ -3106,7 +3296,7 @@
     }
   },
   {
-    "__docId__": 163,
+    "__docId__": 171,
     "kind": "function",
     "name": "updateHelpManual",
     "memberof": "src/main/externalApis/marked.ts",
@@ -3139,7 +3329,7 @@
     }
   },
   {
-    "__docId__": 164,
+    "__docId__": 172,
     "kind": "file",
     "name": "src/main/externalApis/moment.ts",
     "content": "import moment from 'moment-timezone'\n\nconst getNingOfTheDay = (): string => {\n\tconst now = parseInt(\n\t\tmoment()\n\t\t\t.tz('Asia/Singapore')\n\t\t\t.format('H'),\n\t)\n\tif (now < 12) { return 'morning' } else if (now < 18) { return 'afternoon' } else { return 'evening' }\n}\n\nconst formatTimeForListTemplate = (time: string): string => {\n\treturn moment(time, 'YYYY-MM-DDTHH:mm:ssZ').format('MMMM Do YYYY')\n}\n\nexport {\n\tgetNingOfTheDay,\n\tformatTimeForListTemplate,\n}\n",
@@ -3150,7 +3340,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 165,
+    "__docId__": 173,
     "kind": "function",
     "name": "getNingOfTheDay",
     "memberof": "src/main/externalApis/moment.ts",
@@ -3173,7 +3363,7 @@
     }
   },
   {
-    "__docId__": 166,
+    "__docId__": 174,
     "kind": "function",
     "name": "formatTimeForListTemplate",
     "memberof": "src/main/externalApis/moment.ts",
@@ -3203,7 +3393,7 @@
     }
   },
   {
-    "__docId__": 167,
+    "__docId__": 175,
     "kind": "file",
     "name": "src/main/externalApis/news.ts",
     "content": "import NewsAPI from 'newsapi'\nimport { NEWSAPI_KEY } from '../environment'\nconst newsapi = new NewsAPI(NEWSAPI_KEY)\nimport { getCommonMembersFromTwoArrays } from '../utils/array'\nimport { replaceAllSubstring } from '../utils/string'\nconst GOOD_SOURCES = 'bbc-news,the-verge,bbc-sport,bloomberg,business-insider,business-insider-uk,cnn,espn,google-news,mtv-news,the-economist,the-new-york-times,the-washington-post'\nconst MAP_TOPIC_TO_CATEGORY = {\n\tsport: 'sports',\n\thealth: 'health',\n\tbusiness: 'business',\n\tentertain: 'entertainment',\n\tgeneral: 'general',\n\ttechnolog: 'technology',\n\tscienc: 'science',\n}\n\nif (!NEWSAPI_KEY) { throw new Error('missing NEWSAPI_KEY') }\n\n/**\n * Get top headlines\n * @param {any} user\n */\nconst getAllHeadlines = (user: any): Promise<any[]> => {\n\tlet text = user.lastText\n\tif (text.indexOf('\"') !== -1) {\n\t\ttext = replaceAllSubstring(text, '\"', '“', '”', 'SHOW', 'NEWS', 'WITH', 'ABOUT', 'ON')\n\t\treturn new Promise((resolve) => getHeadlinesWithQuery(text).then((articles) => resolve(articles)))\n\t} else {\n\t\tconst common: string[] = getCommonMembersFromTwoArrays(Object.keys(MAP_TOPIC_TO_CATEGORY), user.text[user.text.length - 1].tokenizedText)\n\t\tconst category: (string | null) = MAP_TOPIC_TO_CATEGORY[common[0]] || null\n\t\tif (category) { return new Promise((resolve) => getHeadlinesWithCategory(category).then((articles) => resolve(articles))) } else { return new Promise((resolve) => getRandomTop5Headlines().then((articles) => resolve(articles))) }\n\t}\n}\n\n/**\n * Get a random headline and return the title along with the message\n */\nconst getRandomHeadlines = (): Promise<any> => {\n\treturn new Promise((resolve) => {\n\t\tnewsapi.v2\n\t\t\t.topHeadlines({\n\t\t\t\tsources: 'techcrunch',\n\t\t\t\tlanguage: 'en',\n\t\t\t})\n\t\t\t.then((response) => {\n\t\t\t\tconst article = response.articles[Math.floor(Math.random() * response.articles.length)]\n\t\t\t\tresolve({\n\t\t\t\t\tanswerable: true,\n\t\t\t\t\tsimpleText: `Random news: ${article.title}`,\n\t\t\t\t\timage: article.urlToImage,\n\t\t\t\t\turl: article.url,\n\t\t\t\t})\n\t\t\t})\n\t})\n}\n\n/**\n * Search for articles containing key words\n * @param {string} keyword\n */\nconst getHeadlinesWithQuery = (keyword: string): Promise<any[]> => {\n\treturn new Promise((res) => {\n\t\tnewsapi.v2\n\t\t\t.topHeadlines({\n\t\t\t\tsources: GOOD_SOURCES,\n\t\t\t\tq: keyword,\n\t\t\t\tlanguage: 'en',\n\t\t\t})\n\t\t\t.then((response) => res(response.articles))\n\t})\n}\n\n/**\n * Search for articles in this category\n * @param {string | null} category\n */\nconst getHeadlinesWithCategory = (category: string | null): Promise<any[]> => {\n\treturn new Promise((res) => {\n\t\tnewsapi.v2\n\t\t\t.topHeadlines({\n\t\t\t\tcategory,\n\t\t\t\tlanguage: 'en',\n\t\t\t\tcountry: 'us',\n\t\t\t})\n\t\t\t.then((response) => res(response.articles))\n\t})\n}\n\n/**\n * Get random top headlines articles\n */\nconst getRandomTop5Headlines = (): Promise<any[]> => {\n\n\treturn new Promise((res) => {\n\t\tnewsapi.v2\n\t\t\t.topHeadlines({\n\t\t\t\tsources: GOOD_SOURCES,\n\t\t\t\tlanguage: 'en',\n\t\t\t})\n\t\t\t.then((response) => res(response.articles))\n\t})\n}\n\nexport {\n\tgetRandomHeadlines,\n\tgetAllHeadlines,\n\tgetHeadlinesWithQuery,\n\tgetHeadlinesWithCategory,\n\tgetRandomTop5Headlines,\n}\n",
@@ -3214,7 +3404,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 168,
+    "__docId__": 176,
     "kind": "variable",
     "name": "newsapi",
     "memberof": "src/main/externalApis/news.ts",
@@ -3235,7 +3425,7 @@
     "ignore": true
   },
   {
-    "__docId__": 169,
+    "__docId__": 177,
     "kind": "variable",
     "name": "GOOD_SOURCES",
     "memberof": "src/main/externalApis/news.ts",
@@ -3256,7 +3446,7 @@
     "ignore": true
   },
   {
-    "__docId__": 170,
+    "__docId__": 178,
     "kind": "variable",
     "name": "MAP_TOPIC_TO_CATEGORY",
     "memberof": "src/main/externalApis/news.ts",
@@ -3277,7 +3467,7 @@
     "ignore": true
   },
   {
-    "__docId__": 171,
+    "__docId__": 179,
     "kind": "function",
     "name": "getRandomHeadlines",
     "memberof": "src/main/externalApis/news.ts",
@@ -3299,7 +3489,7 @@
     }
   },
   {
-    "__docId__": 172,
+    "__docId__": 180,
     "kind": "function",
     "name": "getAllHeadlines",
     "memberof": "src/main/externalApis/news.ts",
@@ -3332,7 +3522,7 @@
     }
   },
   {
-    "__docId__": 173,
+    "__docId__": 181,
     "kind": "function",
     "name": "getHeadlinesWithQuery",
     "memberof": "src/main/externalApis/news.ts",
@@ -3365,7 +3555,7 @@
     }
   },
   {
-    "__docId__": 174,
+    "__docId__": 182,
     "kind": "function",
     "name": "getHeadlinesWithCategory",
     "memberof": "src/main/externalApis/news.ts",
@@ -3399,7 +3589,7 @@
     }
   },
   {
-    "__docId__": 175,
+    "__docId__": 183,
     "kind": "function",
     "name": "getRandomTop5Headlines",
     "memberof": "src/main/externalApis/news.ts",
@@ -3421,7 +3611,7 @@
     }
   },
   {
-    "__docId__": 176,
+    "__docId__": 184,
     "kind": "file",
     "name": "src/main/externalApis/node-cache.ts",
     "content": "import NodeCache from 'node-cache'\nimport { CACHE_DURATION } from '../environment'\n\nconst numericCacheDuration = parseInt(CACHE_DURATION)\nconst myCache = new NodeCache( { stdTTL: numericCacheDuration, checkperiod: numericCacheDuration + 10 } )\n\n/**\n* Save data to cache. Successful if returned 'OK'\n* @param {string} key\n* @param {any} data\n*/\nconst save = (key: string, data: any): Promise<string> => {\n\treturn new Promise((resolve, reject) => {\n\t\tif (!key) { reject('Missing key') } else if (!data) { reject('Missing data') } else {\n\t\t\tmyCache.set( key, data, ( err, success ) => {\n\t\t\t\tif (err) { reject(err) } else if ( !err && success ) {\n\t\t\t\t\tresolve('OK')\n\t\t\t\t}\n\t\t\t})\n\t\t\t\t\t\t\t}\n\t})\n\n}\n\n/**\n * Get data from cache. Return undefined if data not found.\n * @param {string} key\n */\nconst get = (key: string): Promise<any> => {\n\treturn new Promise((resolve, reject) => {\n\t\tif (!key) { reject('Missing key') } else {\n\t\t\tmyCache.get( key, (err, value) => {\n\t\t\t\tif (err) { reject(err) } else { resolve(value) }\n\t\t\t})\n\t\t}\n\t})\n\n}\n\n/**\n * Flush all data\n */\nconst flush = (): void => myCache.flushAll()\n\n/**\n * Close the cache\n */\nconst close = (): void => myCache.close()\n\nexport {\n\tsave,\n\tget,\n\tflush,\n\tmyCache,\n\tclose,\n}\n",
@@ -3432,7 +3622,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 177,
+    "__docId__": 185,
     "kind": "variable",
     "name": "numericCacheDuration",
     "memberof": "src/main/externalApis/node-cache.ts",
@@ -3453,7 +3643,7 @@
     "ignore": true
   },
   {
-    "__docId__": 178,
+    "__docId__": 186,
     "kind": "function",
     "name": "save",
     "memberof": "src/main/externalApis/node-cache.ts",
@@ -3496,7 +3686,7 @@
     }
   },
   {
-    "__docId__": 179,
+    "__docId__": 187,
     "kind": "function",
     "name": "get",
     "memberof": "src/main/externalApis/node-cache.ts",
@@ -3529,7 +3719,7 @@
     }
   },
   {
-    "__docId__": 180,
+    "__docId__": 188,
     "kind": "function",
     "name": "flush",
     "memberof": "src/main/externalApis/node-cache.ts",
@@ -3547,7 +3737,7 @@
     "return": null
   },
   {
-    "__docId__": 181,
+    "__docId__": 189,
     "kind": "variable",
     "name": "myCache",
     "memberof": "src/main/externalApis/node-cache.ts",
@@ -3567,7 +3757,7 @@
     }
   },
   {
-    "__docId__": 182,
+    "__docId__": 190,
     "kind": "function",
     "name": "close",
     "memberof": "src/main/externalApis/node-cache.ts",
@@ -3585,222 +3775,18 @@
     "return": null
   },
   {
-    "__docId__": 183,
+    "__docId__": 191,
     "kind": "file",
-    "name": "src/main/externalApis/rx.ts",
-    "content": "import idx from  'idx'\nimport { Observable } from 'rxjs'\nimport Logger from '../logger'\nimport firebase from '../model/database/firebasedb'\nimport { getPlatformAndId } from './../utils/account'\nimport { client } from './@twitter'\n\n// @messenger\nimport MesMessage from '../messenger/api/message'\nimport MesSendImage from '../messenger/api/sendImage'\n\n// @telegram\nimport { tlgImage, tlgMessage }   from '../telegram/api/'\n\nconst POKEMONGO_TWITTER = '2839430431'\nconst WYK_TWITTER = '44680622'\nconst MY_TWITTER = '700623960'\nconst listOfStreams = [\n\tPOKEMONGO_TWITTER,\n\tWYK_TWITTER,\n\tMY_TWITTER,\n]\n\ntype ListOfAudience = string[]\ninterface OberservableTweet {\n\tname: string\n\ttext: string\n\timage: string\n\taudience: string[]\n}\n\nclass Streaming {\n\tpublic listOfAudience: ListOfAudience | null\n\tpublic twitterStreaming: any\n\n\tconstructor(listOfAudience: ListOfAudience = []) {\n\t\tthis.listOfAudience = listOfAudience || null\n\n\t\tif (listOfAudience) {\n\t\t\tconst streaming = Observable.create((observer) => {\n\t\t\t\tconst twitter = client.stream('statuses/filter', {follow: listOfStreams.join(',')})\n\t\t\t\ttwitter.on('data', (tweet) => {\n\t\t\t\t\tif (listOfStreams.includes(tweet.user.id_str)) {\n\t\t\t\t\t\tobserver.next({\n\t\t\t\t\t\t\tname: tweet.user.name,\n\t\t\t\t\t\t\ttext: tweet.text,\n\t\t\t\t\t\t\timage: idx(tweet, (_) => _.extended_entities.media[0].media_url_https) || null,\n\t\t\t\t\t\t\taudience: listOfAudience,\n\t\t\t\t\t\t})\n\t\t\t\t\t}\n\t\t\t\t})\n\t\t\t\ttwitter.on('error', (error) => {\n\t\t\t\t\tobserver.error(error)\n\t\t\t\t})\n\n\t\t\t\treturn () => {\n\t\t\t\t\tLogger.warn('Closing twitter stream')\n\t\t\t\t}\n\t\t\t})\n\n\t\t\tthis.twitterStreaming = streaming.subscribe({\n\t\t\t\tnext: (x: OberservableTweet) => {\n\t\t\t\t\tfor (const userId of x.audience) {\n\t\t\t\t\t\tlet message: Function\n\t\t\t\t\t\tlet image: Function\n\t\t\t\t\t\tconst {\n\t\t\t\t\t\t\tplatform,\n\t\t\t\t\t\t\tid,\n\t\t\t\t\t\t} = getPlatformAndId(userId)\n\t\t\t\t\t\tif (platform === 'messenger') {\n\t\t\t\t\t\t\tmessage = MesMessage\n\t\t\t\t\t\t\timage = MesSendImage\n\t\t\t\t\t\t\t// } else if (platform === 'telegram') {\n\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\tmessage = tlgMessage\n\t\t\t\t\t\t\timage = tlgImage\n\t\t\t\t\t\t}\n\t\t\t\t\t\tmessage(id, `${x.name}: ${x.text}`)\n\t\t\t\t\t\tif (x.image) { image(id, x.image) }\n\t\t\t\t\t}\n\t\t\t\t},\n\t\t\t\terror: (err) => Logger.error('something wrong occurred: ' + err),\n\t\t\t\tcomplete: () => Logger.info('done'),\n\t\t\t})\n\t\t}\n\t}\n\n\tpublic stopStreaming(): void {\n\t\tLogger.warn('Resetting Twitter streaming because of a new stream')\n\t\tthis.twitterStreaming.unsubscribe()\n\n\t}\n\n\tpublic isStreaming(): boolean {\n\t\treturn this.listOfAudience != null\n\t}\n}\n\nconst setUpStreamingApi = (): void => {\n\tlet StreamingInstance = new Streaming()\n\tfirebase.database().ref('restricted_access/streaming/').on('value', (snap) => {\n\t\tconst result = snap.val()\n\t\tlet audience: ListOfAudience\n\t\tif (Array.isArray(result)) {\n\t\t\taudience = result\n\t\t} else if (typeof result === 'object') {\n\t\t\taudience = Object.values(result)\n\t\t}\n\t\tif (StreamingInstance.isStreaming()) { StreamingInstance.stopStreaming() }\n\t\tStreamingInstance = new Streaming(audience)\n\t}, (err) => {\n\t\tLogger.error(err)\n\t})\n}\nexport default setUpStreamingApi\n",
+    "name": "src/main/externalApis/scheduler.ts",
+    "content": "",
     "static": true,
-    "longname": "/Users/heiseish/Projects/pottsRb/src/main/externalApis/rx.ts",
+    "longname": "/Users/heiseish/Projects/pottsRb/src/main/externalApis/scheduler.ts",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 184,
-    "kind": "variable",
-    "name": "POKEMONGO_TWITTER",
-    "memberof": "src/main/externalApis/rx.ts",
-    "static": true,
-    "longname": "src/main/externalApis/rx.ts~POKEMONGO_TWITTER",
-    "access": "public",
-    "export": false,
-    "importPath": "potts-reborn/src/main/externalApis/rx.ts",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 12,
-    "undocument": true,
-    "type": {
-      "types": [
-        "string"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 185,
-    "kind": "variable",
-    "name": "WYK_TWITTER",
-    "memberof": "src/main/externalApis/rx.ts",
-    "static": true,
-    "longname": "src/main/externalApis/rx.ts~WYK_TWITTER",
-    "access": "public",
-    "export": false,
-    "importPath": "potts-reborn/src/main/externalApis/rx.ts",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 13,
-    "undocument": true,
-    "type": {
-      "types": [
-        "string"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 186,
-    "kind": "variable",
-    "name": "MY_TWITTER",
-    "memberof": "src/main/externalApis/rx.ts",
-    "static": true,
-    "longname": "src/main/externalApis/rx.ts~MY_TWITTER",
-    "access": "public",
-    "export": false,
-    "importPath": "potts-reborn/src/main/externalApis/rx.ts",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 14,
-    "undocument": true,
-    "type": {
-      "types": [
-        "string"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 187,
-    "kind": "variable",
-    "name": "listOfStreams",
-    "memberof": "src/main/externalApis/rx.ts",
-    "static": true,
-    "longname": "src/main/externalApis/rx.ts~listOfStreams",
-    "access": "public",
-    "export": false,
-    "importPath": "potts-reborn/src/main/externalApis/rx.ts",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 15,
-    "undocument": true,
-    "type": {
-      "types": [
-        "undefined[]"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 188,
-    "kind": "class",
-    "name": "Streaming",
-    "memberof": "src/main/externalApis/rx.ts",
-    "static": true,
-    "longname": "src/main/externalApis/rx.ts~Streaming",
-    "access": "public",
-    "export": false,
-    "importPath": "potts-reborn/src/main/externalApis/rx.ts",
-    "importStyle": null,
-    "description": "",
-    "lineNumber": 32,
-    "interface": false,
-    "ignore": true
-  },
-  {
-    "__docId__": 189,
-    "kind": "constructor",
-    "name": "constructor",
-    "memberof": "src/main/externalApis/rx.ts~Streaming",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/main/externalApis/rx.ts~Streaming#constructor",
-    "access": "public",
-    "description": null,
-    "lineNumber": 27,
-    "undocument": true
-  },
-  {
-    "__docId__": 190,
-    "kind": "member",
-    "name": "listOfAudience",
-    "memberof": "src/main/externalApis/rx.ts~Streaming",
-    "static": false,
-    "longname": "src/main/externalApis/rx.ts~Streaming#listOfAudience",
-    "access": "public",
-    "description": null,
-    "lineNumber": 28,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 191,
-    "kind": "member",
-    "name": "twitterStreaming",
-    "memberof": "src/main/externalApis/rx.ts~Streaming",
-    "static": false,
-    "longname": "src/main/externalApis/rx.ts~Streaming#twitterStreaming",
-    "access": "public",
-    "description": null,
-    "lineNumber": 49,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
     "__docId__": 192,
-    "kind": "method",
-    "name": "stopStreaming",
-    "memberof": "src/main/externalApis/rx.ts~Streaming",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/main/externalApis/rx.ts~Streaming#stopStreaming",
-    "access": "public",
-    "description": "",
-    "lineNumber": 88,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 193,
-    "kind": "method",
-    "name": "isStreaming",
-    "memberof": "src/main/externalApis/rx.ts~Streaming",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/main/externalApis/rx.ts~Streaming#isStreaming",
-    "access": "public",
-    "description": "",
-    "lineNumber": 94,
-    "return": {
-      "nullable": null,
-      "types": [
-        "boolean"
-      ],
-      "spread": false,
-      "description": ""
-    },
-    "params": []
-  },
-  {
-    "__docId__": 194,
-    "kind": "function",
-    "name": "setUpStreamingApi",
-    "memberof": "src/main/externalApis/rx.ts",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/main/externalApis/rx.ts~setUpStreamingApi",
-    "access": "public",
-    "export": true,
-    "importPath": "potts-reborn/src/main/externalApis/rx.ts",
-    "importStyle": "setUpStreamingApi",
-    "description": null,
-    "lineNumber": 97,
-    "undocument": true,
-    "params": [],
-    "return": null
-  },
-  {
-    "__docId__": 195,
     "kind": "file",
     "name": "src/main/externalApis/weather.ts",
     "content": "import Forecast from 'forecast'\nimport { DARKSKY_KEY } from '../environment'\n\nconst WHITE_HAVEN_LAT = 1.28891123\nconst WHITE_HAVEN_LONG = 103.7768478\n// clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night\nconst MAP_ICON_TO_PICTURE = {\n\t'clear-day': '1018927418276670',\n\t'clear-night': '1018928791609866',\n\t'rain': '1018929591609786',\n\t'snow': '1018930251609720',\n\t'sleet': '1018930598276352',\n\t'wind': '1018930828276329',\n\t'fog': '1018931048276307',\n\t'cloudy': '1018931408276271',\n\t'partly-cloudy-day': '1018932811609464',\n\t'partly-cloudy-night': '1018933201609425',\n}\n\nif (!DARKSKY_KEY) { throw new Error('missing DARKSKY_KEY') }\n// Initialize\nconst forecast = new Forecast({\n\tservice: 'darksky',\n\tkey: DARKSKY_KEY,\n\tunits: 'celcius',\n\tcache: true, // Cache API requests\n\tttl: {\n\t\t// How long to cache requests. Uses syntax from moment.js: http://momentjs.com/docs/#/durations/creating/\n\t\tminutes: 27,\n\t\tseconds: 45,\n\t},\n})\n\n/**\n * Return weather object based on coordinate\n * @param {Coordinate} coordinate\n */\nconst getWeather = (coordinate: number[]): Promise<any> => {\n\treturn new Promise((response, reject) => {\n\t\tforecast.get(coordinate, (err, weather) => {\n\t\t\tif (err) { reject(err) } else { response(weather) }\n\t\t})\n\t})\n}\n\nconst getWeatherMessage = (...params: number[]): Promise<any> => {\n\treturn new Promise((response, reject) => {\n\t\tconst coordinate: number[] =\n\t\tparams.length === 2  ? [params[0], params[1]] : [WHITE_HAVEN_LAT, WHITE_HAVEN_LONG]\n\t\tgetWeather(coordinate)\n\t\t\t.then((weather) => {\n\t\t\t\tresponse({\n\t\t\t\t\tcurrent: `It's ${weather.currently.summary.toLowerCase()}  near your house now! `,\n\t\t\t\t\tsummary: `In general, it is ${weather.hourly.summary.toLowerCase()} and this week there is ${weather.daily.summary.toLowerCase()}`,\n\t\t\t\t\timageId: MAP_ICON_TO_PICTURE[weather.currently.icon],\n\t\t\t\t})\n\t\t\t})\n\t\t\t.catch((err) => reject(err))\n\t})\n}\n\nexport  {\n\tgetWeather,\n\tgetWeatherMessage,\n}\n",
@@ -3811,7 +3797,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 196,
+    "__docId__": 193,
     "kind": "variable",
     "name": "WHITE_HAVEN_LAT",
     "memberof": "src/main/externalApis/weather.ts",
@@ -3832,7 +3818,7 @@
     "ignore": true
   },
   {
-    "__docId__": 197,
+    "__docId__": 194,
     "kind": "variable",
     "name": "WHITE_HAVEN_LONG",
     "memberof": "src/main/externalApis/weather.ts",
@@ -3853,7 +3839,7 @@
     "ignore": true
   },
   {
-    "__docId__": 198,
+    "__docId__": 195,
     "kind": "variable",
     "name": "MAP_ICON_TO_PICTURE",
     "memberof": "src/main/externalApis/weather.ts",
@@ -3874,7 +3860,7 @@
     "ignore": true
   },
   {
-    "__docId__": 199,
+    "__docId__": 196,
     "kind": "variable",
     "name": "forecast",
     "memberof": "src/main/externalApis/weather.ts",
@@ -3895,7 +3881,7 @@
     "ignore": true
   },
   {
-    "__docId__": 200,
+    "__docId__": 197,
     "kind": "function",
     "name": "getWeather",
     "memberof": "src/main/externalApis/weather.ts",
@@ -3928,7 +3914,7 @@
     }
   },
   {
-    "__docId__": 201,
+    "__docId__": 198,
     "kind": "function",
     "name": "getWeatherMessage",
     "memberof": "src/main/externalApis/weather.ts",
@@ -3959,7 +3945,7 @@
     }
   },
   {
-    "__docId__": 202,
+    "__docId__": 199,
     "kind": "file",
     "name": "src/main/externalApis/worldCup.ts",
     "content": "import _ from 'lodash/core'\nimport mojiTranslate from 'moji-translate'\nimport rp from 'request-promise'\nimport { padLeft, padRight } from '../utils/string'\nimport * as CacheProvider from './node-cache'\n\nconst MAX_COUNTRY_LENGTH = 10\nconst MAX_GOALS_LENGTH = 2\n\nconst options = {\n\turi: 'http://worldcup.sfg.io/matches',\n\theaders: {\n\t\t'User-Agent': 'Request-Promise',\n\t},\n\tjson: true, // Automatically parses the JSON string in the response\n}\n\nconst rpad = ( value, char, length ): string | void => {\n\tif ( typeof value === 'undefined' ) {\n\t\treturn undefined\n\t}\n\treturn ( value + char.repeat( length ) ).substring(0, length)\n}\n\nconst isCompletedOrInProgress = (match): boolean => {\n\treturn match.status === 'completed' || match.status === 'in progress'\n}\n\nconst matchHappeningToday = (match: any) => {\n\tconst date = new Date(match.datetime)\n\tconst today = new Date()\n\treturn ((date.getDate() === today.getDate()\n\t&& date.getMonth() === today.getMonth())\n\t|| (date.getMonth() === today.getMonth()\n\t&& date.getDate() === today.getDate() + 1\n\t&& date.getHours() === 2))\n\t&& (date.getDate() + date.getHours().toString() !== today.getDate() + '2')\n}\n\nconst getCountryFlag = ( value ): string => {\n\treturn mojiTranslate.translate( value.replace(/ /g, '_'), true )\n}\n\nconst toConsoleOutput = (match): string => {\n\tlet homeFlag = getCountryFlag( match.home_team.country )\n\tif ( ! homeFlag ) {\n\t\thomeFlag = '  '\n\t}\n\tconst home = padRight( match.home_team.country, ' ', MAX_COUNTRY_LENGTH )\n\tconst homeGoals = rpad( match.home_team.goals, ' ', MAX_GOALS_LENGTH ) || ''\n\n\tconst awayFlag = getCountryFlag( match.away_team.country )\n\tconst away = padLeft( match.away_team.country, ' ', MAX_COUNTRY_LENGTH )\n\tconst awayGoals = rpad( match.away_team.goals, ' ', MAX_GOALS_LENGTH ) || ''\n\n\tconst hours = new Date(match.datetime).getHours()\n\tconst presentableHours = hours < 12 ?\n\t\thours.toString() + 'am'\n\t\t: (hours - 12).toString() + 'pm'\n\treturn `${homeFlag} ${home} ${homeGoals} -  ${awayGoals} ${away} ${awayFlag} ${presentableHours}`\n}\n\nconst getMatches = async (): Promise<any> => {\n\ttry {\n\t\tconst matches = await rp(options)\n\t\treturn matches\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n\n/**\n * Get the last n matches of specific synchronous filter\n * @param {any} matches\n * @param {any} filter\n * @param {number} n\n */\nconst synchFilter = (matches: any, filter: (match: any) => boolean, n?: number): Promise<any> => {\n\treturn new Promise((resolve) => {\n\t\tn = n ? n : 3\n\t\tconst temp = matches\n\t\tconst result = []\n\t\ttemp\n\t\t\t.filter( filter )\n\t\t\t.map( toConsoleOutput )\n\t\t\t.forEach( (r) => result.push(r))\n\t\tresolve(result.slice(Math.max(result.length - n, 1)))\n\t})\n}\n\nconst getWCSchedule = async (): Promise<any> => {\n\ttry {\n\t\tconst schedule = await CacheProvider.get('WorldCupScheduleToday')\n\t\tif (schedule !== undefined) { return schedule } else {\n\t\t\tconst NO_MATCH_TODAY = 'There isn\\'t any match today!'\n\t\t\tconst matches = await getMatches()\n\t\t\tconst past = await synchFilter(matches, isCompletedOrInProgress, 3)\n\t\t\tconst present = await synchFilter(matches, matchHappeningToday, 10)\n\n\t\t\tlet message = 'Last 3 matches: \\n'\n\t\t\tif (!_.isEmpty(past)) {\n\t\t\t\tfor (const match of past) { message += match + '\\n' }\n\t\t\t}\n\t\t\tmessage += 'Today matches: \\n'\n\t\t\tif (!_.isEmpty(present)) {\n\t\t\t\tfor (const match of present) { message += match + '\\n' }\n\t\t\t}\n\n\t\t\tif (!_.isEmpty(past) || !_.isEmpty(present)) {\n\t\t\t\tawait CacheProvider.save('WorldCupScheduleToday', message)\n\t\t\t\treturn message\n\t\t\t} else {\n\t\t\t\tawait CacheProvider.save('WorldCupScheduleToday', NO_MATCH_TODAY)\n\t\t\t\treturn NO_MATCH_TODAY\n\t\t\t}\n\t\t}\n\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n\nexport default getWCSchedule\n",
@@ -3970,7 +3956,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 203,
+    "__docId__": 200,
     "kind": "variable",
     "name": "MAX_COUNTRY_LENGTH",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -3991,7 +3977,7 @@
     "ignore": true
   },
   {
-    "__docId__": 204,
+    "__docId__": 201,
     "kind": "variable",
     "name": "MAX_GOALS_LENGTH",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4012,7 +3998,7 @@
     "ignore": true
   },
   {
-    "__docId__": 205,
+    "__docId__": 202,
     "kind": "variable",
     "name": "options",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4033,7 +4019,7 @@
     "ignore": true
   },
   {
-    "__docId__": 206,
+    "__docId__": 203,
     "kind": "function",
     "name": "rpad",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4076,7 +4062,7 @@
     "ignore": true
   },
   {
-    "__docId__": 207,
+    "__docId__": 204,
     "kind": "function",
     "name": "isCompletedOrInProgress",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4107,7 +4093,7 @@
     "ignore": true
   },
   {
-    "__docId__": 208,
+    "__docId__": 205,
     "kind": "function",
     "name": "matchHappeningToday",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4138,7 +4124,7 @@
     "ignore": true
   },
   {
-    "__docId__": 209,
+    "__docId__": 206,
     "kind": "function",
     "name": "getCountryFlag",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4169,7 +4155,7 @@
     "ignore": true
   },
   {
-    "__docId__": 210,
+    "__docId__": 207,
     "kind": "function",
     "name": "toConsoleOutput",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4200,7 +4186,7 @@
     "ignore": true
   },
   {
-    "__docId__": 211,
+    "__docId__": 208,
     "kind": "function",
     "name": "getMatches",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4224,7 +4210,7 @@
     "ignore": true
   },
   {
-    "__docId__": 212,
+    "__docId__": 209,
     "kind": "function",
     "name": "synchFilter",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4278,7 +4264,7 @@
     "ignore": true
   },
   {
-    "__docId__": 213,
+    "__docId__": 210,
     "kind": "function",
     "name": "getWCSchedule",
     "memberof": "src/main/externalApis/worldCup.ts",
@@ -4301,7 +4287,7 @@
     }
   },
   {
-    "__docId__": 214,
+    "__docId__": 211,
     "kind": "file",
     "name": "src/main/hq.ts",
     "content": "import analyze from './analyze'\nimport execute from './execute'\nimport identifySource from './identifySource'\nimport Logger from './logger'\nimport { saveUser } from './model/cache'\nimport respond from './respond'\nimport retrieveOrCreateUser from './retrieveOrCreateUser'\n\nexport default class Headquarter {\n\t/**\n\t * Handle receving events\n\t * @param platform platforms currently supported\n\t * @param payload message payload from user\n\t */\n\tpublic async receive(platform: supportedPlatform, payload: any): Promise<void | Error> {\n\t\tLogger.info('Transfering event to headquarter..')\n\t\ttry {\n\t\t\tconst partialUniqueId = await identifySource(platform, payload)\n\t\t\tlet user = await retrieveOrCreateUser(partialUniqueId, platform, payload)\n\t\t\tuser = await analyze(platform, payload, user)\n\t\t\tuser = await execute(platform, payload, user)\n\t\t\tawait respond(platform, payload, user)\n\t\t\tawait saveUser(user.id, user)\n\t\t} catch (err) {\n\t\t\tLogger.error(err)\n\t\t} finally {\n\t\t\tLogger.separator('=====================================')\n\t\t}\n\t}\n}\n",
@@ -4312,7 +4298,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 215,
+    "__docId__": 212,
     "kind": "class",
     "name": "Headquarter",
     "memberof": "src/main/hq.ts",
@@ -4327,7 +4313,7 @@
     "interface": false
   },
   {
-    "__docId__": 216,
+    "__docId__": 213,
     "kind": "method",
     "name": "receive",
     "memberof": "src/main/hq.ts~Headquarter",
@@ -4370,7 +4356,7 @@
     }
   },
   {
-    "__docId__": 217,
+    "__docId__": 214,
     "kind": "file",
     "name": "src/main/identifySource.ts",
     "content": "import idx from 'idx'\nimport Logger from './logger'\nimport { generateRandomId } from './utils/string'\n/**\n * Return a partial unique userId from incoming event to identify user\n * @param {supportedPlatform} platform supported platform currently\n * @param {any} payload\n */\nexport default async (platform: supportedPlatform, payload: any): Promise<string> => {\n\tconst log = Logger.info('Identifying source...', true)\n\tconst data = {\n\t\thashPrefix: '',\n\t\tid: '',\n\t}\n\tswitch (platform) {\n\tcase 'telegram':\n\t\tif (idx(payload, (_) => _.from.id)) {\n\t\t\tdata.hashPrefix = 'tlg',\n\t\t\tdata.id = idx(payload, (_) => _.from.id)\n\t\t}\n\t\tbreak\n\n\tcase 'messenger':\n\t\tif (idx(payload, (_) => _.sender.id)) {\n\t\t\tdata.hashPrefix = 'mes',\n\t\t\tdata.id = idx(payload, (_) => _.sender.id)\n\t\t}\n\t\tbreak\n\n\tdefault:\n\t\tdata.hashPrefix = 'gia'\n\t\t// need to make Id more deterministic to prevent collision\n\t\tdata.id = generateRandomId()\n\n\t}\n\tlog.stop('Indentified Source.')\n\treturn `${data.hashPrefix}${data.id}`\n}\n",
@@ -4381,7 +4367,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 218,
+    "__docId__": 215,
     "kind": "function",
     "name": "identifySource",
     "memberof": "src/main/identifySource.ts",
@@ -4424,7 +4410,7 @@
     }
   },
   {
-    "__docId__": 219,
+    "__docId__": 216,
     "kind": "file",
     "name": "src/main/lib/encrypt.ts",
     "content": "if (process.env.NODE_ENV === 'production') { require('dotenv').load() }\nimport cryptoJSON from 'crypto-json'\n\nconst cipher = process.env.CIPHER\nconst passKey = process.env.PASSKEY\nconst encoding = 'hex'\n\n/**\n * Encode JSON object with hidden cipher\n * @param {any} object\n */\nconst encrypt = (object: any) =>  {\n\tif (typeof object !== 'object') {\n\t\tthrow new Error('Cannot encrypt non-object')\n\t}\n\treturn cryptoJSON.encrypt(object, passKey, {\n\t\talgorithm: cipher,\n\t\tencoding,\n\t\tkeys: [],\n\t})\n}\n/**\n * Decode JSON object with cipher\n * @param {any} object\n */\nconst decrypt = (object: any) => {\n\tif (typeof object !== 'object') { throw new Error('Cannot decrypt non-object: ' + object) }\n\treturn cryptoJSON.decrypt(object, passKey, {\n\t\talgorithm: cipher,\n\t\tencoding,\n\t\tkeys: [],\n\t})\n}\nexport {\n\tencrypt,\n\tdecrypt,\n}\n",
@@ -4435,7 +4421,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 220,
+    "__docId__": 217,
     "kind": "variable",
     "name": "cipher",
     "memberof": "src/main/lib/encrypt.ts",
@@ -4456,7 +4442,7 @@
     "ignore": true
   },
   {
-    "__docId__": 221,
+    "__docId__": 218,
     "kind": "variable",
     "name": "passKey",
     "memberof": "src/main/lib/encrypt.ts",
@@ -4477,7 +4463,7 @@
     "ignore": true
   },
   {
-    "__docId__": 222,
+    "__docId__": 219,
     "kind": "variable",
     "name": "encoding",
     "memberof": "src/main/lib/encrypt.ts",
@@ -4498,7 +4484,7 @@
     "ignore": true
   },
   {
-    "__docId__": 223,
+    "__docId__": 220,
     "kind": "function",
     "name": "encrypt",
     "memberof": "src/main/lib/encrypt.ts",
@@ -4531,7 +4517,7 @@
     }
   },
   {
-    "__docId__": 224,
+    "__docId__": 221,
     "kind": "function",
     "name": "decrypt",
     "memberof": "src/main/lib/encrypt.ts",
@@ -4564,7 +4550,7 @@
     }
   },
   {
-    "__docId__": 225,
+    "__docId__": 222,
     "kind": "file",
     "name": "src/main/lib/string.ts",
     "content": "import { getNingOfTheDay } from '../externalApis/moment'\nimport { randomIndex } from '../utils/array'\n\n/**\n * Handle unknown queries\n * @param name user name\n */\nconst randomConfusedMessage = (name: string | null): string => {\n\tconst prefixes = [\n\t\t'Hmmmm  ',\n\t\t'err.. ',\n\t\t'Ayay  ',\n\t]\n\tconst suffixes = [\n\t\t'I am not really sure about that..',\n\t\t'idk',\n\t\t'let me think',\n\t]\n\tconst n = name ? name : 'friend'\n\treturn `${randomIndex(prefixes)} ${n}, ${randomIndex(suffixes)}`\n}\n\n/**\n * Generate good bye message\n * @param name user name\n */\nconst randomByeMessage = (name: string | null): string => {\n\tconst suffixes = [\n\t\t'Have a good day!',\n\t\t'Hope to talk to you again soon mate',\n\t\t'Smell ya later ;)',\n\t]\n\tconst prefixes = ['Good bye', 'Baii', 'Bye bye', 'Aye aye']\n\tconst n = name ? name : 'friend'\n\treturn `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`\n}\n\n/**\n * Generate reply to compliment\n * @param name user name\n */\nconst randomResponseToComplimentMessage = (name: string | null): string => {\n\tconst suffixes = [\n\t\t'I really appreciate it!',\n\t\t'I\\'m touched..',\n\t\t'FeelsGoodMan',\n\t]\n\n\tconst prefixes = ['Thanks', 'Ty', 'woah', 'Aye aye']\n\tconst n = name ? name : 'friend'\n\treturn `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`\n\n}\n\n/**\n * Response to thanks\n * @param name user name\n */\nconst randomResponseToThanksMessage = (name: string | null): string => {\n\n\tconst prefixes = ['No problemo', 'Np', 'Aye', 'Aye aye']\n\n\tconst suffixes = [\n\t\t'Glad I could help!',\n\t\t'Hope to be of service again~',\n\t\t'¯\\\\_(ツ)_/¯',\n\t]\n\tconst n = name ? name : 'friend'\n\treturn `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`\n\n}\n\n/**\n * Greeting suffix\n */\nconst randomGreetingSuffix = () => {\n\tconst suffixes = ['What\\'s up man!~', 'How are you doing!', 'Such a nice day isn\\'t it?', 'Here\\'s a photo you might like: ']\n\treturn randomIndex(suffixes)\n}\n\n/**\n * Greeting prefix\n * @param name user name\n */\nconst randomGreetingPrefix = async (name: string | null) => {\n\tconst prefixes = [\n\t\t'Greetings',\n\t\t'Yo',\n\t\t'Hello',\n\t\t`Good ${await getNingOfTheDay()}`,\n\t]\n\tconst n = name ? name : 'friend'\n\treturn `${randomIndex(prefixes)}, ${n}!`\n}\n\nconst possibleYay: string[] = [\n\t'Yoshhh!',\n\t'Ez',\n\t'Hue hue hue',\n\t'Ye :>',\n\t'Nice la',\n]\n\nconst possibleNay: string[] = [\n\t'Sorry :<',\n\t'NANI',\n\t'Mada Mada',\n\t'...',\n]\n\nexport {\n\trandomConfusedMessage,\n\trandomByeMessage,\n\trandomGreetingPrefix,\n\trandomGreetingSuffix,\n\trandomResponseToComplimentMessage,\n\trandomResponseToThanksMessage,\n\tpossibleNay,\n\tpossibleYay,\n}\n",
@@ -4575,7 +4561,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 226,
+    "__docId__": 223,
     "kind": "function",
     "name": "randomConfusedMessage",
     "memberof": "src/main/lib/string.ts",
@@ -4608,7 +4594,7 @@
     }
   },
   {
-    "__docId__": 227,
+    "__docId__": 224,
     "kind": "function",
     "name": "randomByeMessage",
     "memberof": "src/main/lib/string.ts",
@@ -4641,7 +4627,7 @@
     }
   },
   {
-    "__docId__": 228,
+    "__docId__": 225,
     "kind": "function",
     "name": "randomGreetingPrefix",
     "memberof": "src/main/lib/string.ts",
@@ -4674,7 +4660,7 @@
     }
   },
   {
-    "__docId__": 229,
+    "__docId__": 226,
     "kind": "function",
     "name": "randomGreetingSuffix",
     "memberof": "src/main/lib/string.ts",
@@ -4696,7 +4682,7 @@
     }
   },
   {
-    "__docId__": 230,
+    "__docId__": 227,
     "kind": "function",
     "name": "randomResponseToComplimentMessage",
     "memberof": "src/main/lib/string.ts",
@@ -4729,7 +4715,7 @@
     }
   },
   {
-    "__docId__": 231,
+    "__docId__": 228,
     "kind": "function",
     "name": "randomResponseToThanksMessage",
     "memberof": "src/main/lib/string.ts",
@@ -4762,7 +4748,7 @@
     }
   },
   {
-    "__docId__": 232,
+    "__docId__": 229,
     "kind": "variable",
     "name": "possibleNay",
     "memberof": "src/main/lib/string.ts",
@@ -4782,7 +4768,7 @@
     }
   },
   {
-    "__docId__": 233,
+    "__docId__": 230,
     "kind": "variable",
     "name": "possibleYay",
     "memberof": "src/main/lib/string.ts",
@@ -4802,7 +4788,7 @@
     }
   },
   {
-    "__docId__": 234,
+    "__docId__": 231,
     "kind": "file",
     "name": "src/main/logger/index.ts",
     "content": "import chalk from 'chalk'\nimport ora from 'ora'\n\nclass Logger {\n\tprivate prefixColor\n\tconstructor() {\n\t\tthis.prefixColor = chalk.magenta\n\t}\n\n\t/**\n\t* log the info\n\t* @param text Text to display\n\t* @param load whether the text animation is loading\n\t*/\n\tpublic info(text: string, load?: boolean): void | any {\n\t\tif (load) {\n\t\t\tconst spinner = ora({\n\t\t\t\ttext: this.generateDateTimePrefix()\n\t\t\t\t+ chalk.green('info: ') + chalk.cyan(text),\n\t\t\t\tspinner: 'arc',\n\n\t\t\t})\n\t\t\tspinner.start()\n\t\t\t/**\n\t\t\t* Stop the loading animation and display afterText\n\t\t\t* @param afterText text to displat after loading animation\n\t\t\t*/\n\t\t\tconst stop = (afterText?: string) => {\n\t\t\t\tspinner.stopAndPersist({\n\t\t\t\t\ttext: this.generateDateTimePrefix()\n\t\t\t\t\t+ chalk.green('info: ') + chalk.cyan(afterText),\n\t\t\t\t\tspinner: 'arc' || 'done',\n\t\t\t\t\tsymbol: '✓',\n\t\t\t\t})\n\t\t\t}\n\t\t\treturn { stop }\n\t\t} else { this.log(text, 'info') }\n\t}\n\n\t/**\n\t * Logging the warning text\n\t * @param text warning text\n\t */\n\tpublic warn(text: string) {\n\t\tthis.log(text, 'warn')\n\t}\n\n\t/**\n\t * Logging the error text\n\t * @param text error text\n\t */\n\tpublic error(text: string) {\n\t\tthis.log(text, 'error')\n\t}\n\t/**\n\t* Logging separator symbols\n\t* @param text separator symbols\n\t*/\n\tpublic separator(text: string) {\n\t\tconsole.log(chalk.yellow(text))\n\t}\n\n\t/**\n\t * Generate date and time prefix for logging\n\t */\n\tprivate generateDateTimePrefix() {\n\t\tif (process.env.NODE_ENV === 'production') return ''\n\t\telse return '[' + this.prefixColor(new Date().toString()) + ']'\n\t}\n\t/**\n\t * Logging out the text with prefix color\n\t * @param text text to log\n\t * @param color color of primary text\n\t */\n\tprivate log(text: string, level?: 'info' | 'error' | 'warn') {\n\t\tlet color\n\t\tswitch (level) {\n\t\t\tcase 'info':\n\t\t\tcolor = chalk.green\n\t\t\tbreak\n\n\t\t\tcase 'error':\n\t\t\tcolor = chalk.red\n\t\t\tbreak\n\n\t\t\tcase 'warn':\n\t\t\tcolor = chalk.yellow\n\t\t\tbreak\n\n\t\t\tdefault:\n\t\t\tcolor = chalk.white\n\t\t}\n\t\tconsole.log(this.generateDateTimePrefix()\n\t\t+ color(`${level}: `) + chalk.cyan(text))\n\t}\n}\n\nexport default new Logger()\n",
@@ -4813,7 +4799,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 235,
+    "__docId__": 232,
     "kind": "class",
     "name": "Logger",
     "memberof": "src/main/logger/index.ts",
@@ -4829,7 +4815,7 @@
     "interface": false
   },
   {
-    "__docId__": 236,
+    "__docId__": 233,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/main/logger/index.ts~Logger",
@@ -4843,7 +4829,7 @@
     "undocument": true
   },
   {
-    "__docId__": 237,
+    "__docId__": 234,
     "kind": "member",
     "name": "prefixColor",
     "memberof": "src/main/logger/index.ts~Logger",
@@ -4860,7 +4846,7 @@
     }
   },
   {
-    "__docId__": 238,
+    "__docId__": 235,
     "kind": "method",
     "name": "info",
     "memberof": "src/main/logger/index.ts~Logger",
@@ -4900,7 +4886,7 @@
     }
   },
   {
-    "__docId__": 239,
+    "__docId__": 236,
     "kind": "method",
     "name": "warn",
     "memberof": "src/main/logger/index.ts~Logger",
@@ -4926,7 +4912,7 @@
     "return": null
   },
   {
-    "__docId__": 240,
+    "__docId__": 237,
     "kind": "method",
     "name": "error",
     "memberof": "src/main/logger/index.ts~Logger",
@@ -4952,7 +4938,7 @@
     "return": null
   },
   {
-    "__docId__": 241,
+    "__docId__": 238,
     "kind": "method",
     "name": "separator",
     "memberof": "src/main/logger/index.ts~Logger",
@@ -4978,7 +4964,7 @@
     "return": null
   },
   {
-    "__docId__": 242,
+    "__docId__": 239,
     "kind": "method",
     "name": "generateDateTimePrefix",
     "memberof": "src/main/logger/index.ts~Logger",
@@ -4997,7 +4983,7 @@
     }
   },
   {
-    "__docId__": 243,
+    "__docId__": 240,
     "kind": "method",
     "name": "log",
     "memberof": "src/main/logger/index.ts~Logger",
@@ -5033,7 +5019,7 @@
     "return": null
   },
   {
-    "__docId__": 244,
+    "__docId__": 241,
     "kind": "variable",
     "name": "logger",
     "memberof": "src/main/logger/index.ts",
@@ -5053,7 +5039,7 @@
     }
   },
   {
-    "__docId__": 245,
+    "__docId__": 242,
     "kind": "file",
     "name": "src/main/messenger/api/genericTemplate.ts",
     "content": "import Logger from '../../logger'\nimport { messaging } from '../fbrequest'\n\n/**\n * Send generic template\n * @param senderId ID of sender\n * @param text Text to be sent.\n * @param subtitle Subtitle\n * @param urlMedia Link to media\n * @param imageId Facebook ID of the image\n * @param urlButton link that should be invoked when clicking on the buttons\n * @param cb callback function when opt is executed\n */\nexport default async (senderId: string, text: string, subtitle?: string, urlMedia?: string,\n\t\t                    imageId?: string, urlButton?: string, cb?: (err: any, data: any) => any): Promise<void>  => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tmessage: {\n\t\t\t\tattachment: {\n\t\t\t\t\ttype: 'template',\n\t\t\t\t\tpayload: {\n\t\t\t\t\t\ttemplate_type: 'generic',\n\t\t\t\t\t\telements: [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\ttitle: 'Today weather',\n\t\t\t\t\t\t\t\timage_url: urlMedia,\n\t\t\t\t\t\t\t\tattachment_id: imageId,\n\t\t\t\t\t\t\t\tsubtitle: 'Hi',\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t],\n\t\t\t\t\t\tbuttons: [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\ttype: 'web_url',\n\t\t\t\t\t\t\t\turl: urlButton,\n\t\t\t\t\t\t\t\ttitle: 'View More',\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t],\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t\tmessaging_type: 'RESPONSE',\n\t\t\t},\n\t\t},\n\t}\n\tmessaging(opts, (err, resp, data) => {\n\t\tif (err) { Logger.error(err) }\n\t\tif (cb) {\n\t\t\tcb(err || (data.error && data.error.message), data)\n\t\t}\n\t})\n}\n",
@@ -5064,7 +5050,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 246,
+    "__docId__": 243,
     "kind": "function",
     "name": "genericTemplate",
     "memberof": "src/main/messenger/api/genericTemplate.ts",
@@ -5153,7 +5139,7 @@
     "return": null
   },
   {
-    "__docId__": 247,
+    "__docId__": 244,
     "kind": "file",
     "name": "src/main/messenger/api/graphApi.ts",
     "content": "import graph from 'fbgraph'\nimport { FB_PAGE_TOKEN } from '../../environment'\n\ngraph.setAccessToken(FB_PAGE_TOKEN)\ngraph.setVersion('2.6')\n\n/**\n * Get the user first and last name\n * @param sender user id\n * @return promise contains the user name\n */\nconst getUserName = (sender: string): Promise<{firstName: string, lastName: string} | null> => {\n\treturn new Promise((response) => {\n\t\tgraph.get(sender, (err, res) => {\n\t\t\tif (err) { response(null) } else {\n\t\t\t\tresponse({\n\t\t\t\t\tfirstName: res.first_name,\n\t\t\t\t\tlastName: res.last_name,\n\t\t\t\t})\n\t\t\t}\n\t\t})\n\t})\n}\n\nexport {\n\tgetUserName,\n}\n",
@@ -5164,7 +5150,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 248,
+    "__docId__": 245,
     "kind": "function",
     "name": "getUserName",
     "memberof": "src/main/messenger/api/graphApi.ts",
@@ -5200,7 +5186,7 @@
     }
   },
   {
-    "__docId__": 249,
+    "__docId__": 246,
     "kind": "file",
     "name": "src/main/messenger/api/listTemplate.ts",
     "content": "import Logger from '../../logger'\nimport { messaging } from '../fbrequest'\n\n/**\n * Send generic template\n * @param senderId ID of sender\n * @param items array of item to be place in list template\n * @param cb callback function when opt is executed\n */\nexport default async (senderId: string, items: any[], cb?: (err: any, data: any) => any): Promise<void> => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tmessage: {\n\t\t\t\tattachment: {\n\t\t\t\t\ttype: 'template',\n\t\t\t\t\tpayload: {\n\t\t\t\t\t\ttemplate_type: 'list',\n\t\t\t\t\t\ttop_element_style: 'large',\n\t\t\t\t\t\telements: items,\n\t\t\t\t\t\tbuttons: [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\ttitle: 'View More',\n\t\t\t\t\t\t\t\ttype: 'postback',\n\t\t\t\t\t\t\t\tpayload: 'viewMoreNews',\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t],\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t\tmessaging_type: 'RESPONSE',\n\t\t},\n\t}\n\tmessaging(opts, (err, resp, data) => {\n\t\tif (err) { Logger.error(err) }\n\t\tif (cb) {\n\t\t\tcb(err || (data.error && data.error.message), data)\n\t\t}\n\t})\n}\n",
@@ -5211,7 +5197,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 250,
+    "__docId__": 247,
     "kind": "function",
     "name": "listTemplate",
     "memberof": "src/main/messenger/api/listTemplate.ts",
@@ -5260,7 +5246,7 @@
     "return": null
   },
   {
-    "__docId__": 251,
+    "__docId__": 248,
     "kind": "file",
     "name": "src/main/messenger/api/mediaTemplate.ts",
     "content": "import Logger from '../../logger'\nimport { messaging } from '../fbrequest'\nimport { uploadMedia } from './utility'\n\n/**\n * Send Media template\n * @param senderId ID of sender\n * @param media Media to sent\n * @param button Button to show under the media\n * @param cb callback function when opt is executed\n */\nexport default async (senderId: string, media: MessengerTextMedia, button?: MessengerTextButton, cb?: (err: any, data: any) => any): Promise<void>  => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tmessage: {\n\t\t\t\tattachment: {\n\t\t\t\t\ttype: 'template',\n\t\t\t\t\tpayload: {\n\t\t\t\t\t\ttemplate_type: 'media',\n\t\t\t\t\t\telements: [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tmedia_type: media.type ? 'image' : 'video',\n\t\t\t\t\t\t\t\tattachment_id: media.id || await uploadMedia(media.url, media.type),\n\t\t\t\t\t\t\t\tbuttons: button ? [\n\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\ttype: 'web_url',\n\t\t\t\t\t\t\t\t\t\turl: button.url,\n\t\t\t\t\t\t\t\t\t\ttitle: button.title,\n\t\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t\t] : null,\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t],\n\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t\tmessaging_type: 'RESPONSE',\n\t\t},\n\t}\n\tmessaging(opts, (err, resp, data) => {\n\t\tif (err) { Logger.error(err) }\n\t\tif (cb) {\n\t\t\tcb(err || (data.error && data.error.message), data)\n\t\t}\n\t})\n}\n",
@@ -5271,7 +5257,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 252,
+    "__docId__": 249,
     "kind": "function",
     "name": "mediaTemplate",
     "memberof": "src/main/messenger/api/mediaTemplate.ts",
@@ -5330,7 +5316,7 @@
     "return": null
   },
   {
-    "__docId__": 253,
+    "__docId__": 250,
     "kind": "file",
     "name": "src/main/messenger/api/message.ts",
     "content": "import Logger from '../../logger'\nimport { messaging } from '../fbrequest'\n\n/**\n * Send Media template\n * @param senderId ID of sender\n * @param msg Media to sent\n * @param cb callback function when opt is executed\n */\nexport default async (senderId: string, msg: string, cb?: (err: any, data: any) => any): Promise<void>  => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tmessage: {\n\t\t\t\ttext: msg,\n\t\t\t},\n\t\t\tmessaging_type: 'RESPONSE',\n\t\t},\n\t}\n\tmessaging(opts, (err, resp, data) => {\n\t\tif (err) { Logger.error(err) }\n\t\tif (cb) {\n\t\t\tcb(err || (data.error && data.error.message), data)\n\t\t}\n\t})\n}\n",
@@ -5341,7 +5327,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 254,
+    "__docId__": 251,
     "kind": "function",
     "name": "message",
     "memberof": "src/main/messenger/api/message.ts",
@@ -5390,7 +5376,7 @@
     "return": null
   },
   {
-    "__docId__": 255,
+    "__docId__": 252,
     "kind": "file",
     "name": "src/main/messenger/api/parser.ts",
     "content": "import idx from 'idx'\nimport { formatTimeForListTemplate } from '../../externalApis/moment'\nimport Logger from '../../logger'\n\n/**\n * Parse News API articles to display on facebook messenger list template.\n * @param items Array of items to be parsed.\n */\nconst parseArticles = (items: any[]): any[]  => {\n\tlet elements = [], i = 0\n\tif (items.length > 4) { Logger.error('Trying to send list template message with more than 4 articles') }\n\tfor (const item of items) {\n\t\telements[i] = {}\n\t\telements[i].title  = item.title\n\t\telements[i].subtitle =\n\t\t`${idx(item, (_) => _.source.name)}\\n${formatTimeForListTemplate(item.publishedAt)}`\n\t\telements[i].image_url = item.urlToImage\n\t\telements[i].buttons = [{\n\t\t\ttitle: 'View',\n\t\t\ttype: 'web_url',\n\t\t\turl: item.url,\n\t\t\twebview_height_ratio: 'tall',\n\t\t}]\n\t\ti++\n\t}\n\treturn elements\n}\n\nexport {\n\tparseArticles,\n}\n",
@@ -5401,7 +5387,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 256,
+    "__docId__": 253,
     "kind": "function",
     "name": "parseArticles",
     "memberof": "src/main/messenger/api/parser.ts",
@@ -5434,7 +5420,7 @@
     }
   },
   {
-    "__docId__": 257,
+    "__docId__": 254,
     "kind": "file",
     "name": "src/main/messenger/api/quickReply.ts",
     "content": "import Logger from '../../logger'\nimport { messaging } from '../fbrequest'\n\ninterface QuickReply {\n\tcontent_type: string\n\ttitle: string\n\tpayload: string\n\timage_url: string\n}\n/**\n * Send Media template\n * @param senderId ID of sender\n * @param msg Media to sent\n * @param quickReplies quick replies options to be displayed\n * @param cb callback function when opt is executed\n */\nexport default async (senderId: string, msg: string, ...quickReplies: QuickReply[]): Promise<void>  => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tmessage: {\n\t\t\t\ttext: msg,\n\t\t\t\tquick_replies: quickReplies,\n\t\t\t},\n\t\t\tmessaging_type: 'RESPONSE',\n\t\t},\n\t}\n\tmessaging(opts, (err) => {\n\t\tif (err) { Logger.error(err) }\n\t})\n}\n",
@@ -5445,7 +5431,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 258,
+    "__docId__": 255,
     "kind": "function",
     "name": "quickReply",
     "memberof": "src/main/messenger/api/quickReply.ts",
@@ -5504,7 +5490,7 @@
     "return": null
   },
   {
-    "__docId__": 259,
+    "__docId__": 256,
     "kind": "file",
     "name": "src/main/messenger/api/sendImage.ts",
     "content": "import { messaging } from '../fbrequest'\n\n/**\n * Send image\n * @param senderId id of user\n * @param url url of the image\n * @param cb callback function\n */\nexport default async (senderId: string, url: string, cb?: (err: any, data: any) => void): Promise<void>  => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tmessage: {\n\t\t\t\tattachment: {\n\t\t\t\t\ttype: 'image',\n\t\t\t\t\tpayload: {\n\t\t\t\t\t\turl,\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t\tmessaging_type: 'RESPONSE',\n\t\t},\n\t}\n\tmessaging(opts, (err, resp, data) => {\n\t\tif (cb) {\n\t\t\tcb(err || (data.error && data.error.message), data)\n\t\t}\n\t})\n}\n",
@@ -5515,7 +5501,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 260,
+    "__docId__": 257,
     "kind": "function",
     "name": "sendImage",
     "memberof": "src/main/messenger/api/sendImage.ts",
@@ -5564,7 +5550,7 @@
     "return": null
   },
   {
-    "__docId__": 261,
+    "__docId__": 258,
     "kind": "file",
     "name": "src/main/messenger/api/senderAction.ts",
     "content": "import Logger from '../../logger'\nimport { messaging } from '../fbrequest'\n\n/**\n * Show typing on animation\n * @param senderId id of user\n * @param cb callback function\n */\nconst typingOn = async (senderId: string,  cb?: (err: any, data: any) => any): Promise<void> => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tsender_action: 'typing_on',\n\t\t\tmessaging_type: 'RESPONSE',\n\t\t},\n\t}\n\tmessaging(opts, (err, resp, data) => {\n\t\tif (err) { Logger.error(err) }\n\t\tif (cb) {\n\t\t\tcb(err || (data.error && data.error.message), data)\n\t\t}\n\t})\n}\n\n/**\n * Show typing off animation\n * @param senderId id of user\n * @param cb callback function\n */\nconst typingOff = async (senderId: string,  cb?: (err: any, data: any) => any): Promise<any>  => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tsender_action: 'typing_off',\n\t\t\tmessaging_type: 'RESPONSE',\n\t\t},\n\t}\n\tmessaging(opts, (err, resp, data) => {\n\t\tif (err) { Logger.error(err) }\n\t\tif (cb) {\n\t\t\tcb(err || (data.error && data.error.message), data)\n\t\t}\n\t})\n}\n\n/**\n * Show marking seen animation\n * @param senderId id of user\n * @param cb callback function\n */\nconst markSeen = async (senderId: string,  cb?: (err: any, data: any) => any): Promise<any>  => {\n\tconst opts = {\n\t\tform: {\n\t\t\trecipient: {\n\t\t\t\tid: senderId,\n\t\t\t},\n\t\t\tsender_action: 'mark_seen',\n\t\t\tmessaging_type: 'RESPONSE',\n\t\t},\n\t}\n\tmessaging(opts, (err, resp, data) => {\n\t\tif (err) { Logger.error(err) }\n\t\tif (cb) {\n\t\t\tcb(err || (data.error && data.error.message), data)\n\t\t}\n\t})\n}\n\nexport {\n\ttypingOn,\n\ttypingOff,\n\tmarkSeen,\n}\n",
@@ -5575,7 +5561,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 262,
+    "__docId__": 259,
     "kind": "function",
     "name": "typingOn",
     "memberof": "src/main/messenger/api/senderAction.ts",
@@ -5614,7 +5600,7 @@
     "return": null
   },
   {
-    "__docId__": 263,
+    "__docId__": 260,
     "kind": "function",
     "name": "typingOff",
     "memberof": "src/main/messenger/api/senderAction.ts",
@@ -5653,7 +5639,7 @@
     "return": null
   },
   {
-    "__docId__": 264,
+    "__docId__": 261,
     "kind": "function",
     "name": "markSeen",
     "memberof": "src/main/messenger/api/senderAction.ts",
@@ -5692,7 +5678,7 @@
     "return": null
   },
   {
-    "__docId__": 265,
+    "__docId__": 262,
     "kind": "file",
     "name": "src/main/messenger/api/utility.ts",
     "content": "import idx from 'idx'\nimport Logger from '../../logger'\nimport { uploading } from '../fbrequest'\n\ntype media = 'image' | 'video'\n/**\n *\n * @param url URL of the media to be uploaded\n * @param type type of media\n */\nconst uploadMedia = (url?: string, type?: media): Promise<any> => {\n\treturn new Promise((resolve) => {\n\t\tif (!url) { resolve(null) }\n\t\tconst opts = {\n\t\t\tform: {\n\t\t\t\tmessage: {\n\t\t\t\t\tattachment: {\n\t\t\t\t\t\ttype,\n\t\t\t\t\t\tpayload: {\n\t\t\t\t\t\t\tis_reusable: true,\n\t\t\t\t\t\t\turl,\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t}\n\t\tuploading(opts, (err, resp) => {\n\t\t\tif (err) { Logger.error(err) }\n\t\t\tresolve(idx(resp, (_) => _.body.attachment_id))\n\t\t})\n\t})\n}\n\nexport {\n\tuploadMedia,\n}\n",
@@ -5703,7 +5689,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 266,
+    "__docId__": 263,
     "kind": "function",
     "name": "uploadMedia",
     "memberof": "src/main/messenger/api/utility.ts",
@@ -5746,7 +5732,7 @@
     }
   },
   {
-    "__docId__": 267,
+    "__docId__": 264,
     "kind": "file",
     "name": "src/main/messenger/fbrequest.ts",
     "content": "import request from 'request'\nimport { FB_PAGE_TOKEN } from '../environment'\nconst messaging: any = request.defaults({\n\turi: 'https://graph.facebook.com/v2.6/me/messages',\n\tmethod: 'POST',\n\tjson: true,\n\tqs: { access_token: FB_PAGE_TOKEN },\n\theaders: { 'Content-Type': 'application/json' },\n})\n\nconst uploading: any = request.defaults({\n\turi: 'https://graph.facebook.com/v2.6/me/message_attachments',\n\tmethod: 'POST',\n\tjson: true,\n\tqs: { access_token: FB_PAGE_TOKEN },\n\theaders: { 'Content-Type': 'application/json' },\n})\n\nexport {\n\tmessaging,\n\tuploading,\n}\n",
@@ -5757,7 +5743,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 268,
+    "__docId__": 265,
     "kind": "variable",
     "name": "messaging",
     "memberof": "src/main/messenger/fbrequest.ts",
@@ -5777,7 +5763,7 @@
     }
   },
   {
-    "__docId__": 269,
+    "__docId__": 266,
     "kind": "variable",
     "name": "uploading",
     "memberof": "src/main/messenger/fbrequest.ts",
@@ -5797,7 +5783,7 @@
     }
   },
   {
-    "__docId__": 270,
+    "__docId__": 267,
     "kind": "file",
     "name": "src/main/messenger/preprocess.ts",
     "content": "import { FB_PAGE_ID, FB_PAGE_TOKEN } from '../environment'\nimport { markSeen, typingOff, typingOn } from './api/senderAction'\n\nif (!FB_PAGE_ID) throw new Error('missing FB_PAGE_ID') \nif (!FB_PAGE_TOKEN) throw new Error('missing FB_PAGE_TOKEN')\n\nexport default (messagingEvents: any, cb?: (event: any) => void) => {\n\tfor (let i = 0; i < messagingEvents.length; i++) {\n\t\tconst event = messagingEvents[i]\n\t\tconst senderId = event.sender.id\n\t\tmarkSeen(senderId)\n\t\ttypingOn(senderId)\n\t\tif (cb) cb(event)\n\t\ttypingOff(senderId)\t}\n\n}\n",
@@ -5808,7 +5794,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 271,
+    "__docId__": 268,
     "kind": "function",
     "name": "preprocess",
     "memberof": "src/main/messenger/preprocess.ts",
@@ -5840,7 +5826,7 @@
     "return": null
   },
   {
-    "__docId__": 272,
+    "__docId__": 269,
     "kind": "file",
     "name": "src/main/messenger/respond.ts",
     "content": "import { randomConfusedMessage } from '../lib/string'\nimport { waitToDo } from '../utils/timer'\nimport sendListTemplate from './api/listTemplate'\nimport sendMediaTemplate from './api/mediaTemplate'\nimport message from './api/message'\nimport sendQuickReply from './api/quickReply'\n\nconst TIME_WAITED_BEFORE_CONFIRMING = 3000\n\n/**\n* Respond in facebook messenger\n* @param {userType} user\n*/\nexport default async (user: userType): Promise<void> => {\n\ttry {\n\t\tconst fbId = user.id.replace('mes', '')\n\t\tconst response = user.response\n\t\tconst imageId = response.image && !response.image.includes('http')\n\t\t// Messenger SDK require exact object structure. Thus the need to convert mongoose object to js object\n\t\tif (!response.answerable) {\n\t\t\tawait message(fbId, randomConfusedMessage(user.name.first))\n\t\t} else if (response.simpleText && !response.image && !imageId) {\n\t\t\tawait message(fbId, response.simpleText)\n\t\t} else if (response.simpleText && (response.image || imageId)) {\n\t\t\tconst media: MessengerTextMedia = {\n\t\t\t\ttype: 'image',\n\t\t\t\t// url: response.image,\n\t\t\t\tid: response.image,\n\t\t\t}\n\t\t\t/** Need more general cases here */\n\t\t\tlet button: MessengerTextButton = null\n\t\t\tif (response.url) {\n\t\t\t\tbutton = {\n\t\t\t\t\ttitle: 'View Article',\n\t\t\t\t\turl: response.url,\n\t\t\t\t}\n\t\t\t}\n\t\t\tawait sendMediaTemplate(fbId, media, button)\n\t\t\tawait message(fbId, response.simpleText)\n\n\t\t} else if (response.cascadeText) {\n\t\t\tif (response.cascadeText.length == 1) {\n\t\t\t\tconst topArticle = response.cascadeText[0]\n\n\t\t\t\tmessage(fbId, topArticle.title, () => {\n\t\t\t\t\tconst media: MessengerTextMedia = {\n\t\t\t\t\t\ttype: 'image',\n\t\t\t\t\t\turl: topArticle.image_url,\n\t\t\t\t\t}\n\t\t\t\t\tlet button: MessengerTextButton = null\n\n\t\t\t\t\tif (topArticle.buttons[0].url) {\n\t\t\t\t\t\tbutton = {\n\t\t\t\t\t\t\ttitle: 'View Article',\n\t\t\t\t\t\t\turl: topArticle.buttons[0].url,\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\tsendMediaTemplate(fbId, media, button)\n\t\t\t\t})\n\t\t\t} else {\n\t\t\t\tawait sendListTemplate(fbId, response.cascadeText)\n\t\t\t}\n\t\t} else if (response.multipleText) {\n\t\t\tfor (const text of response.multipleText) { await message(fbId, text) }\n\t\t}\n\t\twaitToDo(TIME_WAITED_BEFORE_CONFIRMING, sendResponseConfirmation.bind(null, fbId))\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n\n/**\n* send a confirmation for the bot's response\n* @param {string} fbId\n*/\nconst sendResponseConfirmation = (fbId: string) => {\n\tsendQuickReply(fbId, 'Is this what you\\'s asking for?',\n\t{\n\t\tcontent_type: 'text',\n\t\ttitle: 'Yup!',\n\t\tpayload: 'CORRECT_SERVICE',\n\t\timage_url: 'https://vignette.wikia.nocookie.net/whentheycry/images/2/2a/Check.png/revision/latest?cb=20120629163937',\n\t},\n\t{\n\t\tcontent_type: 'text',\n\t\ttitle: 'Nope!',\n\t\tpayload: 'INCORRECT_SERVICE',\n\t\timage_url: 'https://www.clker.com/cliparts/8/3/3/4/1195445190322000997molumen_red_round_error_warning_icon.svg.med.png',\n\t})\n}\n",
@@ -5851,7 +5837,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 273,
+    "__docId__": 270,
     "kind": "variable",
     "name": "TIME_WAITED_BEFORE_CONFIRMING",
     "memberof": "src/main/messenger/respond.ts",
@@ -5872,7 +5858,7 @@
     "ignore": true
   },
   {
-    "__docId__": 274,
+    "__docId__": 271,
     "kind": "function",
     "name": "respond",
     "memberof": "src/main/messenger/respond.ts",
@@ -5905,7 +5891,7 @@
     }
   },
   {
-    "__docId__": 275,
+    "__docId__": 272,
     "kind": "function",
     "name": "sendResponseConfirmation",
     "memberof": "src/main/messenger/respond.ts",
@@ -5935,7 +5921,7 @@
     "ignore": true
   },
   {
-    "__docId__": 276,
+    "__docId__": 273,
     "kind": "file",
     "name": "src/main/model/cache.ts",
     "content": "import * as CacheProvider from '../externalApis/node-cache'\nimport Logger from '../logger'\nimport { UserDB } from './mongoDB'\n\nCacheProvider.myCache.on('expired', (key, value) => {\n\ttry {\n\t\tLogger.info('Account in cache expiring, saving to database..')\n\t\tUserDB.updateUser(key, value)\n\t} catch (e) {\n\t\tLogger.error(e)\n\t}\n})\n\n/**\n * Try to get user from cache. If not retrieve user from database\n * @param id id of user\n * @return promise that contains the user\n */\nconst getUser = async (id: string): Promise<any | Error> => {\n\ttry {\n\t\tconst account = await CacheProvider.get(id)\n\t\tif (account !== undefined) { return account } else {\n\t\t\tconst user = await UserDB.findUser(id)\n\t\t\tif (user) {\n\t\t\t\treturn typeof user.toObject === 'function' ? user.toObject() : user\n\t\t\t} else { return null }\n\t\t}\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n\n/**\n * Save user to cache\n * @param id id of user\n * @param user user object\n * @return promise that contains the response YES if succeeded. NO otherwise.\n */\nconst saveUser = async (id: string, user: any): Promise<string | Error> => {\n\ttry {\n\t\tuser = typeof user.toObject === 'function' ? user.toObject() : user\n\t\treturn await CacheProvider.save(id, user)\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n\nexport {\n\tgetUser,\n\tsaveUser,\n}\n",
@@ -5946,7 +5932,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 277,
+    "__docId__": 274,
     "kind": "function",
     "name": "getUser",
     "memberof": "src/main/model/cache.ts",
@@ -5982,7 +5968,7 @@
     }
   },
   {
-    "__docId__": 278,
+    "__docId__": 275,
     "kind": "function",
     "name": "saveUser",
     "memberof": "src/main/model/cache.ts",
@@ -6028,38 +6014,41 @@
     }
   },
   {
-    "__docId__": 279,
+    "__docId__": 276,
     "kind": "file",
-    "name": "src/main/model/database/firebasedb.ts",
-    "content": "import * as admin from 'firebase-admin'\nimport { decrypt } from '../../lib/encrypt'\nimport encryptedServiceAccount from './account.json'\nconst firebase  = process.env.NODE_ENV === 'production' ? admin.initializeApp({\n\tcredential: admin.credential.cert(decrypt(encryptedServiceAccount)),\n\tdatabaseURL: 'https://mvpapp-1ba71.firebaseio.com',\n}) : undefined\nexport default firebase\n",
+    "name": "src/main/model/firebase/index.ts",
+    "content": "import encryptedServiceAccount from './account.json'\nimport * as admin from 'firebase-admin'\nimport { decrypt } from '../../lib/encrypt'\nimport Logger from '../../logger'\n\nconst initiateConnectionToFirebase = () =>  {\n\tLogger.info('Establishing connection to firebase..')\n\treturn admin.initializeApp({\n\t\tcredential: admin.credential.cert(decrypt(encryptedServiceAccount)),\n\t\tdatabaseURL: 'https://mvpapp-1ba71.firebaseio.com',\n\t})\n}\nexport default initiateConnectionToFirebase\n",
     "static": true,
-    "longname": "/Users/heiseish/Projects/pottsRb/src/main/model/database/firebasedb.ts",
+    "longname": "/Users/heiseish/Projects/pottsRb/src/main/model/firebase/index.ts",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 280,
-    "kind": "variable",
-    "name": "firebase",
-    "memberof": "src/main/model/database/firebasedb.ts",
+    "__docId__": 277,
+    "kind": "function",
+    "name": "initiateConnectionToFirebase",
+    "memberof": "src/main/model/firebase/index.ts",
+    "generator": false,
+    "async": false,
     "static": true,
-    "longname": "src/main/model/database/firebasedb.ts~firebase",
+    "longname": "src/main/model/firebase/index.ts~initiateConnectionToFirebase",
     "access": "public",
     "export": true,
-    "importPath": "potts-reborn/src/main/model/database/firebasedb.ts",
-    "importStyle": "firebase",
+    "importPath": "potts-reborn/src/main/model/firebase/index.ts",
+    "importStyle": "initiateConnectionToFirebase",
     "description": null,
-    "lineNumber": 4,
+    "lineNumber": 5,
     "undocument": true,
-    "type": {
+    "params": [],
+    "return": {
       "types": [
         "*"
       ]
     }
   },
   {
-    "__docId__": 281,
+    "__docId__": 278,
     "kind": "file",
     "name": "src/main/model/mongoDB/db.ts",
     "content": "import mongoose from 'mongoose'\nimport {\n\tMONGO_DB_URI,\n} from '../../environment'\nimport Logger from '../../logger'\nconst options = {\n\tautoReconnect: true,\n\treconnectTries: 100, // Never stop trying to reconnect\n\treconnectInterval: 500, // Reconnect every 500ms\n\tpoolSize: 10, // Maintain up to 10 socket connections\n\tbufferMaxEntries: 0,\n\tuseNewUrlParser: true,\n}\nmongoose.connect(MONGO_DB_URI, options).then(\n\t() => Logger.info('Established connection to mlab'),\n\t(err) => Logger.error(err),\n)\nmongoose.set('useCreateIndex', true)\nmongoose.connection.on('reconnectFailed', () => Logger.error('Mongoose attemp to recoonect failed'))\nexport default mongoose\n",
@@ -6070,7 +6059,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 282,
+    "__docId__": 279,
     "kind": "variable",
     "name": "options",
     "memberof": "src/main/model/mongoDB/db.ts",
@@ -6091,7 +6080,7 @@
     "ignore": true
   },
   {
-    "__docId__": 283,
+    "__docId__": 280,
     "kind": "file",
     "name": "src/main/model/mongoDB/doc.ts",
     "content": "import mongoose from './db'\nconst Schema = mongoose.Schema\nexport default new Schema({\n\ttype: String,\n\tvalue: String,\n}, { strict: false , _id : false })\n",
@@ -6102,7 +6091,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 284,
+    "__docId__": 281,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/doc.ts",
@@ -6123,7 +6112,7 @@
     "ignore": true
   },
   {
-    "__docId__": 285,
+    "__docId__": 282,
     "kind": "file",
     "name": "src/main/model/mongoDB/entity.ts",
     "content": "import mongoose from './db'\nconst Schema = mongoose.Schema\nexport default new Schema({\n\tlastIntent: String,\n\tsentiment: String,\n}, { strict: false , _id : false })\n",
@@ -6134,7 +6123,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 286,
+    "__docId__": 283,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/entity.ts",
@@ -6155,7 +6144,7 @@
     "ignore": true
   },
   {
-    "__docId__": 287,
+    "__docId__": 284,
     "kind": "file",
     "name": "src/main/model/mongoDB/index.ts",
     "content": "import { Text }  from './text'\nimport UserDB from './user'\n\nexport {\n\tUserDB,\n\tText as TextDB,\n}\n",
@@ -6166,7 +6155,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 288,
+    "__docId__": 285,
     "kind": "file",
     "name": "src/main/model/mongoDB/listTemplateButton.ts",
     "content": "import mongoose from './db'\nconst Schema = mongoose.Schema\nexport default new Schema({\n\ttitle: String,\n\ttype: String,\n\turl: String,\n\twebview_height_ratio: String,\n}, { strict: false, _id : false  })\n",
@@ -6177,7 +6166,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 289,
+    "__docId__": 286,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/listTemplateButton.ts",
@@ -6198,7 +6187,7 @@
     "ignore": true
   },
   {
-    "__docId__": 290,
+    "__docId__": 287,
     "kind": "file",
     "name": "src/main/model/mongoDB/location.ts",
     "content": "import mongoose from './db'\nconst Schema = mongoose.Schema\nexport default new Schema({\n\tlat: Number || String,\n\tlong: Number || String,\n\tformattedAddress: String,\n}, { strict: false, _id : false  })\n",
@@ -6209,7 +6198,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 291,
+    "__docId__": 288,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/location.ts",
@@ -6230,7 +6219,7 @@
     "ignore": true
   },
   {
-    "__docId__": 292,
+    "__docId__": 289,
     "kind": "file",
     "name": "src/main/model/mongoDB/name.ts",
     "content": "import mongoose from './db'\nconst Schema = mongoose.Schema\nexport default new Schema({\n\tfirst: String,\n\tlast: String,\n\tfull: { type: String, index: true},\n}, { strict: false, _id : false  })\n",
@@ -6241,7 +6230,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 293,
+    "__docId__": 290,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/name.ts",
@@ -6262,7 +6251,7 @@
     "ignore": true
   },
   {
-    "__docId__": 294,
+    "__docId__": 291,
     "kind": "file",
     "name": "src/main/model/mongoDB/response.ts",
     "content": "import mongoose from './db'\nimport singleCascadeTextSchema from './singleCascadeText'\n\nconst Schema = mongoose.Schema\nexport default new Schema({\n\tanswerable: Boolean,\n\tsimpleText: String,\n\timage: String,\n\timageId: Number,\n\turl: String,\n\tcascadeText: [singleCascadeTextSchema],\n\tmultipleText: [String],\n}, { strict: false, _id : false  })\n",
@@ -6273,7 +6262,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 295,
+    "__docId__": 292,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/response.ts",
@@ -6294,7 +6283,7 @@
     "ignore": true
   },
   {
-    "__docId__": 296,
+    "__docId__": 293,
     "kind": "file",
     "name": "src/main/model/mongoDB/singleCascadeText.ts",
     "content": "import mongoose from './db'\nimport listTemplateButtonSchema from './listTemplateButton'\nconst Schema = mongoose.Schema\nexport default new Schema({\n\ttitle: String,\n\tsubtitle: String,\n\timage_url: String,\n\tbuttons: [listTemplateButtonSchema],\n}, { strict: false, _id : false  })\n",
@@ -6305,7 +6294,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 297,
+    "__docId__": 294,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/singleCascadeText.ts",
@@ -6326,7 +6315,7 @@
     "ignore": true
   },
   {
-    "__docId__": 298,
+    "__docId__": 295,
     "kind": "file",
     "name": "src/main/model/mongoDB/text.ts",
     "content": "import mongoose from './db'\nconst Schema = mongoose.Schema\nconst textSchema = new Schema({\n\tcorrectlyResponded: { type: Boolean, default: false, index: true},\n\toriginalText: String,\n\ttokenizedText: [String],\n\ttimeStamp: { type: Date, default: Date.now},\n}, { strict: false })\n\ntextSchema.statics.findAll = function() {\n\tthis.find({}, function(err, texts) {\n\t\tif (err) { return Promise.reject(err) } else { return Promise.resolve(texts) }\n\t})\n}\n\ntextSchema.statics.findIncorrectResponse = function() {\n\tthis.find({correctlyResponded: false}, (err, texts) => {\n\t\tif (err) { return Promise.reject(err) } else { return Promise.resolve(texts) }\n\t})\n}\n\ntextSchema.statics.deleteAll = function() {\n\tthis.find({}, function(err, texts) {\n\t\tif (err) { return Promise.reject(err) } else {\n\t\t\tfor (const text of texts) {\n\t\t\t\ttext.remove((err) => {\n\t\t\t\t\tif (err) { return Promise.reject(err) }\n\t\t\t\t})\n\t\t\t}\n\t\t}\n\t})\n}\n\nconst Text = mongoose.model('Text', textSchema)\nexport {\n\tText,\n\ttextSchema,\n}\n",
@@ -6337,7 +6326,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 299,
+    "__docId__": 296,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/text.ts",
@@ -6358,7 +6347,7 @@
     "ignore": true
   },
   {
-    "__docId__": 300,
+    "__docId__": 297,
     "kind": "function",
     "name": "findAll",
     "memberof": "src/main/model/mongoDB/text.ts",
@@ -6378,7 +6367,7 @@
     "ignore": true
   },
   {
-    "__docId__": 301,
+    "__docId__": 298,
     "kind": "function",
     "name": "findIncorrectResponse",
     "memberof": "src/main/model/mongoDB/text.ts",
@@ -6398,7 +6387,7 @@
     "ignore": true
   },
   {
-    "__docId__": 302,
+    "__docId__": 299,
     "kind": "function",
     "name": "deleteAll",
     "memberof": "src/main/model/mongoDB/text.ts",
@@ -6418,7 +6407,7 @@
     "ignore": true
   },
   {
-    "__docId__": 303,
+    "__docId__": 300,
     "kind": "variable",
     "name": "Text",
     "memberof": "src/main/model/mongoDB/text.ts",
@@ -6438,7 +6427,7 @@
     }
   },
   {
-    "__docId__": 304,
+    "__docId__": 301,
     "kind": "variable",
     "name": "textSchema",
     "memberof": "src/main/model/mongoDB/text.ts",
@@ -6458,7 +6447,7 @@
     }
   },
   {
-    "__docId__": 305,
+    "__docId__": 302,
     "kind": "file",
     "name": "src/main/model/mongoDB/user.ts",
     "content": "import mongoose from './db'\nimport docSchema from './doc'\nimport entitySchema from './entity'\nimport locationSchema from './location'\nimport nameSchema from './name'\nimport responseSchema from './response'\nimport { textSchema } from './text'\n\nconst Schema = mongoose.Schema\nconst userSchema = new Schema({\n\tid: { type: String, require: true, unique: true, index: true },\n\tname: nameSchema,\n\tlastLocation: locationSchema,\n\tlastText: String,\n\tlastDoc: docSchema,\n\ttext: [textSchema],\n\tentity: entitySchema,\n\tresponse: responseSchema,\n\tlocale: String,\n}, { strict: false })\n\nuserSchema.statics.findAll = function() {\n\treturn new Promise((resolve, reject) => {\n\t\tthis.find({}, function(err, users) {\n\t\t\tif (err) { return reject(err) } else { return resolve(users) }\n\t\t})\n\t})\n\n}\n\nuserSchema.statics.updateUser = function(id: string, user: any) {\n\treturn new Promise((resolve, reject) => {\n\t\tthis.findOneAndUpdate({id: new RegExp(id, 'i')}, user, (err, newUser) => {\n\t\t\tif (err) { return reject(err) } else { return resolve(newUser) }\n\t\t})\n\t})\n}\n\nuserSchema.statics.findUser = function(id: string) {\n\treturn new Promise((resolve, reject) => {\n\t\tthis.findOne({id: new RegExp(id, 'i')}, (err, user) => {\n\t\t\tif (err) { reject(err) }\n\t\t\tif (user) { resolve(user) } else { resolve(null) }\n\t\t})\n\t})\n\n}\n\nuserSchema.statics.addUser = function(user: any) {\n\treturn new Promise((resolve, reject) => {\n\t\tconst newUser = new this()\n\t\tObject.keys(user).forEach((key) => {\n\t\t\tnewUser[key] = user[key]\n\t\t})\n\t\tnewUser.save((err, user)  => {\n\t\t\tif (err) { return reject(err) } else { return resolve(user) }\n\t\t})\n\t})\n\n}\n\nuserSchema.statics.deleteUser = function(id) {\n\treturn new Promise((resolve, reject) => {\n\t\tthis.findOne({id: new RegExp(id, 'i')}, (err, user) => {\n\t\t\tif (err) { return reject(err) }\n\t\t\tif (user != null) {\n\t\t\t\tuser.remove((err) =>  {\n\t\t\t\t\tif (err) { return reject(err) }\n\t\t\t\t})\n\t\t\t} else { return reject('No such user') }\n\t\t})\n\t})\n\n}\nexport default mongoose.model('User', userSchema)\n",
@@ -6469,7 +6458,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 306,
+    "__docId__": 303,
     "kind": "variable",
     "name": "Schema",
     "memberof": "src/main/model/mongoDB/user.ts",
@@ -6490,7 +6479,7 @@
     "ignore": true
   },
   {
-    "__docId__": 307,
+    "__docId__": 304,
     "kind": "variable",
     "name": "userSchema",
     "memberof": "src/main/model/mongoDB/user.ts",
@@ -6511,7 +6500,7 @@
     "ignore": true
   },
   {
-    "__docId__": 308,
+    "__docId__": 305,
     "kind": "function",
     "name": "findAll",
     "memberof": "src/main/model/mongoDB/user.ts",
@@ -6535,7 +6524,7 @@
     "ignore": true
   },
   {
-    "__docId__": 309,
+    "__docId__": 306,
     "kind": "function",
     "name": "updateUser",
     "memberof": "src/main/model/mongoDB/user.ts",
@@ -6572,7 +6561,7 @@
     "ignore": true
   },
   {
-    "__docId__": 310,
+    "__docId__": 307,
     "kind": "function",
     "name": "findUser",
     "memberof": "src/main/model/mongoDB/user.ts",
@@ -6603,7 +6592,7 @@
     "ignore": true
   },
   {
-    "__docId__": 311,
+    "__docId__": 308,
     "kind": "function",
     "name": "addUser",
     "memberof": "src/main/model/mongoDB/user.ts",
@@ -6634,7 +6623,7 @@
     "ignore": true
   },
   {
-    "__docId__": 312,
+    "__docId__": 309,
     "kind": "function",
     "name": "deleteUser",
     "memberof": "src/main/model/mongoDB/user.ts",
@@ -6665,7 +6654,7 @@
     "ignore": true
   },
   {
-    "__docId__": 313,
+    "__docId__": 310,
     "kind": "file",
     "name": "src/main/preprocess.ts",
     "content": "import messengerPreprocess  from './messenger/preprocess'\nimport telegramPreprocess from './telegram/preprocess'\n\nexport {\n\ttelegramPreprocess,\n\tmessengerPreprocess,\n}\n",
@@ -6676,7 +6665,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 314,
+    "__docId__": 311,
     "kind": "file",
     "name": "src/main/respond.ts",
     "content": "import { translate } from './externalApis/@google/translate'\nimport Logger from './logger'\nimport respondMessenger from './messenger/respond'\nimport respondTelegram from './telegram/respond'\n/**\n* Respond to original message\n* @param {supportedPlatform} platform\n* @param {any} payload\n* @param {userType} user\n*/\nexport default async (platform: supportedPlatform, payload: any, user: userType): Promise<void> => {\n\ttry {\n\t\tconst log = Logger.info('Responding...', true)\n\t\tuser = await prepareResponseForSending(user)\n\t\tswitch (platform) {\n\t\t\tcase 'telegram':\n\t\t\tawait respondTelegram(payload, user)\n\t\t\tbreak\n\n\t\t\tcase 'messenger':\n\t\t\tawait respondMessenger(user)\n\t\t\tbreak\n\n\t\t\tdefault:\n\n\t\t}\n\t\tlog.stop('Responded.')\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n\n/**\n* Sync the language of the response with the locale of the convo\n* @param {userType} user\n*/\nconst prepareResponseForSending = async (user: userType): Promise<userType> => {\n\ttry {\n\t\tconst response = user.response\n\t\tif (response.simpleText) {\n\t\t\tconst responseLang = 'eng'\n\t\t\tif (responseLang !== user.locale) {\n\t\t\t\tuser.response = {\n\t\t\t\t\t...response,\n\t\t\t\t\tsimpleText: await translate(response.simpleText, user.locale),\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn user\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n",
@@ -6687,7 +6676,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 315,
+    "__docId__": 312,
     "kind": "function",
     "name": "respond",
     "memberof": "src/main/respond.ts",
@@ -6740,7 +6729,7 @@
     }
   },
   {
-    "__docId__": 316,
+    "__docId__": 313,
     "kind": "function",
     "name": "prepareResponseForSending",
     "memberof": "src/main/respond.ts",
@@ -6774,7 +6763,7 @@
     "ignore": true
   },
   {
-    "__docId__": 317,
+    "__docId__": 314,
     "kind": "file",
     "name": "src/main/retrieveOrCreateUser.ts",
     "content": "import Logger from './logger'\nimport { getUserName } from './messenger/api/graphApi'\nimport {\n\tgetUser,\n\tsaveUser,\n} from './model/cache'\nimport UserDB from './model/mongoDB/user'\n\n/**\n* Return a partial unique userId from incoming event to identify user\n* @param {supportedPlatform} platform supported platform currently\n* @param {any} payload\n* @return promise contains the updated user\n*/\nexport default async (partialUniqueId: string, platform: supportedPlatform, payload: any): Promise<userType> => {\n\ttry {\n\t\tconst user = await getUser(partialUniqueId)\n\t\tif (user) {\n\t\t\treturn user\n\t\t} else {\n\t\t\tconst newUser = await createNewUser(partialUniqueId, platform, payload)\n\t\t\tawait UserDB.addUser(newUser)\n\t\t\tsaveUser(partialUniqueId, newUser)\n\t\t\treturn newUser\n\t\t}\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n\n/**\n * Create new user based on the payload\n * @param {string} partialUniqueId\n * @param {supportedPlatform} platform\n * @param {any} payload\n * @return user object\n */\nconst createNewUser = async (partialUniqueId: string, platform: supportedPlatform, payload: any): Promise<userType> => {\n\n\ttry {\n\t\tconst log = Logger.info('Creating new user...', true)\n\t\tconst user: userType = new UserDB({\n\t\t\tid: partialUniqueId,\n\t\t\tlocale: 'eng',\n\t\t\tentity: {\n\t\t\t\tlastIntent: null,\n\t\t\t},\n\t\t})\n\t\tlet name\n\t\tswitch (platform) {\n\t\tcase 'telegram':\n\t\t\tuser.name = {\n\t\t\t\tfirst: payload.from.first_name,\n\t\t\t}\n\t\t\tbreak\n\n\t\tcase 'messenger':\n\t\t\tname = await getUserName(user.id.replace('mes', ''))\n\t\t\tif (name) {\n\t\t\t\tconst { firstName, lastName } = name\n\t\t\t\tuser.name = {\n\t\t\t\t\tfirst: firstName,\n\t\t\t\t\tlast: lastName,\n\t\t\t\t\tfull: `${firstName} ${lastName}`,\n\t\t\t\t}\n\t\t\t}\n\t\t\tbreak\n\n\t\tdefault:\n\n\t\t}\n\t\tlog.stop('Created new user.')\n\t\treturn user\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n",
@@ -6785,7 +6774,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 318,
+    "__docId__": 315,
     "kind": "function",
     "name": "retrieveOrCreateUser",
     "memberof": "src/main/retrieveOrCreateUser.ts",
@@ -6831,7 +6820,7 @@
     }
   },
   {
-    "__docId__": 319,
+    "__docId__": 316,
     "kind": "function",
     "name": "createNewUser",
     "memberof": "src/main/retrieveOrCreateUser.ts",
@@ -6888,7 +6877,255 @@
     "ignore": true
   },
   {
+    "__docId__": 317,
+    "kind": "file",
+    "name": "src/main/streaming/index.ts",
+    "content": "import { getPlatformAndId } from './../utils/account'\nimport Logger from '../logger'\nimport MesMessage from '../messenger/api/message'\nimport MesSendImage from '../messenger/api/sendImage'\nimport { tlgImage, tlgMessage }   from '../telegram/api/'\n\n\ninterface StreamableObject {\n\ttext?: string,\n\timage?: string\n}\n/**\n * \n * @param toStream object to stream\n * @param firebase ref to firebase\n */\nconst stream = (toStream: StreamableObject, firebase: any):void => {\n\tfirebase.database().ref('restricted_access/streaming/').once('value').then(snap => {\n\t\tconst result = snap.val()\n\t\tlet audience\n\t\tif (Array.isArray(result)) audience = result\n\t\telse if (typeof result === 'object') audience = Object.values(result)\n\t\tfor (let userId of audience) {\n\t\t\tconst {\n\t\t\t\tplatform,\n\t\t\t\tid,\n\t\t\t} = getPlatformAndId(userId)\n\t\t\tlet message, image\n\t\t\tif (platform === 'messenger') {\n\t\t\t\tmessage = MesMessage\n\t\t\t\timage = MesSendImage\n\t\t\t} else {\n\t\t\t\tmessage = tlgMessage\n\t\t\t\timage = tlgImage\n\t\t\t}\n\t\t\tif (toStream.text) message(id, toStream.text)\n\t\t\tif (toStream.image) image(id, toStream.image) \n\t\t}\n\t}, (err) => {\n\t\tLogger.error(err)\n\t})\n}\n\nexport default stream",
+    "static": true,
+    "longname": "/Users/heiseish/Projects/pottsRb/src/main/streaming/index.ts",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 318,
+    "kind": "function",
+    "name": "stream",
+    "memberof": "src/main/streaming/index.ts",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/main/streaming/index.ts~stream",
+    "access": "public",
+    "export": true,
+    "importPath": "potts-reborn/src/main/streaming/index.ts",
+    "importStyle": "stream",
+    "description": "",
+    "lineNumber": 11,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "toStream",
+        "description": "object to stream"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "firebase",
+        "description": "ref to firebase"
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 319,
+    "kind": "file",
+    "name": "src/main/streaming/twitter.ts",
+    "content": "import idx from  'idx'\nimport { Observable } from 'rxjs'\nimport Logger from '../logger'\nimport { client } from '../externalApis/@twitter'\nimport stream from './'\n\nconst POKEMONGO_TWITTER = '2839430431'\nconst WYK_TWITTER = '44680622'\nconst MY_TWITTER = '700623960'\nconst listOfStreams = [\n\tPOKEMONGO_TWITTER,\n\tWYK_TWITTER,\n\tMY_TWITTER,\n]\n\ninterface OberservableTweet {\n\tname: string\n\ttext: string\n\timage: string\n\taudience: string[]\n}\n\n/**\n * Class for twitter streaming\n */\nexport default class TwitterStreaming {\n\tpublic streaming\n\tpublic twitterStreaming\n\t\n\t/**\n\t * Constructor for twitter streaming class\n\t */\n\tconstructor() {\n\t\tthis.streaming = Observable.create((observer) => {\n\t\t\tconst twitter = client.stream('statuses/filter', {follow: listOfStreams.join(',')})\n\t\t\ttwitter.on('data', (tweet) => {\n\t\t\t\tif (listOfStreams.includes(tweet.user.id_str)) {\n\t\t\t\t\tobserver.next({\n\t\t\t\t\t\tname: tweet.user.name,\n\t\t\t\t\t\ttext: tweet.text,\n\t\t\t\t\t\timage: idx(tweet, (_) => _.extended_entities.media[0].media_url_https) || null\n\t\t\t\t\t})\n\t\t\t\t}\n\t\t\t})\n\t\t\ttwitter.on('error', (error) => {\n\t\t\t\tobserver.error(error)\n\t\t\t})\n\t\t\t\n\t\t\treturn () => {\n\t\t\t\ttwitter.destroy()\n\t\t\t}\n\t\t})\n\t}\n\t\n\t/**\n\t * Start listenning to twitter streaming api\n\t * @param firebase ref to firebase module\n\t */\n\tpublic startStreaming(firebase: any):void {\n\t\tLogger.info('Starting twitter stream')\n\t\tthis.twitterStreaming = this.streaming.subscribe({\n\t\t\tnext: (x: OberservableTweet) => {\n\t\t\t\tstream({\n\t\t\t\t\ttext: x.name + ': ' + x.text,\n\t\t\t\t\timage: x.image\n\t\t\t\t}, firebase)\n\t\t\t},\n\t\t\terror: (err) => Logger.error('something wrong occurred: ' + err),\n\t\t\tcomplete: () => Logger.info('done'),\n\t\t})\n\t}\n\t\n\t/**\n\t * Terminate the stream\n\t */\n\tpublic stopStreaming(): void {\n\t\tLogger.warn('Stopping Twitter stream')\n\t\tthis.twitterStreaming.unsubscribe()\t\n\t}\n}\n",
+    "static": true,
+    "longname": "/Users/heiseish/Projects/pottsRb/src/main/streaming/twitter.ts",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
     "__docId__": 320,
+    "kind": "variable",
+    "name": "POKEMONGO_TWITTER",
+    "memberof": "src/main/streaming/twitter.ts",
+    "static": true,
+    "longname": "src/main/streaming/twitter.ts~POKEMONGO_TWITTER",
+    "access": "public",
+    "export": false,
+    "importPath": "potts-reborn/src/main/streaming/twitter.ts",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 321,
+    "kind": "variable",
+    "name": "WYK_TWITTER",
+    "memberof": "src/main/streaming/twitter.ts",
+    "static": true,
+    "longname": "src/main/streaming/twitter.ts~WYK_TWITTER",
+    "access": "public",
+    "export": false,
+    "importPath": "potts-reborn/src/main/streaming/twitter.ts",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 322,
+    "kind": "variable",
+    "name": "MY_TWITTER",
+    "memberof": "src/main/streaming/twitter.ts",
+    "static": true,
+    "longname": "src/main/streaming/twitter.ts~MY_TWITTER",
+    "access": "public",
+    "export": false,
+    "importPath": "potts-reborn/src/main/streaming/twitter.ts",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 323,
+    "kind": "variable",
+    "name": "listOfStreams",
+    "memberof": "src/main/streaming/twitter.ts",
+    "static": true,
+    "longname": "src/main/streaming/twitter.ts~listOfStreams",
+    "access": "public",
+    "export": false,
+    "importPath": "potts-reborn/src/main/streaming/twitter.ts",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 324,
+    "kind": "class",
+    "name": "TwitterStreaming",
+    "memberof": "src/main/streaming/twitter.ts",
+    "static": true,
+    "longname": "src/main/streaming/twitter.ts~TwitterStreaming",
+    "access": "public",
+    "export": true,
+    "importPath": "potts-reborn/src/main/streaming/twitter.ts",
+    "importStyle": "TwitterStreaming",
+    "description": "Class for twitter streaming",
+    "lineNumber": 26,
+    "interface": false
+  },
+  {
+    "__docId__": 325,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/main/streaming/twitter.ts~TwitterStreaming",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/main/streaming/twitter.ts~TwitterStreaming#constructor",
+    "access": "public",
+    "description": "Constructor for twitter streaming class",
+    "lineNumber": 24
+  },
+  {
+    "__docId__": 326,
+    "kind": "member",
+    "name": "streaming",
+    "memberof": "src/main/streaming/twitter.ts~TwitterStreaming",
+    "static": false,
+    "longname": "src/main/streaming/twitter.ts~TwitterStreaming#streaming",
+    "access": "public",
+    "description": null,
+    "lineNumber": 25,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 327,
+    "kind": "method",
+    "name": "startStreaming",
+    "memberof": "src/main/streaming/twitter.ts~TwitterStreaming",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/main/streaming/twitter.ts~TwitterStreaming#startStreaming",
+    "access": "public",
+    "description": "Start listenning to twitter streaming api",
+    "lineNumber": 59,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "undefined"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "firebase",
+        "description": ""
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 328,
+    "kind": "member",
+    "name": "twitterStreaming",
+    "memberof": "src/main/streaming/twitter.ts~TwitterStreaming",
+    "static": false,
+    "longname": "src/main/streaming/twitter.ts~TwitterStreaming#twitterStreaming",
+    "access": "public",
+    "description": null,
+    "lineNumber": 54,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 329,
+    "kind": "method",
+    "name": "stopStreaming",
+    "memberof": "src/main/streaming/twitter.ts~TwitterStreaming",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/main/streaming/twitter.ts~TwitterStreaming#stopStreaming",
+    "access": "public",
+    "description": "Terminate the stream",
+    "lineNumber": 76,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 330,
     "kind": "file",
     "name": "src/main/telegram/api/image.ts",
     "content": "import bot from '../'\nexport default async (chatId: string | number, url: string | Buffer, reply?: boolean, messageId?: string | number): Promise<void | Error> => {\n\ttry {\n\t\tif (reply) {\n\t\t\treturn await bot.sendPhoto(chatId, url, {\n\t\t\t\treply_to_message_id: messageId,\n\t\t\t})\n\t\t} else { return await bot.sendPhoto(chatId, url) }\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n",
@@ -6899,7 +7136,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 321,
+    "__docId__": 331,
     "kind": "function",
     "name": "image",
     "memberof": "src/main/telegram/api/image.ts",
@@ -6947,7 +7184,7 @@
     }
   },
   {
-    "__docId__": 322,
+    "__docId__": 332,
     "kind": "file",
     "name": "src/main/telegram/api/index.ts",
     "content": "import tlgImage from './image'\nimport tlgMessage from './message'\n\nexport {\n\ttlgMessage,\n\ttlgImage,\n}\n",
@@ -6958,7 +7195,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 323,
+    "__docId__": 333,
     "kind": "file",
     "name": "src/main/telegram/api/message.ts",
     "content": "import bot from '../'\nexport default async (chatId: string | number, text: string, reply?: boolean, messageId?: string | number): Promise<void | Error> => {\n\ttry {\n\t\tif (reply) {\n\t\t\treturn await bot.sendMessage(chatId, text, {reply_to_message_id: messageId})\n\t\t} else {\n\t\t\treturn await bot.sendMessage(chatId, text)\n\t\t}\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n\n}\n",
@@ -6969,7 +7206,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 324,
+    "__docId__": 334,
     "kind": "function",
     "name": "message",
     "memberof": "src/main/telegram/api/message.ts",
@@ -7017,7 +7254,7 @@
     }
   },
   {
-    "__docId__": 325,
+    "__docId__": 335,
     "kind": "file",
     "name": "src/main/telegram/index.ts",
     "content": "process.env.NTBA_FIX_319 = '1'\nimport moduleBot from 'node-telegram-bot-api'\nimport { TELEGRAM_TOKEN } from '../environment'\nif (!TELEGRAM_TOKEN) { throw new Error('missing telegram token') }\nconst telegramBot: any = new moduleBot(TELEGRAM_TOKEN, {polling: true})\ntelegramBot.on('polling-error', (err) => {\n\tconst Logger = require('../logger')\n\tLogger.error(err)\n})\nexport default telegramBot\n",
@@ -7028,7 +7265,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 326,
+    "__docId__": 336,
     "kind": "file",
     "name": "src/main/telegram/preprocess.ts",
     "content": "/**\n* Only reply to private IM or group message that tag the bot\n* @param {any} msg\n* @return a string if message is valid or null\n*/\nexport default (msg: any): string | null => {\n\tif (msg.from.id === msg.chat.id\n\t\t|| msg.text.indexOf('@openAImatchThis_bot') !== -1)\n\t\t\treturn {\n\t\t\t\t...msg,\n\t\t\t\ttext: msg.text.replace('@openAImatchThis_bot', '')\n\t\t\t}\n\telse return null\n}\n",
@@ -7039,7 +7276,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 327,
+    "__docId__": 337,
     "kind": "function",
     "name": "preprocess",
     "memberof": "src/main/telegram/preprocess.ts",
@@ -7075,7 +7312,7 @@
     }
   },
   {
-    "__docId__": 328,
+    "__docId__": 338,
     "kind": "file",
     "name": "src/main/telegram/respond.ts",
     "content": "import { randomConfusedMessage } from '../lib/string'\nimport { tlgImage, tlgMessage } from './api'\n/**\n* Respond in telegram\n* @param {any} payload\n* @param {userType} user\n*/\nexport default async (payload: any, user: userType): Promise<void | Error> => {\n\ttry {\n\t\tconst chat = payload.chat.id\n\t\tconst msgId = payload.message_id\n\t\tconst response = user.response\n\n\t\tif (!response.answerable) {\n\t\t\tawait tlgMessage(chat, randomConfusedMessage(user.name.first), true, msgId)\n\t\t\treturn\n\t\t}\n\n\t\tif (response.simpleText) {\n\t\t\tawait tlgMessage(chat, response.simpleText, true, msgId)\n\t\t\tif (response.image) { await tlgImage(chat, response.image) }\n\t\t} else if (response.cascadeText) {\n\t\t\tfor (const i of response.cascadeText) {\n\t\t\t\tawait tlgMessage(chat, i.title + '\\n' + i.buttons[0].url)\n\t\t\t\tawait tlgImage(chat, i.image_url)\n\t\t\t}\n\t\t} else if (response.multipleText) {\n\t\t\tfor (const text of response.multipleText) { await tlgMessage(chat, text) }\n\t\t}\n\t} catch (e) {\n\t\treturn Promise.reject(e)\n\t}\n}\n",
@@ -7086,7 +7323,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 329,
+    "__docId__": 339,
     "kind": "function",
     "name": "respond",
     "memberof": "src/main/telegram/respond.ts",
@@ -7129,7 +7366,7 @@
     }
   },
   {
-    "__docId__": 330,
+    "__docId__": 340,
     "kind": "file",
     "name": "src/main/types/json.d.ts",
     "content": "declare module '*.json' {\n    const value: any\n    export default value\n}\n",
@@ -7140,7 +7377,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 331,
+    "__docId__": 341,
     "kind": "file",
     "name": "src/main/types/model.d.ts",
     "content": "declare interface messengerEntitiesType {\n\tgreetings?: any\n\tthanks?: any\n\tbye?: any\n\tdatetime?: any\n\tamount_of_money?: any\n\tphone_number?: any\n\temail?: any\n\tdistance?: any\n\tquantity?: any\n\ttemperature?: any\n\tvolume?: any\n\tlocation?: any\n\tduration?: any\n\turl?: any\n\tsentiment?: any\n}\n\ndeclare interface databaseTextType {\n\t[n: number]: {\n\t\toriginalText: string,\n\t\ttokenizedText: {\n\t\t\t[n: number]: string,\n\t\t},\n\t\ttimeStamp: number,\n\t}\n}\n\ndeclare type localTextType = Array<{\n\toriginalText: string,\n\ttokenizedText: string[],\n\ttimeStamp: number,\n}>\n\ndeclare interface userType {\n\tid: string\n\tname?: {\n\t\tfirst?: string,\n\t\tlast?: string,\n\t\tfull?: string,\n\t}\n\tlastLocation?: {\n\t\tlat?: number | string,\n\t\tlong?: number | string,\n\t\tformattedAddress?: string,\n\t}\n\tlastDoc?: {\n\t\tvalue?: number | string,\n\t\ttype?: 'image' | 'video' | 'location' | 'QUICK_REPLY' | 'audio',\n\t}\n\tlastText?: string\n\ttext?: Text[]\n\tentity?: {\n\t\tlastIntent?: string,\n\t\tsentiment?: string,\n\t}\n\ttoObject?: () => userType\n\tresponse?: {\n\t\tanswerable?: Boolean,\n\t\tsimpleText?: string,\n\t\timage?: string,\n\t\tcascadeText?: cascadeTextType,\n\t\tmultipleText?: string[],\n\t\turl?: string,\n\t}\n\tlocale: string\n}\n\ndeclare type cascadeTextType = Array<{\n\ttitle: string,\n\timage: string,\n\timage_url: string,\n\tbuttons: cascadeTextButton[],\n}>\n\ndeclare interface cascadeTextButton {\n\ttitle: string,\n\ttype: 'web_url',\n\turl: string,\n\twebview_height_ratio: 'tall' | 'short',\n}\n",
@@ -7151,7 +7388,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 332,
+    "__docId__": 342,
     "kind": "file",
     "name": "src/main/types/platform.d.ts",
     "content": "declare type supportedPlatform = 'messenger' | 'telegram'\n\ndeclare interface MessengerTextMedia {\n\ttype: 'image' | 'video'\n\turl?: string\n\tid?: string | number | null\n}\ndeclare type MessengerTextButton = {\n\ttitle?: string,\n\turl?: string,\n} | null\t\n",
@@ -7162,7 +7399,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 333,
+    "__docId__": 343,
     "kind": "file",
     "name": "src/main/utils/account.ts",
     "content": "interface Result {\n\tplatform: string\n\tid: string | number\n}\n/**\n * Get the platform and platform-specific id from the database string\n * @param {string} databaseId\n * @return {Result} parsed data\n * @return an object containing the account id and platform\n */\nconst getPlatformAndId = (databaseId: string): Result => {\n\tlet platform: string\n\tlet id: string | number\n\tif (databaseId.indexOf('mes') !== -1) {\n\t\tplatform = 'messenger'\n\t\tid = databaseId.replace('mes', '')\n\t} else if (databaseId.indexOf('tlg') !== -1) {\n\t\tplatform = 'telegram'\n\t\tid = parseInt(databaseId.replace('tlg', ''))\n\t} else if (databaseId.indexOf('gia') !== -1) {\n\t\tplatform = 'unknown'\n\t\tid = databaseId.replace('gia', '')\n\t}\n\n\treturn {\n\t\tplatform,\n\t\tid,\n\t}\n}\nexport {\n\tgetPlatformAndId,\n}\n",
@@ -7173,7 +7410,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 334,
+    "__docId__": 344,
     "kind": "function",
     "name": "getPlatformAndId",
     "memberof": "src/main/utils/account.ts",
@@ -7209,7 +7446,7 @@
     }
   },
   {
-    "__docId__": 335,
+    "__docId__": 345,
     "kind": "file",
     "name": "src/main/utils/array.ts",
     "content": "/**\n * Check duplicate of a sorted array.\n * @param {any[]} a\n * @return true if there are duplicated. False otherwise\n */\nconst checkDuplicates = (a: any[]): boolean => {\n\tfor (let i = 0; i < a.length - 1; i++) {\n\t\tif (a[i] === a[i + 1]) { return true }\n\t}\n\treturn false\n}\n/**\n * Check if two arrays has any mutual member\n * @param {any[]} array1\n * @param {any[]} array2\n * @return True if two arrays have mutual elements. False otherwise.\n */\nconst checkIfArrayMutual = (array1: any[], array2: any[]) => {\n\treturn array1.filter((value) => -1 !== array2.indexOf(value)).length > 0\n}\n\n/**\n * Get the list of common members from 2 arrays\n * @param {any[]} a\n * @param {any[]} b\n * @return array containing all the mutual elements\n */\nconst getCommonMembersFromTwoArrays = (a: any[], b: any[]): any[] => a.filter((n) => b.indexOf(n) !== -1 )\n\n/**\n * shuffle an array based on Fisher-Yates (aka Knuth) Shuffle algorithm\n * @param {any[]} array\n * @return array shuffled\n */\nconst shuffle = (array: any[]): any[] => {\n\tlet currentIndex = array.length, temporaryValue, randomIndex\n\t// While there remain elements to shuffle...\n\twhile (0 !== currentIndex) {\n\t\t// Pick a remaining element...\n\t\trandomIndex = Math.floor(Math.random() * currentIndex)\n\t\tcurrentIndex -= 1\n\t\t// And swap it with the current element.\n\t\ttemporaryValue = array[currentIndex]\n\t\tarray[currentIndex] = array[randomIndex]\n\t\tarray[randomIndex] = temporaryValue\n\t}\n\treturn array\n}\n\n/**\n * Check if an  array of objects hay any object that contains a key with a specific attribute value.\n * @param {any[]} arr\n * @param {string} attribute\n * @param {string} key\n * @return object with key equal to some values, null if there is no such object\n */\nconst containsObjectWithNameAttribute = (arr: any[], attribute: string, key: string = 'name'): any => {\n\tfor (const object of arr) {\n\t\tif (object[key] === attribute) {\n\t\t\treturn object\n\t\t}\n\t}\n\treturn false\n}\n\n/**\n * Return a random member of an array\n * @param {any[]} array\n * @return an element inside the array\n */\nconst randomIndex = <T extends {}>(array: T[]) => array[Math.floor(Math.random() * array.length)]\n\n/**\n * Remove an element from array\n * @param {any[]}array Array to be process\n * @param {any} member elemen to be removed\n * @return a new array that doesn't have the old element\n */\nconst removeFromArray  = <T extends {}>(array: T[], member: T) => {\n\tconst index = array.indexOf(member)\n\tif (index > -1) { array.splice(index, 1) }\n\treturn array\n}\nexport {\n\tcheckDuplicates,\n\tcheckIfArrayMutual,\n\tshuffle,\n\tgetCommonMembersFromTwoArrays,\n\tcontainsObjectWithNameAttribute,\n\trandomIndex,\n\tremoveFromArray,\n}\n",
@@ -7220,7 +7457,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 336,
+    "__docId__": 346,
     "kind": "function",
     "name": "checkDuplicates",
     "memberof": "src/main/utils/array.ts",
@@ -7256,7 +7493,7 @@
     }
   },
   {
-    "__docId__": 337,
+    "__docId__": 347,
     "kind": "function",
     "name": "checkIfArrayMutual",
     "memberof": "src/main/utils/array.ts",
@@ -7302,7 +7539,7 @@
     }
   },
   {
-    "__docId__": 338,
+    "__docId__": 348,
     "kind": "function",
     "name": "shuffle",
     "memberof": "src/main/utils/array.ts",
@@ -7338,7 +7575,7 @@
     }
   },
   {
-    "__docId__": 339,
+    "__docId__": 349,
     "kind": "function",
     "name": "getCommonMembersFromTwoArrays",
     "memberof": "src/main/utils/array.ts",
@@ -7384,7 +7621,7 @@
     }
   },
   {
-    "__docId__": 340,
+    "__docId__": 350,
     "kind": "function",
     "name": "containsObjectWithNameAttribute",
     "memberof": "src/main/utils/array.ts",
@@ -7440,7 +7677,7 @@
     }
   },
   {
-    "__docId__": 341,
+    "__docId__": 351,
     "kind": "function",
     "name": "randomIndex",
     "memberof": "src/main/utils/array.ts",
@@ -7476,7 +7713,7 @@
     }
   },
   {
-    "__docId__": 342,
+    "__docId__": 352,
     "kind": "function",
     "name": "removeFromArray",
     "memberof": "src/main/utils/array.ts",
@@ -7522,7 +7759,7 @@
     }
   },
   {
-    "__docId__": 343,
+    "__docId__": 353,
     "kind": "file",
     "name": "src/main/utils/object.ts",
     "content": "import Logger from '../logger'\n/**\n * Mask an object with an mask.\n * @param target Object to be masked\n * @param mask mask\n * @returns masked results;\n * @throws Error if target is not an object;\n */\nconst maskObject = (target: any, mask: object): (object | Error) => {\n\tif (!target || !mask) throw new Error('maskObject: Argument missing!')\n\tif (Array.isArray(target) || typeof(target) !== 'object') throw new Error('maskObject: Target object must be an object!')\n\tconst res = {}\n\tfor (const key in target) {\n\t\tif (mask[key] == true) res[key] = target[key]\n\n\t\telse if (typeof target[key] != 'object' && typeof mask[key] != 'boolean')\n\t\t\tLogger.warn('Object ' + target\n\t\t\t\t+ ' at key ' + key + ' is not an object'\n\t\t\t\t+ 'but mask ' + mask + ' at this key is an object')\n\n\t\telse if (typeof target[key] == 'object' && typeof mask[key] == 'object') {\n\t\t\tconst val = maskObject(target[key], mask[key])\n\t\t\tres[key] = val\n\t\t}\n\t}\n\treturn res\n}\n\nexport {\n\tmaskObject,\n}\n",
@@ -7533,7 +7770,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 344,
+    "__docId__": 354,
     "kind": "function",
     "name": "maskObject",
     "memberof": "src/main/utils/object.ts",
@@ -7593,7 +7830,7 @@
     ]
   },
   {
-    "__docId__": 345,
+    "__docId__": 355,
     "kind": "file",
     "name": "src/main/utils/string.ts",
     "content": "import natural from 'natural'\nnatural.PorterStemmer.attach()\n/**\n* Tokenized text and return an array of stem words\n* NOTE: Quite unreliable\n* @param {string} text\n* @return array of tokenized text\n*/\nconst tokenizeText = (text: natural.String): string[] => text.toLowerCase().tokenizeAndStem()\n\n/**\n* Right padding s with c to a total of n chars\n* @param {string} s original string\n* @param {string} c character to be padded\n* @param {number} n length\n* @return string with right side padded\n*/\nconst padRight = (s: string, c: string, n: number): string => {\n\tif (! s || ! c || s.length >= n) {\n\t\treturn s\n\t}\n\tconst max = (n - s.length) / c.length\n\tfor (let i = 0; i < max; i++) {\n\t\ts += c\n\t}\n\treturn s\n}\n\n/**\n* Left padding s with c to a total of n chars\n* @param {string} s original string\n* @param {string} c character to be padded\n* @param {number} n length\n* @return a string with left side padded\n*/\nconst padLeft = (s: string, c: string, n: number): string => {\n\tif (! s || ! c || s.length >= n) {\n\t\treturn s\n\t}\n\tconst max = (n - s.length) / c.length\n\tfor (let i = 0; i < max; i++) {\n\t\ts = c + s\n\t}\n\treturn s\n}\n\n/**\n* Remove all substrings inside a string\n* @param {string} s original string\n* @param {string} substrings substrings to be removed\n* @return a string with all substrings removed\n*/\nconst replaceAllSubstring = (s: string, ...substrings: string[]): string => {\n\tfor (const substring of substrings) { s = replaceAll(s, substring, '') }\n\treturn s\n}\n\n/**\n* Return a numeric substring from a string\n* @param {string} s original strong\n* @param {number} index index of the numeric subtring to be returned. default is 0\n* @return a string that is convertible to a number\n*/\nconst getNumberStringFromString = (s: string, index?: number): string | null => {\n\tconst i = index ? index : 0\n\treturn s.match(/\\d+/)[i] ? s.match(/\\d+/)[i] : s.match(/\\d+/)[0] ? s.match(/\\d+/)[0] : null\n}\n\n/**\n* Generate a random string of numbers based on length given\n* @param {number} length\n* @return a random string consists of n umber\n*/\nconst generateRandomId = (length: number = 10): string => {\n\tlet text = ''\n\tconst possible = '0123456789'\n\tfor (let i = 0; i < length; i++) text += possible.charAt(Math.floor(Math.random() * possible.length))\n\treturn text\n}\n\n/**\n* Replace all occurence of a substring in a string\n* @param {string} str\n* @param {string} find\n* @param {string} replace\n* @return a string will all `find` replaced by `replace`\n*/\nconst replaceAll = (str, find, replace): string => {\n\treturn str.replace(new RegExp(find, 'g'), replace)\n}\n\nexport {\n\tpadRight,\n\tpadLeft,\n\treplaceAllSubstring,\n\tgetNumberStringFromString,\n\tgenerateRandomId,\n\ttokenizeText,\n\treplaceAll,\n}\n",
@@ -7604,7 +7841,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 346,
+    "__docId__": 356,
     "kind": "function",
     "name": "padRight",
     "memberof": "src/main/utils/string.ts",
@@ -7660,7 +7897,7 @@
     }
   },
   {
-    "__docId__": 347,
+    "__docId__": 357,
     "kind": "function",
     "name": "padLeft",
     "memberof": "src/main/utils/string.ts",
@@ -7716,7 +7953,7 @@
     }
   },
   {
-    "__docId__": 348,
+    "__docId__": 358,
     "kind": "function",
     "name": "replaceAllSubstring",
     "memberof": "src/main/utils/string.ts",
@@ -7762,7 +7999,7 @@
     }
   },
   {
-    "__docId__": 349,
+    "__docId__": 359,
     "kind": "function",
     "name": "getNumberStringFromString",
     "memberof": "src/main/utils/string.ts",
@@ -7808,7 +8045,7 @@
     }
   },
   {
-    "__docId__": 350,
+    "__docId__": 360,
     "kind": "function",
     "name": "generateRandomId",
     "memberof": "src/main/utils/string.ts",
@@ -7844,7 +8081,7 @@
     }
   },
   {
-    "__docId__": 351,
+    "__docId__": 361,
     "kind": "function",
     "name": "tokenizeText",
     "memberof": "src/main/utils/string.ts",
@@ -7880,7 +8117,7 @@
     }
   },
   {
-    "__docId__": 352,
+    "__docId__": 362,
     "kind": "function",
     "name": "replaceAll",
     "memberof": "src/main/utils/string.ts",
@@ -7936,7 +8173,7 @@
     }
   },
   {
-    "__docId__": 353,
+    "__docId__": 363,
     "kind": "file",
     "name": "src/main/utils/timer.ts",
     "content": "/**\n * Wait for a certain amount to time to execute some function. Clean up version of setTimeOut\n * @param {number} time Amount of miniseconds to wait\n * @param {function} cb callback function to wait}\n */\nconst waitToDo = (time: number, cb: () => void): void => {\n\tsetTimeout(() =>  {\n\t\tcb()\n\t}, time)\n}\n\nexport {\n\twaitToDo,\n}\n",
@@ -7947,7 +8184,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 354,
+    "__docId__": 364,
     "kind": "function",
     "name": "waitToDo",
     "memberof": "src/main/utils/timer.ts",

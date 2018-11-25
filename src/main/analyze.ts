@@ -1,7 +1,6 @@
 import idx from 'idx'
 import { predict } from './externalApis/@google/tensorflow/intentClassification'
 import Logger from './logger'
-import { TextDB } from './model/mongoDB'
 import { tokenizeText } from './utils/string'
 const CLASSIFY_CONFIDENCE_THRESHOLD = 0.9
 
@@ -40,12 +39,12 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 					sentiment,
 				}
 			}
-			if (!user.text) { user.text = [] }
-			const newText = new TextDB({
-				orignalText: text,
-				tokenizeText: tokenizeText(text),
-			})
-			user.text.push(newText)
+			// if (!user.text) { user.text = [] }
+			// const newText = new TextDB({
+			// 	orignalText: text,
+			// 	tokenizeText: tokenizeText(text),
+			// })
+			// user.text.push(newText)
 			return user
 		}
 	} catch (e) {

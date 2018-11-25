@@ -10,19 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __importDefault(require("lodash/core"));
 const moji_translate_1 = __importDefault(require("moji-translate"));
 const request_promise_1 = __importDefault(require("request-promise"));
 const string_1 = require("../utils/string");
-const CacheProvider = __importStar(require("./node-cache"));
 const MAX_COUNTRY_LENGTH = 10;
 const MAX_GOALS_LENGTH = 2;
 const options = {
@@ -80,11 +72,11 @@ const getMatches = () => __awaiter(this, void 0, void 0, function* () {
     }
 });
 /**
- * Get the last n matches of specific synchronous filter
- * @param {any} matches
- * @param {any} filter
- * @param {number} n
- */
+* Get the last n matches of specific synchronous filter
+* @param {any} matches
+* @param {any} filter
+* @param {number} n
+*/
 const synchFilter = (matches, filter, n) => {
     return new Promise((resolve) => {
         n = n ? n : 3;
@@ -99,35 +91,27 @@ const synchFilter = (matches, filter, n) => {
 };
 const getWCSchedule = () => __awaiter(this, void 0, void 0, function* () {
     try {
-        const schedule = yield CacheProvider.get('WorldCupScheduleToday');
-        if (schedule !== undefined) {
-            return schedule;
+        const NO_MATCH_TODAY = 'There isn\'t any match today!';
+        const matches = yield getMatches();
+        const past = yield synchFilter(matches, isCompletedOrInProgress, 3);
+        const present = yield synchFilter(matches, matchHappeningToday, 10);
+        let message = 'Last 3 matches: \n';
+        if (!core_1.default.isEmpty(past)) {
+            for (const match of past) {
+                message += match + '\n';
+            }
+        }
+        message += 'Today matches: \n';
+        if (!core_1.default.isEmpty(present)) {
+            for (const match of present) {
+                message += match + '\n';
+            }
+        }
+        if (!core_1.default.isEmpty(past) || !core_1.default.isEmpty(present)) {
+            return message;
         }
         else {
-            const NO_MATCH_TODAY = 'There isn\'t any match today!';
-            const matches = yield getMatches();
-            const past = yield synchFilter(matches, isCompletedOrInProgress, 3);
-            const present = yield synchFilter(matches, matchHappeningToday, 10);
-            let message = 'Last 3 matches: \n';
-            if (!core_1.default.isEmpty(past)) {
-                for (const match of past) {
-                    message += match + '\n';
-                }
-            }
-            message += 'Today matches: \n';
-            if (!core_1.default.isEmpty(present)) {
-                for (const match of present) {
-                    message += match + '\n';
-                }
-            }
-            if (!core_1.default.isEmpty(past) || !core_1.default.isEmpty(present)) {
-                yield CacheProvider.save('WorldCupScheduleToday', message);
-                return message;
-            }
-            else {
-                yield CacheProvider.save('WorldCupScheduleToday', NO_MATCH_TODAY);
-                return NO_MATCH_TODAY;
-            }
+            return NO_MATCH_TODAY;
         }
     }
     catch (e) {

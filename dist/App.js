@@ -14,13 +14,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_1 = __importDefault(require("express"));
 const environment_1 = require("./main/environment");
-const rx_1 = __importDefault(require("./main/externalApis/rx"));
-const node_schedule_1 = __importDefault(require("node-schedule"));
-const _nasa_1 = __importDefault(require("./main/externalApis/@nasa"));
-const streaming_1 = __importDefault(require("./main/streaming"));
+const twitter_1 = __importDefault(require("./main/streaming/twitter"));
+const morningNasa_1 = __importDefault(require("./main/streaming/morningNasa"));
+const codeforce_1 = __importDefault(require("./main/streaming/codeforce"));
 const hq_1 = __importDefault(require("./main/hq"));
 const preprocess_1 = require("./main/preprocess");
 const telegram_1 = __importDefault(require("./main/telegram"));
+const firebase_1 = __importDefault(require("./main/model/firebase"));
+const mongoDB_1 = __importDefault(require("./main/model/mongoDB"));
+const sweeper_1 = __importDefault(require("./main/sweeper"));
+const cache_1 = __importDefault(require("./main/model/cache"));
 /**
 * REST API
 */
@@ -28,22 +31,24 @@ class App {
     /**
     * Constructor for main REST API
     */
-    constructor(port) {
+    constructor() {
+        this.sweeper = new sweeper_1.default();
+        this.setUpDatabase();
         this.headquarter = new hq_1.default();
         this.express = express_1.default();
-        this.express.listen(port);
-        this.express.use(body_parser_1.default.json());
-        this.express.use(body_parser_1.default.urlencoded({ extended: true }));
     }
     /**
-     * Fire up endpoint listener
-     */
-    startServer() {
-        this.loadFacebookEndpoint();
-        this.loadPingEndpoints();
-        this.loadStreamingEndpoint();
-        this.loadTelegramEndpoint();
-        this.setUpMorningSchedule();
+    * Establish connection to database
+    */
+    setUpDatabase() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.firebase = new firebase_1.default();
+            this.mongodb = new mongoDB_1.default();
+            this.UserDB = yield this.mongodb.users;
+            this.cache = new cache_1.default(this.UserDB);
+            this.sweeper.add(this.cache.close);
+            this.sweeper.add(this.firebase.terminateConnection);
+        });
     }
     /**
     * Endpoint for ping related service
@@ -68,7 +73,7 @@ class App {
             }
         });
         this.express.post('/fb', (req, res) => {
-            preprocess_1.messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event));
+            preprocess_1.messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event, this.mongodb.users, this.cache));
             res.sendStatus(200);
         });
     }
@@ -79,29 +84,47 @@ class App {
         telegram_1.default.on('message', (msg) => {
             const result = preprocess_1.telegramPreprocess(msg);
             if (result)
-                this.headquarter.receive('telegram', msg);
+                this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
         });
     }
     /**
-    * Endpoint for streaming API
+    *
+    * @param {string[]} people list of people to send to
     */
-    loadStreamingEndpoint() {
-        if (process.env.NODE_ENV === 'production')
-            rx_1.default();
+    loadStreamingEndpoint(people) {
+        // if (process.env.NODE_ENV === 'production') {
+        this.streams = [];
+        this.streams.push(new twitter_1.default());
+        this.streams.push(new morningNasa_1.default());
+        this.streams.push(new codeforce_1.default(this.firebase));
+        for (let st of this.streams)
+            st.startStreaming(people);
+        for (let st of this.streams)
+            this.sweeper.add(st.stopStreaming);
+        // }
     }
     /**
-    * Set up nasa news retriever scheduler for every moning
+    * Configure setting for express
+    * @param {string | number} port port that express should be listening to
     */
-    setUpMorningSchedule() {
-        if (process.env.NODE_ENV === 'production') {
-            node_schedule_1.default.scheduleJob('30 08 * * *', () => __awaiter(this, void 0, void 0, function* () {
-                let nasa = yield _nasa_1.default();
-                streaming_1.default({
-                    text: nasa.explanation,
-                    image: nasa.url
-                });
-            }));
-        }
+    configureExpress(port) {
+        this.express.listen(port);
+        this.express.use(body_parser_1.default.json());
+        this.express.use(body_parser_1.default.urlencoded({ extended: true }));
+    }
+    /**
+    * Fire up endpoint listener
+    * @throws error if express is appropriately set up beforehand.
+    */
+    startServer() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.express)
+                throw new Error('Express is not set up when firing endpoint listener');
+            this.loadFacebookEndpoint();
+            this.loadPingEndpoints();
+            this.loadTelegramEndpoint();
+            this.loadStreamingEndpoint(yield this.firebase.getStreamingAudience());
+        });
     }
 }
 exports.default = App;

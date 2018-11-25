@@ -8,7 +8,7 @@ export default (msg: any): string | null => {
 		|| msg.text.indexOf('@openAImatchThis_bot') !== -1)
 			return {
 				...msg,
-				text: msg.text.replace('@openAImatchThis_bot', '')
+				text: msg.text.replace('@openAImatchThis_bot ', '')
 			}
 	else return null
 }

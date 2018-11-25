@@ -84,6 +84,12 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
+    "potts-reborn/src/main/environment.ts~nasa_apikey",
+    "variable/index.html#static-variable-NASA_APIKEY",
+    "<span>NASA_APIKEY</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
+    "variable"
+  ],
+  [
     "potts-reborn/src/main/environment.ts~newsapi_key",
     "variable/index.html#static-variable-NEWSAPI_KEY",
     "<span>NEWSAPI_KEY</span> <span class=\"search-result-import-path\">potts-reborn/src/main/environment.ts</span>",
@@ -136,6 +142,12 @@ window.esdocSearchIndex = [
     "variable/index.html#static-variable-Text",
     "<span>Text</span> <span class=\"search-result-import-path\">potts-reborn/src/main/model/mongoDB/text.ts</span>",
     "variable"
+  ],
+  [
+    "potts-reborn/src/main/streaming/twitter.ts~twitterstreaming",
+    "class/src/main/streaming/twitter.ts~TwitterStreaming.html",
+    "<span>TwitterStreaming</span> <span class=\"search-result-import-path\">potts-reborn/src/main/streaming/twitter.ts</span>",
+    "class"
   ],
   [
     "potts-reborn/src/main/environment.ts~unsplash_id",
@@ -270,12 +282,6 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "potts-reborn/src/main/model/database/firebasedb.ts~firebase",
-    "variable/index.html#static-variable-firebase",
-    "<span>firebase</span> <span class=\"search-result-import-path\">potts-reborn/src/main/model/database/firebasedb.ts</span>",
-    "variable"
-  ],
-  [
     "potts-reborn/src/main/externalapis/node-cache.ts~flush",
     "function/index.html#static-function-flush",
     "<span>flush</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/node-cache.ts</span>",
@@ -321,6 +327,12 @@ window.esdocSearchIndex = [
     "potts-reborn/src/main/utils/array.ts~getcommonmembersfromtwoarrays",
     "function/index.html#static-function-getCommonMembersFromTwoArrays",
     "<span>getCommonMembersFromTwoArrays</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/externalapis/@nasa/index.ts~getdailynasanews",
+    "function/index.html#static-function-getDailyNasaNews",
+    "<span>getDailyNasaNews</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@nasa/index.ts</span>",
     "function"
   ],
   [
@@ -429,6 +441,12 @@ window.esdocSearchIndex = [
     "potts-reborn/src/main/telegram/api/image.ts~image",
     "function/index.html#static-function-image",
     "<span>image</span> <span class=\"search-result-import-path\">potts-reborn/src/main/telegram/api/image.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/model/firebase/index.ts~initiateconnectiontofirebase",
+    "function/index.html#static-function-initiateConnectionToFirebase",
+    "<span>initiateConnectionToFirebase</span> <span class=\"search-result-import-path\">potts-reborn/src/main/model/firebase/index.ts</span>",
     "function"
   ],
   [
@@ -666,12 +684,6 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "potts-reborn/src/main/externalapis/rx.ts~setupstreamingapi",
-    "function/index.html#static-function-setUpStreamingApi",
-    "<span>setUpStreamingApi</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/rx.ts</span>",
-    "function"
-  ],
-  [
     "potts-reborn/src/main/utils/array.ts~shuffle",
     "function/index.html#static-function-shuffle",
     "<span>shuffle</span> <span class=\"search-result-import-path\">potts-reborn/src/main/utils/array.ts</span>",
@@ -681,6 +693,12 @@ window.esdocSearchIndex = [
     "potts-reborn/src/main/externalapis/@google/speech.ts~speechtotext",
     "function/index.html#static-function-speechToText",
     "<span>speechToText</span> <span class=\"search-result-import-path\">potts-reborn/src/main/externalApis/@google/speech.ts</span>",
+    "function"
+  ],
+  [
+    "potts-reborn/src/main/streaming/index.ts~stream",
+    "function/index.html#static-function-stream",
+    "<span>stream</span> <span class=\"search-result-import-path\">potts-reborn/src/main/streaming/index.ts</span>",
     "function"
   ],
   [
@@ -1062,6 +1080,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/app.ts~app#firebase",
+    "class/src/App.ts~App.html#instance-member-firebase",
+    "src/App.ts~App#firebase",
+    "member"
+  ],
+  [
     "src/app.ts~app#headquarter",
     "class/src/App.ts~App.html#instance-member-headquarter",
     "src/App.ts~App#headquarter",
@@ -1090,6 +1114,24 @@ window.esdocSearchIndex = [
     "class/src/App.ts~App.html#instance-method-loadTelegramEndpoint",
     "src/App.ts~App#loadTelegramEndpoint",
     "method"
+  ],
+  [
+    "src/app.ts~app#setupmorningschedule",
+    "class/src/App.ts~App.html#instance-method-setUpMorningSchedule",
+    "src/App.ts~App#setUpMorningSchedule",
+    "method"
+  ],
+  [
+    "src/app.ts~app#startserver",
+    "class/src/App.ts~App.html#instance-method-startServer",
+    "src/App.ts~App#startServer",
+    "method"
+  ],
+  [
+    "src/app.ts~app#streams",
+    "class/src/App.ts~App.html#instance-member-streams",
+    "src/App.ts~App#streams",
+    "member"
   ],
   [
     "src/index.ts",
@@ -1230,6 +1272,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/main/externalapis/@nasa/index.ts",
+    "file/src/main/externalApis/@nasa/index.ts.html",
+    "src/main/externalApis/@nasa/index.ts",
+    "file"
+  ],
+  [
     "src/main/externalapis/@twitter/index.ts",
     "file/src/main/externalApis/@twitter/index.ts.html",
     "src/main/externalApis/@twitter/index.ts",
@@ -1278,9 +1326,9 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/main/externalapis/rx.ts",
-    "file/src/main/externalApis/rx.ts.html",
-    "src/main/externalApis/rx.ts",
+    "src/main/externalapis/scheduler.ts",
+    "file/src/main/externalApis/scheduler.ts.html",
+    "src/main/externalApis/scheduler.ts",
     "file"
   ],
   [
@@ -1464,9 +1512,9 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/main/model/database/firebasedb.ts",
-    "file/src/main/model/database/firebasedb.ts.html",
-    "src/main/model/database/firebasedb.ts",
+    "src/main/model/firebase/index.ts",
+    "file/src/main/model/firebase/index.ts.html",
+    "src/main/model/firebase/index.ts",
     "file"
   ],
   [
@@ -1552,6 +1600,48 @@ window.esdocSearchIndex = [
     "file/src/main/retrieveOrCreateUser.ts.html",
     "src/main/retrieveOrCreateUser.ts",
     "file"
+  ],
+  [
+    "src/main/streaming/index.ts",
+    "file/src/main/streaming/index.ts.html",
+    "src/main/streaming/index.ts",
+    "file"
+  ],
+  [
+    "src/main/streaming/twitter.ts",
+    "file/src/main/streaming/twitter.ts.html",
+    "src/main/streaming/twitter.ts",
+    "file"
+  ],
+  [
+    "src/main/streaming/twitter.ts~twitterstreaming#constructor",
+    "class/src/main/streaming/twitter.ts~TwitterStreaming.html#instance-constructor-constructor",
+    "src/main/streaming/twitter.ts~TwitterStreaming#constructor",
+    "method"
+  ],
+  [
+    "src/main/streaming/twitter.ts~twitterstreaming#startstreaming",
+    "class/src/main/streaming/twitter.ts~TwitterStreaming.html#instance-method-startStreaming",
+    "src/main/streaming/twitter.ts~TwitterStreaming#startStreaming",
+    "method"
+  ],
+  [
+    "src/main/streaming/twitter.ts~twitterstreaming#stopstreaming",
+    "class/src/main/streaming/twitter.ts~TwitterStreaming.html#instance-method-stopStreaming",
+    "src/main/streaming/twitter.ts~TwitterStreaming#stopStreaming",
+    "method"
+  ],
+  [
+    "src/main/streaming/twitter.ts~twitterstreaming#streaming",
+    "class/src/main/streaming/twitter.ts~TwitterStreaming.html#instance-member-streaming",
+    "src/main/streaming/twitter.ts~TwitterStreaming#streaming",
+    "member"
+  ],
+  [
+    "src/main/streaming/twitter.ts~twitterstreaming#twitterstreaming",
+    "class/src/main/streaming/twitter.ts~TwitterStreaming.html#instance-member-twitterStreaming",
+    "src/main/streaming/twitter.ts~TwitterStreaming#twitterStreaming",
+    "member"
   ],
   [
     "src/main/telegram/api/image.ts",

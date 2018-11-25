@@ -5,7 +5,7 @@ import request from 'request'
 const NASA_API_URL = 'https://api.nasa.gov/planetary/apod?api_key=' + NASA_APIKEY
 
 interface nasaApiObject {
-    copyright: string,
+    copyright?: string,
     date: string,
     explanation: string,
     hdurl: string,  //image url HD

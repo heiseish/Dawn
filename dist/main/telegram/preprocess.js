@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (msg) => {
     if (msg.from.id === msg.chat.id
         || msg.text.indexOf('@openAImatchThis_bot') !== -1)
-        return Object.assign({}, msg, { text: msg.text.replace('@openAImatchThis_bot', '') });
+        return Object.assign({}, msg, { text: msg.text.replace('@openAImatchThis_bot ', '') });
     else
         return null;
 };

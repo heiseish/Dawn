@@ -2,7 +2,6 @@ import _ from 'lodash/core'
 import mojiTranslate from 'moji-translate'
 import rp from 'request-promise'
 import { padLeft, padRight } from '../utils/string'
-import * as CacheProvider from './node-cache'
 
 const MAX_COUNTRY_LENGTH = 10
 const MAX_GOALS_LENGTH = 2
@@ -48,15 +47,15 @@ const toConsoleOutput = (match): string => {
 	}
 	const home = padRight( match.home_team.country, ' ', MAX_COUNTRY_LENGTH )
 	const homeGoals = rpad( match.home_team.goals, ' ', MAX_GOALS_LENGTH ) || ''
-
+	
 	const awayFlag = getCountryFlag( match.away_team.country )
 	const away = padLeft( match.away_team.country, ' ', MAX_COUNTRY_LENGTH )
 	const awayGoals = rpad( match.away_team.goals, ' ', MAX_GOALS_LENGTH ) || ''
-
+	
 	const hours = new Date(match.datetime).getHours()
 	const presentableHours = hours < 12 ?
-		hours.toString() + 'am'
-		: (hours - 12).toString() + 'pm'
+	hours.toString() + 'am'
+	: (hours - 12).toString() + 'pm'
 	return `${homeFlag} ${home} ${homeGoals} -  ${awayGoals} ${away} ${awayFlag} ${presentableHours}`
 }
 
@@ -70,55 +69,50 @@ const getMatches = async (): Promise<any> => {
 }
 
 /**
- * Get the last n matches of specific synchronous filter
- * @param {any} matches
- * @param {any} filter
- * @param {number} n
- */
+* Get the last n matches of specific synchronous filter
+* @param {any} matches
+* @param {any} filter
+* @param {number} n
+*/
 const synchFilter = (matches: any, filter: (match: any) => boolean, n?: number): Promise<any> => {
 	return new Promise((resolve) => {
 		n = n ? n : 3
 		const temp = matches
 		const result = []
 		temp
-			.filter( filter )
-			.map( toConsoleOutput )
-			.forEach( (r) => result.push(r))
+		.filter( filter )
+		.map( toConsoleOutput )
+		.forEach( (r) => result.push(r))
 		resolve(result.slice(Math.max(result.length - n, 1)))
 	})
 }
 
 const getWCSchedule = async (): Promise<any> => {
 	try {
-		const schedule = await CacheProvider.get('WorldCupScheduleToday')
-		if (schedule !== undefined) { return schedule } else {
-			const NO_MATCH_TODAY = 'There isn\'t any match today!'
-			const matches = await getMatches()
-			const past = await synchFilter(matches, isCompletedOrInProgress, 3)
-			const present = await synchFilter(matches, matchHappeningToday, 10)
-
-			let message = 'Last 3 matches: \n'
-			if (!_.isEmpty(past)) {
-				for (const match of past) { message += match + '\n' }
-			}
-			message += 'Today matches: \n'
-			if (!_.isEmpty(present)) {
-				for (const match of present) { message += match + '\n' }
-			}
-
-			if (!_.isEmpty(past) || !_.isEmpty(present)) {
-				await CacheProvider.save('WorldCupScheduleToday', message)
-				return message
-			} else {
-				await CacheProvider.save('WorldCupScheduleToday', NO_MATCH_TODAY)
-				return NO_MATCH_TODAY
-			}
+		const NO_MATCH_TODAY = 'There isn\'t any match today!'
+		const matches = await getMatches()
+		const past = await synchFilter(matches, isCompletedOrInProgress, 3)
+		const present = await synchFilter(matches, matchHappeningToday, 10)
+		
+		let message = 'Last 3 matches: \n'
+		if (!_.isEmpty(past)) {
+			for (const match of past) { message += match + '\n' }
 		}
-
+		message += 'Today matches: \n'
+		if (!_.isEmpty(present)) {
+			for (const match of present) { message += match + '\n' }
+		}
+		
+		if (!_.isEmpty(past) || !_.isEmpty(present)) {
+			return message
+		} else {
+			return NO_MATCH_TODAY
+		}
+		
 	} catch (e) {
 		return Promise.reject(e)
 	}
-
+	
 }
 
 export default getWCSchedule

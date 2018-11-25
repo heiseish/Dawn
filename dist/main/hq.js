@@ -15,7 +15,6 @@ const analyze_1 = __importDefault(require("./analyze"));
 const execute_1 = __importDefault(require("./execute"));
 const identifySource_1 = __importDefault(require("./identifySource"));
 const logger_1 = __importDefault(require("./logger"));
-const cache_1 = require("./model/cache");
 const respond_1 = __importDefault(require("./respond"));
 const retrieveOrCreateUser_1 = __importDefault(require("./retrieveOrCreateUser"));
 class Headquarter {
@@ -24,16 +23,16 @@ class Headquarter {
      * @param platform platforms currently supported
      * @param payload message payload from user
      */
-    receive(platform, payload) {
+    receive(platform, payload, UserDb, cache) {
         return __awaiter(this, void 0, void 0, function* () {
             logger_1.default.info('Transfering event to headquarter..');
             try {
                 const partialUniqueId = yield identifySource_1.default(platform, payload);
-                let user = yield retrieveOrCreateUser_1.default(partialUniqueId, platform, payload);
+                let user = yield retrieveOrCreateUser_1.default(partialUniqueId, platform, payload, UserDb, cache);
                 user = yield analyze_1.default(platform, payload, user);
                 user = yield execute_1.default(platform, payload, user);
                 yield respond_1.default(platform, payload, user);
-                yield cache_1.saveUser(user.id, user);
+                cache.saveUser(user.id, user);
             }
             catch (err) {
                 logger_1.default.error(err);

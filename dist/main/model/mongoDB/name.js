@@ -1,13 +1,16 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const db_1 = __importDefault(require("./db"));
-const Schema = db_1.default.Schema;
-exports.default = new Schema({
-    first: String,
-    last: String,
-    full: { type: String, index: true },
-}, { strict: false, _id: false });
+/**
+ * Create name schema
+ * @param mongoose mongdb connection
+ */
+const createNameSchema = (mongoose) => {
+    const Schema = mongoose.Schema;
+    return new Schema({
+        first: String,
+        last: String,
+        full: { type: String, index: true },
+    }, { strict: false, _id: false });
+};
+exports.default = createNameSchema;
 //# sourceMappingURL=name.js.map

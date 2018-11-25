@@ -13,9 +13,8 @@ exports.default = () => {
         request_1.default(catFactUrl, (error, res, body) => {
             try {
                 const result = JSON.parse(body);
-                if (error) {
+                if (error)
                     reject(error);
-                }
                 else if (result.fact.length >= 320) {
                     response('Cat is an animal😺');
                 }

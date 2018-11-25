@@ -13,6 +13,7 @@ class Logger {
     * log the info
     * @param text Text to display
     * @param load whether the text animation is loading
+    * @returns object with method stop that takes in after-text as a string
     */
     info(text, load) {
         if (load) {

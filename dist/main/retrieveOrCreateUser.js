@@ -13,24 +13,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const logger_1 = __importDefault(require("./logger"));
 const graphApi_1 = require("./messenger/api/graphApi");
-const cache_1 = require("./model/cache");
-const user_1 = __importDefault(require("./model/mongoDB/user"));
 /**
 * Return a partial unique userId from incoming event to identify user
 * @param {supportedPlatform} platform supported platform currently
 * @param {any} payload
 * @return promise contains the updated user
 */
-exports.default = (partialUniqueId, platform, payload) => __awaiter(this, void 0, void 0, function* () {
+exports.default = (partialUniqueId, platform, payload, UserDB, cache) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const user = yield cache_1.getUser(partialUniqueId);
+        const user = yield cache.getUser(partialUniqueId);
         if (user) {
             return user;
         }
         else {
             const newUser = yield createNewUser(partialUniqueId, platform, payload);
-            yield user_1.default.addUser(newUser);
-            cache_1.saveUser(partialUniqueId, newUser);
+            yield UserDB.addUser(newUser);
+            cache.saveUser(partialUniqueId, newUser);
             return newUser;
         }
     }
@@ -48,13 +46,13 @@ exports.default = (partialUniqueId, platform, payload) => __awaiter(this, void 0
 const createNewUser = (partialUniqueId, platform, payload) => __awaiter(this, void 0, void 0, function* () {
     try {
         const log = logger_1.default.info('Creating new user...', true);
-        const user = new user_1.default({
+        const user = {
             id: partialUniqueId,
             locale: 'eng',
             entity: {
                 lastIntent: null,
             },
-        });
+        };
         let name;
         switch (platform) {
             case 'telegram':

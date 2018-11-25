@@ -1,1 +1,0 @@
-{"version":3,"file":"firebasedb.js","sourceRoot":"","sources":["../../../../src/main/model/database/firebasedb.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,sDAAuC;AACvC,+CAA2C;AAC3C,kEAAoD;AACpD,kBAAe,KAAK,CAAC,aAAa,CAAC;IAClC,UAAU,EAAE,KAAK,CAAC,UAAU,CAAC,IAAI,CAAC,iBAAO,CAAC,sBAAuB,CAAC,CAAC;IACnE,WAAW,EAAE,qCAAqC;CAClD,CAAC,CAAA"}

@@ -1,10 +1,5 @@
 import Logger from './logger'
 import { getUserName } from './messenger/api/graphApi'
-import {
-	getUser,
-	saveUser,
-} from './model/cache'
-import UserDB from './model/mongoDB/user'
 
 /**
 * Return a partial unique userId from incoming event to identify user
@@ -12,15 +7,16 @@ import UserDB from './model/mongoDB/user'
 * @param {any} payload
 * @return promise contains the updated user
 */
-export default async (partialUniqueId: string, platform: supportedPlatform, payload: any): Promise<userType> => {
+export default async (partialUniqueId: string, platform: supportedPlatform, 
+			payload: any, UserDB: any, cache: any): Promise<userType> => {
 	try {
-		const user = await getUser(partialUniqueId)
+		const user = await cache.getUser(partialUniqueId)
 		if (user) {
 			return user
 		} else {
 			const newUser = await createNewUser(partialUniqueId, platform, payload)
 			await UserDB.addUser(newUser)
-			saveUser(partialUniqueId, newUser)
+			cache.saveUser(partialUniqueId, newUser)
 			return newUser
 		}
 	} catch (e) {
@@ -36,17 +32,18 @@ export default async (partialUniqueId: string, platform: supportedPlatform, payl
  * @param {any} payload
  * @return user object
  */
-const createNewUser = async (partialUniqueId: string, platform: supportedPlatform, payload: any): Promise<userType> => {
+const createNewUser = async (partialUniqueId: string, platform: supportedPlatform, 
+			payload: any): Promise<userType> => {
 
 	try {
 		const log = Logger.info('Creating new user...', true)
-		const user: userType = new UserDB({
+		const user: userType = {
 			id: partialUniqueId,
 			locale: 'eng',
 			entity: {
 				lastIntent: null,
 			},
-		})
+		}
 		let name
 		switch (platform) {
 		case 'telegram':

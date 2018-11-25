@@ -11,6 +11,7 @@ const mocha = new Mocha()
 const externalApisTest = './test/externalApis/'
 const serverTest = './test/main/'
 const utilTest = './test/utils/'
+const modelTest = './test/model/'
 
 // Add each .ts file to the mocha instance
 Logger.info('Adding external api files to testing.')
@@ -33,6 +34,16 @@ fs.readdirSync(serverTest).filter((file) => {
 	)
 })
 
+Logger.info('Adding model files to testing.')
+fs.readdirSync(modelTest).filter((file) => {
+	// Only keep the .ts files
+	return file.substr(-3) === '.ts'
+}).forEach((file) => {
+	mocha.addFile(
+		path.join(modelTest, file),
+	)
+})
+
 Logger.info('Adding utils files to testing.')
 fs.readdirSync(utilTest).filter((file) => {
 	// Only keep the .ts files
@@ -43,6 +54,7 @@ fs.readdirSync(utilTest).filter((file) => {
 	)
 })
 
+// mocha.setup('--exit')
 // Run the tests.
 mocha.run((failures) => {
 	process.on('exit', () =>  {

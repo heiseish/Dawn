@@ -1,8 +1,8 @@
-import * as NodeCache from '../../src/main/externalApis/node-cache'
+import NodeCache from '../../src/main/model/cache'
 
 const useInTest = (): void => {
 	before(function setUpCache() {
-		this.cache = NodeCache
+		this.cache = new NodeCache(null)
 	})
 
 	beforeEach(function dropCache() {
