@@ -14,16 +14,16 @@ export default async (platform: supportedPlatform, payload: any): Promise<string
 	}
 	switch (platform) {
 	case 'telegram':
-		if (idx(payload, (_) => _.from.id)) {
+		if (idx(payload, _ => _.from.id)) {
 			data.hashPrefix = 'tlg',
-			data.id = idx(payload, (_) => _.from.id)
+			data.id = idx(payload, _ => _.from.id)
 		}
 		break
 
 	case 'messenger':
-		if (idx(payload, (_) => _.sender.id)) {
+		if (idx(payload, _ => _.sender.id)) {
 			data.hashPrefix = 'mes',
-			data.id = idx(payload, (_) => _.sender.id)
+			data.id = idx(payload, _ => _.sender.id)
 		}
 		break
 

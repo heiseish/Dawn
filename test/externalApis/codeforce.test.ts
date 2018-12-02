@@ -4,12 +4,6 @@ import { CODEFORCE_API_RESPONSE_TIME } from '../data/api'
 const MOCK_HANLE1 = 'DmitriyH'
 const MOCK_HANDLE2 = 'Fefer_Ivan'
 
-const USER1_RATING = 1906
-const USER1_RANK = 'candidate master'
-
-const USER2_RATING = 2240
-const USER2_RANK = 'master'
-
 const useInTest = (): void => {
 	before(async function getCodeforcesResult() {
 		this.user1 = await getUserRating(MOCK_HANLE1)
@@ -40,24 +34,20 @@ describe('Codeforce Api ⌨️', function () {
 			expect(this.user1)
 			.to.have.property('rating')
 			.that.is.a('number')
-			.and.to.be.equal(USER1_RATING)
 
 			expect(this.user2)
 			.to.have.property('rating')
 			.that.is.a('number')
-			.and.to.be.equal(USER2_RATING)
 		})
 		
 		it('Returned object should have rank property', function() {
 			expect(this.user1)
 			.to.have.property('rank')
 			.that.is.a('string')
-			.and.to.be.equal(USER1_RANK)
 
 			expect(this.user2)
 			.to.have.property('rank')
 			.that.is.a('string')
-			.and.to.be.equal(USER2_RANK)
 		})
 	})
 })

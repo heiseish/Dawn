@@ -18,14 +18,13 @@ const MAP_TOPIC_TO_CATEGORY = {
     technolog: 'technology',
     scienc: 'science',
 };
-if (!environment_1.NEWSAPI_KEY) {
-    throw new Error('missing NEWSAPI_KEY');
-}
 /**
  * Get top headlines
  * @param {any} user
  */
 const getAllHeadlines = (user) => {
+    if (!environment_1.NEWSAPI_KEY)
+        return Promise.reject('missing NEWSAPI_KEY');
     let text = user.lastText;
     if (text.indexOf('"') !== -1) {
         text = string_1.replaceAllSubstring(text, '"', '“', '”', 'SHOW', 'NEWS', 'WITH', 'ABOUT', 'ON');
@@ -34,12 +33,12 @@ const getAllHeadlines = (user) => {
     else {
         const common = array_1.getCommonMembersFromTwoArrays(Object.keys(MAP_TOPIC_TO_CATEGORY), user.text[user.text.length - 1].tokenizedText);
         const category = MAP_TOPIC_TO_CATEGORY[common[0]] || null;
-        if (category) {
-            return new Promise((resolve) => getHeadlinesWithCategory(category).then((articles) => resolve(articles)));
-        }
-        else {
-            return new Promise((resolve) => getRandomTop5Headlines().then((articles) => resolve(articles)));
-        }
+        if (category)
+            return new Promise((resolve) => getHeadlinesWithCategory(category)
+                .then((articles) => resolve(articles)));
+        else
+            return new Promise((resolve) => getRandomTop5Headlines()
+                .then((articles) => resolve(articles)));
     }
 };
 exports.getAllHeadlines = getAllHeadlines;
@@ -47,6 +46,8 @@ exports.getAllHeadlines = getAllHeadlines;
  * Get a random headline and return the title along with the message
  */
 const getRandomHeadlines = () => {
+    if (!environment_1.NEWSAPI_KEY)
+        return Promise.reject('missing NEWSAPI_KEY');
     return new Promise((resolve) => {
         newsapi.v2
             .topHeadlines({
@@ -70,6 +71,8 @@ exports.getRandomHeadlines = getRandomHeadlines;
  * @param {string} keyword
  */
 const getHeadlinesWithQuery = (keyword) => {
+    if (!environment_1.NEWSAPI_KEY)
+        return Promise.reject('missing NEWSAPI_KEY');
     return new Promise((res) => {
         newsapi.v2
             .topHeadlines({
@@ -86,6 +89,8 @@ exports.getHeadlinesWithQuery = getHeadlinesWithQuery;
  * @param {string | null} category
  */
 const getHeadlinesWithCategory = (category) => {
+    if (!environment_1.NEWSAPI_KEY)
+        return Promise.reject('missing NEWSAPI_KEY');
     return new Promise((res) => {
         newsapi.v2
             .topHeadlines({
@@ -101,6 +106,8 @@ exports.getHeadlinesWithCategory = getHeadlinesWithCategory;
  * Get random top headlines articles
  */
 const getRandomTop5Headlines = () => {
+    if (!environment_1.NEWSAPI_KEY)
+        return Promise.reject('missing NEWSAPI_KEY');
     return new Promise((res) => {
         newsapi.v2
             .topHeadlines({

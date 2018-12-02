@@ -17,7 +17,6 @@ const MAP_ICON_TO_PICTURE = {
 	'partly-cloudy-night': '1018933201609425',
 }
 
-if (!DARKSKY_KEY) { throw new Error('missing DARKSKY_KEY') }
 // Initialize
 const forecast = new Forecast({
 	service: 'darksky',
@@ -37,6 +36,7 @@ const forecast = new Forecast({
  */
 const getWeather = (coordinate: number[]): Promise<any> => {
 	return new Promise((response, reject) => {
+		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY')
 		forecast.get(coordinate, (err, weather) => {
 			if (err) { reject(err) } else { response(weather) }
 		})
@@ -45,6 +45,7 @@ const getWeather = (coordinate: number[]): Promise<any> => {
 
 const getWeatherMessage = (...params: number[]): Promise<any> => {
 	return new Promise((response, reject) => {
+		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY')
 		const coordinate: number[] =
 		params.length === 2  ? [params[0], params[1]] : [WHITE_HAVEN_LAT, WHITE_HAVEN_LONG]
 		getWeather(coordinate)

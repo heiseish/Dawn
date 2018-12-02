@@ -27,15 +27,15 @@ exports.default = (platform, payload) => __awaiter(this, void 0, void 0, functio
     };
     switch (platform) {
         case 'telegram':
-            if (idx_1.default(payload, (_) => _.from.id)) {
+            if (idx_1.default(payload, _ => _.from.id)) {
                 data.hashPrefix = 'tlg',
-                    data.id = idx_1.default(payload, (_) => _.from.id);
+                    data.id = idx_1.default(payload, _ => _.from.id);
             }
             break;
         case 'messenger':
-            if (idx_1.default(payload, (_) => _.sender.id)) {
+            if (idx_1.default(payload, _ => _.sender.id)) {
                 data.hashPrefix = 'mes',
-                    data.id = idx_1.default(payload, (_) => _.sender.id);
+                    data.id = idx_1.default(payload, _ => _.sender.id);
             }
             break;
         default:

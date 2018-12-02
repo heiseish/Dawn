@@ -22,6 +22,9 @@ class Headquarter {
      * Handle receving events
      * @param platform platforms currently supported
      * @param payload message payload from user
+     * @param UserDb Mongoose DB User schema
+     * @param cache Cache server
+     * @throws Error if any errors with child processes
      */
     receive(platform, payload, UserDb, cache) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -38,7 +41,7 @@ class Headquarter {
                 logger_1.default.error(err);
             }
             finally {
-                logger_1.default.separator('=====================================');
+                logger_1.default.separator();
             }
         });
     }

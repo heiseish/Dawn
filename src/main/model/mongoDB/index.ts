@@ -4,11 +4,10 @@ import {
 } from '../../environment'
 import Logger from '../../logger'
 import UserDB from './user'
-import textSchema from './text'
+// import textSchema from './text'
 
 export default class MongoDB {
 	private db
-	private texts
 	private options = {
 		autoReconnect: true,
 		reconnectTries: 100, // Never stop trying to reconnect
@@ -32,8 +31,16 @@ export default class MongoDB {
 			},
 		)
 		this.db.set('useCreateIndex', true)
-		this.db.connection.on('reconnectFailed', () => Logger.error('Mongoose attemp to recoonect failed'))
 		this.users = new UserDB(this.db)
 		// this.texts = textSchema(this.db)
 	}	
+
+	/**
+	 * Terminate connection to mongoose database
+	 */
+	public terminateConnection = ():void => {
+		Logger.warn('Closing connection to Mongo DB...')
+		this.db.connection.close()
+	}
+
 }

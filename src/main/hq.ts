@@ -10,6 +10,9 @@ export default class Headquarter {
 	 * Handle receving events
 	 * @param platform platforms currently supported
 	 * @param payload message payload from user
+	 * @param UserDb Mongoose DB User schema
+	 * @param cache Cache server
+	 * @throws Error if any errors with child processes
 	 */
 	public async receive(platform: supportedPlatform, payload: any, UserDb: any, cache: any): Promise<void | Error> {
 		Logger.info('Transfering event to headquarter..')
@@ -23,7 +26,7 @@ export default class Headquarter {
 		} catch (err) {
 			Logger.error(err)
 		} finally {
-			Logger.separator('=====================================')
+			Logger.separator()
 		}
 	}
 }

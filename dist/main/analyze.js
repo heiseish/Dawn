@@ -32,7 +32,7 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
         }
         else if (text) {
             user.locale = checkLang();
-            user.lastText = text;
+            user.lastText = reformat(text);
             const intent = yield findIntent(text);
             if (typeof intent === 'string') {
                 user.entity = {
@@ -152,4 +152,14 @@ const findIntent = (text) => __awaiter(this, void 0, void 0, function* () {
 * //TODO
 */
 const checkLang = () => 'en';
+/**
+ * strim text to prevent the link being sent to RNN server
+ * @param text Text to be formatted
+ * @returns formatted text
+ */
+const reformat = (text) => {
+    text = text.replace('/', '');
+    text = text.replace('https:', '');
+    return text;
+};
 //# sourceMappingURL=analyze.js.map

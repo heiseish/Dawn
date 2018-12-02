@@ -57,7 +57,7 @@ class Logger {
 	* Logging separator symbols
 	* @param text separator symbols
 	*/
-	public separator(text: string) {
+	public separator(text: string = '=====================================') {
 		console.log(chalk.yellow(text))
 	}
 

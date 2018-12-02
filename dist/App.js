@@ -32,23 +32,9 @@ class App {
     * Constructor for main REST API
     */
     constructor() {
-        this.sweeper = new sweeper_1.default();
-        this.setUpDatabase();
-        this.headquarter = new hq_1.default();
         this.express = express_1.default();
-    }
-    /**
-    * Establish connection to database
-    */
-    setUpDatabase() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.firebase = new firebase_1.default();
-            this.mongodb = new mongoDB_1.default();
-            this.UserDB = yield this.mongodb.users;
-            this.cache = new cache_1.default(this.UserDB);
-            this.sweeper.add(this.cache.close);
-            this.sweeper.add(this.firebase.terminateConnection);
-        });
+        this.sweeper = new sweeper_1.default();
+        this.headquarter = new hq_1.default();
     }
     /**
     * Endpoint for ping related service
@@ -65,12 +51,10 @@ class App {
             if (!environment_1.FB_VERIFY_TOKEN)
                 throw new Error('missing FB_VERIFY_TOKEN');
             if (req.query['hub.mode'] === 'subscribe' &&
-                req.query['hub.verify_token'] === environment_1.FB_VERIFY_TOKEN) {
+                req.query['hub.verify_token'] === environment_1.FB_VERIFY_TOKEN)
                 res.status(200).send(req.query['hub.challenge']);
-            }
-            else {
+            else
                 res.sendStatus(403);
-            }
         });
         this.express.post('/fb', (req, res) => {
             preprocess_1.messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event, this.mongodb.users, this.cache));
@@ -92,16 +76,16 @@ class App {
     * @param {string[]} people list of people to send to
     */
     loadStreamingEndpoint(people) {
-        // if (process.env.NODE_ENV === 'production') {
-        this.streams = [];
-        this.streams.push(new twitter_1.default());
-        this.streams.push(new morningNasa_1.default());
-        this.streams.push(new codeforce_1.default(this.firebase));
-        for (let st of this.streams)
-            st.startStreaming(people);
-        for (let st of this.streams)
-            this.sweeper.add(st.stopStreaming);
-        // }
+        if (process.env.NODE_ENV === 'production') {
+            this.streams = [];
+            this.streams.push(new twitter_1.default());
+            this.streams.push(new morningNasa_1.default());
+            this.streams.push(new codeforce_1.default(this.firebase));
+            for (let st of this.streams)
+                st.startStreaming(people);
+            for (let st of this.streams)
+                this.sweeper.add(st.stopStreaming);
+        }
     }
     /**
     * Configure setting for express
@@ -124,6 +108,20 @@ class App {
             this.loadPingEndpoints();
             this.loadTelegramEndpoint();
             this.loadStreamingEndpoint(yield this.firebase.getStreamingAudience());
+        });
+    }
+    /**
+    * Establish connection to database
+    */
+    setUpDatabase() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.firebase = new firebase_1.default();
+            this.mongodb = new mongoDB_1.default();
+            this.UserDB = yield this.mongodb.users;
+            this.cache = new cache_1.default(this.UserDB);
+            this.sweeper.add(this.cache.close);
+            this.sweeper.add(this.mongodb.terminateConnection);
+            this.sweeper.add(this.firebase.terminateConnection);
         });
     }
 }

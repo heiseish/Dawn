@@ -11,10 +11,20 @@ const _1 = __importDefault(require("./"));
 const POKEMONGO_TWITTER = '2839430431';
 const WYK_TWITTER = '44680622';
 const MY_TWITTER = '700623960';
+const KUROKY_TWITTER = '949785073';
+const MATUM_TWITTER = '2773714579';
+const GH_TWITTER = '1574718510';
+const MIRACLE_TWITTER = '3907466052';
+const MC_TWITTER = '2870796886';
 const listOfStreams = [
     POKEMONGO_TWITTER,
     WYK_TWITTER,
     MY_TWITTER,
+    KUROKY_TWITTER,
+    MATUM_TWITTER,
+    GH_TWITTER,
+    MIRACLE_TWITTER,
+    MC_TWITTER
 ];
 /**
  * Class for twitter streaming

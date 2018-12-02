@@ -10,5 +10,6 @@ const App_1 = __importDefault(require("./App"));
 const environment_1 = require("./main/environment");
 const app = new App_1.default();
 app.configureExpress(environment_1.PORT);
+app.setUpDatabase();
 app.startServer();
 //# sourceMappingURL=index.js.map

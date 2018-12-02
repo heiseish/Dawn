@@ -26,7 +26,7 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 			user.lastDoc = document
 		} else if (text) {
 			user.locale = checkLang()
-			user.lastText = text
+			user.lastText = reformat(text)
 			const intent = await findIntent(text)
 			if (typeof intent === 'string') {
 				user.entity = {
@@ -160,3 +160,14 @@ const findIntent = async (text: string): Promise<string | Error> => {
 * //TODO
 */
 const checkLang = (): string => 'en'
+
+/**
+ * strim text to prevent the link being sent to RNN server
+ * @param text Text to be formatted
+ * @returns formatted text
+ */
+const reformat = (text: string):string => {
+	text = text.replace('/', '')
+	text = text.replace('https:', '')
+	return text
+}

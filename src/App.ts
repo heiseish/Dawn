@@ -33,23 +33,11 @@ export default class App {
 	* Constructor for main REST API
 	*/
 	constructor() {
-		this.sweeper = new Sweeper()
-		this.setUpDatabase()
-		this.headquarter = new Headquarter()
 		this.express = express()
+		this.sweeper = new Sweeper()
+		this.headquarter = new Headquarter()
 	}
 	
-	/**
-	* Establish connection to database
-	*/
-	private async setUpDatabase():Promise<void> {
-		this.firebase = new Firebase()
-		this.mongodb = new MongoDB()
-		this.UserDB = await this.mongodb.users
-		this.cache = new Cache(this.UserDB)
-		this.sweeper.add(this.cache.close)
-		this.sweeper.add(this.firebase.terminateConnection)
-	}
 	/**
 	* Endpoint for ping related service
 	*/
@@ -66,7 +54,8 @@ export default class App {
 		this.express.get('/fb', (req, res) => {
 			if (!FB_VERIFY_TOKEN) throw new Error('missing FB_VERIFY_TOKEN')
 			if (req.query['hub.mode'] === 'subscribe' &&
-			req.query['hub.verify_token'] === FB_VERIFY_TOKEN) { res.status(200).send(req.query['hub.challenge']) } else { res.sendStatus(403) }
+				req.query['hub.verify_token'] === FB_VERIFY_TOKEN) res.status(200).send(req.query['hub.challenge'])
+			else res.sendStatus(403)
 		})
 		this.express.post('/fb', (req, res) => {
 			messengerPreprocess(req.body.entry[0].messaging, 
@@ -90,7 +79,7 @@ export default class App {
 	* @param {string[]} people list of people to send to
 	*/
 	private loadStreamingEndpoint(people: string[]): void {
-		// if (process.env.NODE_ENV === 'production') {
+		if (process.env.NODE_ENV === 'production') {
 			this.streams = []
 			this.streams.push(new TwitterStreaming())
 			this.streams.push(new MorningNasa())
@@ -98,7 +87,7 @@ export default class App {
 			
 			for (let st of this.streams) st.startStreaming(people)
 			for (let st of this.streams) this.sweeper.add(st.stopStreaming)
-		// }
+		}
 	}
 	
 	/**
@@ -121,6 +110,20 @@ export default class App {
 		this.loadTelegramEndpoint()
 		
 		this.loadStreamingEndpoint(await this.firebase.getStreamingAudience())
+	}
+
+	/**
+	* Establish connection to database
+	*/
+	public async setUpDatabase():Promise<void> {
+		this.firebase = new Firebase()
+		this.mongodb = new MongoDB()
+		this.UserDB = await this.mongodb.users
+		this.cache = new Cache(this.UserDB)
+		this.sweeper.add(this.cache.close)
+		this.sweeper.add(this.mongodb.terminateConnection)
+		this.sweeper.add(this.firebase.terminateConnection)
+		
 	}
 	
 	

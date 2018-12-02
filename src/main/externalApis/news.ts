@@ -14,13 +14,14 @@ const MAP_TOPIC_TO_CATEGORY = {
 	scienc: 'science',
 }
 
-if (!NEWSAPI_KEY) { throw new Error('missing NEWSAPI_KEY') }
+
 
 /**
  * Get top headlines
  * @param {any} user
  */
 const getAllHeadlines = (user: any): Promise<any[]> => {
+	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY')
 	let text = user.lastText
 	if (text.indexOf('"') !== -1) {
 		text = replaceAllSubstring(text, '"', '“', '”', 'SHOW', 'NEWS', 'WITH', 'ABOUT', 'ON')
@@ -28,7 +29,10 @@ const getAllHeadlines = (user: any): Promise<any[]> => {
 	} else {
 		const common: string[] = getCommonMembersFromTwoArrays(Object.keys(MAP_TOPIC_TO_CATEGORY), user.text[user.text.length - 1].tokenizedText)
 		const category: (string | null) = MAP_TOPIC_TO_CATEGORY[common[0]] || null
-		if (category) { return new Promise((resolve) => getHeadlinesWithCategory(category).then((articles) => resolve(articles))) } else { return new Promise((resolve) => getRandomTop5Headlines().then((articles) => resolve(articles))) }
+		if (category) return new Promise((resolve) => getHeadlinesWithCategory(category)
+			.then((articles) => resolve(articles))) 
+		else return new Promise((resolve) => getRandomTop5Headlines()
+			.then((articles) => resolve(articles)))
 	}
 }
 
@@ -36,6 +40,7 @@ const getAllHeadlines = (user: any): Promise<any[]> => {
  * Get a random headline and return the title along with the message
  */
 const getRandomHeadlines = (): Promise<any> => {
+	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY')
 	return new Promise((resolve) => {
 		newsapi.v2
 			.topHeadlines({
@@ -59,6 +64,7 @@ const getRandomHeadlines = (): Promise<any> => {
  * @param {string} keyword
  */
 const getHeadlinesWithQuery = (keyword: string): Promise<any[]> => {
+	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY')
 	return new Promise((res) => {
 		newsapi.v2
 			.topHeadlines({
@@ -75,6 +81,7 @@ const getHeadlinesWithQuery = (keyword: string): Promise<any[]> => {
  * @param {string | null} category
  */
 const getHeadlinesWithCategory = (category: string | null): Promise<any[]> => {
+	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY')
 	return new Promise((res) => {
 		newsapi.v2
 			.topHeadlines({
@@ -90,7 +97,7 @@ const getHeadlinesWithCategory = (category: string | null): Promise<any[]> => {
  * Get random top headlines articles
  */
 const getRandomTop5Headlines = (): Promise<any[]> => {
-
+	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY')
 	return new Promise((res) => {
 		newsapi.v2
 			.topHeadlines({
