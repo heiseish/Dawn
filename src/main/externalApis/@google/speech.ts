@@ -6,7 +6,7 @@ import { USING_VISION } from './controller'
 const TEMP_AUDIO_PATH = 'temp.aac'
 /**
  * Transcribe the audio into text
- * @param {URI of the recorded audio file} AudioUrl
+ * @param {string} AudioUrl URI of the recorded audio file
  */
 const speechToText = (AudioUrl: string): Promise<string> => {
 	return new Promise((resolve, reject) => {

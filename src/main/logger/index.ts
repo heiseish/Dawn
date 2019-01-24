@@ -6,7 +6,6 @@ class Logger {
 	constructor() {
 		this.prefixColor = chalk.magenta
 	}
-
 	/**
 	* log the info
 	* @param text Text to display

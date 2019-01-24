@@ -52,10 +52,12 @@ export default class App {
 	*/
 	private loadFacebookEndpoint(): void {
 		this.express.get('/fb', (req, res) => {
-			if (!FB_VERIFY_TOKEN) throw new Error('missing FB_VERIFY_TOKEN')
+			if (!FB_VERIFY_TOKEN) 
+				throw new Error('missing FB_VERIFY_TOKEN')
 			if (req.query['hub.mode'] === 'subscribe' &&
 				req.query['hub.verify_token'] === FB_VERIFY_TOKEN) res.status(200).send(req.query['hub.challenge'])
-			else res.sendStatus(403)
+			else 
+				res.sendStatus(403)
 		})
 		this.express.post('/fb', (req, res) => {
 			messengerPreprocess(req.body.entry[0].messaging, 
@@ -95,6 +97,8 @@ export default class App {
 	* @param {string | number} port port that express should be listening to
 	*/
 	public configureExpress(port: string | number):void {
+		if (typeof port === 'string') 
+			port = parseInt(port)
 		this.express.listen(port)
 		this.express.use(bodyParser.json())
 		this.express.use(bodyParser.urlencoded({extended: true}))

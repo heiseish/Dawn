@@ -12,7 +12,7 @@ interface StreamableObject {
 /**
 * 
 * @param {StreamableObject} toStream object to stream
-* @param {string[]} list ref to firebase
+* @param {string[]} list list of people to send stream to
 */
 const stream = (toStream: StreamableObject, list: string[]):void => {
 	for (let userId of list) {

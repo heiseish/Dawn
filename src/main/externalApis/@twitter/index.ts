@@ -6,18 +6,7 @@ import {
 	TWITTER_CONSUMER_SECRET,
 } from '../../environment'
 
-/**
- * Check if keys are present
- */
-if (!TWITTER_CONSUMER_KEY) {
-	throw new Error('missing TWITTER_CONSUMER_KEY')
-} else if (!TWITTER_CONSUMER_SECRET) {
-	throw new Error('missing TWITTER_CONSUMER_SECRET')
-} else if (!TWITTER_ACCESS_TOKEN_KEY) {
-	throw new Error('missing TWITTER_ACCESS_TOKEN_KEY')
-} else if (!TWITTER_ACCESS_TOKEN_SECRET) {
-	throw new Error('missing TWITTER_ACCESS_TOKEN_SECRET')
-}
+
 
 const client = new Twitter({
 	consumer_key: TWITTER_CONSUMER_KEY,
@@ -26,11 +15,24 @@ const client = new Twitter({
 	access_token_secret: TWITTER_ACCESS_TOKEN_SECRET,
 })
 
+
+const checkTwitterKeys = () => {
+	if (!TWITTER_CONSUMER_KEY) {
+		throw new Error('missing TWITTER_CONSUMER_KEY')
+	} else if (!TWITTER_CONSUMER_SECRET) {
+		throw new Error('missing TWITTER_CONSUMER_SECRET')
+	} else if (!TWITTER_ACCESS_TOKEN_KEY) {
+		throw new Error('missing TWITTER_ACCESS_TOKEN_KEY')
+	} else if (!TWITTER_ACCESS_TOKEN_SECRET) {
+		throw new Error('missing TWITTER_ACCESS_TOKEN_SECRET')
+	}
+}
 /**
  * Get twitter status from a twitter user
  * @param screenName twitter handle
  */
 const getTwitterStatus = (screenName: string): Promise<any> => {
+	checkTwitterKeys()
 	return new Promise((response, reject) => {
 		const options = {
 			screen_name: screenName,
@@ -48,6 +50,7 @@ const getTwitterStatus = (screenName: string): Promise<any> => {
  * @param screenName twitter handler
  */
 const checkAndReturnTwitterUser = (screenName: string): Promise<any> => {
+	checkTwitterKeys()
 	return new Promise((resolve, reject) => {
 		const options = {
 			screen_name: screenName,
