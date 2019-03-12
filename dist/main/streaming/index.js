@@ -10,7 +10,7 @@ const api_1 = require("../telegram/api/");
 /**
 *
 * @param {StreamableObject} toStream object to stream
-* @param {string[]} list ref to firebase
+* @param {string[]} list list of people to send stream to
 */
 const stream = (toStream, list) => {
     for (let userId of list) {

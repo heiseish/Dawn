@@ -92,6 +92,8 @@ class App {
     * @param {string | number} port port that express should be listening to
     */
     configureExpress(port) {
+        if (typeof port === 'string')
+            port = parseInt(port);
         this.express.listen(port);
         this.express.use(body_parser_1.default.json());
         this.express.use(body_parser_1.default.urlencoded({ extended: true }));

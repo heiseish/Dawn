@@ -16,6 +16,7 @@ const MATUM_TWITTER = '2773714579';
 const GH_TWITTER = '1574718510';
 const MIRACLE_TWITTER = '3907466052';
 const MC_TWITTER = '2870796886';
+const NORDAX_TWITTER = '795002060643205124';
 const listOfStreams = [
     POKEMONGO_TWITTER,
     WYK_TWITTER,
@@ -24,7 +25,8 @@ const listOfStreams = [
     MATUM_TWITTER,
     GH_TWITTER,
     MIRACLE_TWITTER,
-    MC_TWITTER
+    MC_TWITTER,
+    NORDAX_TWITTER
 ];
 /**
  * Class for twitter streaming

@@ -46,12 +46,6 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
                     sentiment,
                 };
             }
-            // if (!user.text) { user.text = [] }
-            // const newText = new TextDB({
-            // 	orignalText: text,
-            // 	tokenizeText: tokenizeText(text),
-            // })
-            // user.text.push(newText)
             return user;
         }
     }

@@ -5,21 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const twitter_1 = __importDefault(require("twitter"));
 const environment_1 = require("../../environment");
-/**
- * Check if keys are present
- */
-if (!environment_1.TWITTER_CONSUMER_KEY) {
-    throw new Error('missing TWITTER_CONSUMER_KEY');
-}
-else if (!environment_1.TWITTER_CONSUMER_SECRET) {
-    throw new Error('missing TWITTER_CONSUMER_SECRET');
-}
-else if (!environment_1.TWITTER_ACCESS_TOKEN_KEY) {
-    throw new Error('missing TWITTER_ACCESS_TOKEN_KEY');
-}
-else if (!environment_1.TWITTER_ACCESS_TOKEN_SECRET) {
-    throw new Error('missing TWITTER_ACCESS_TOKEN_SECRET');
-}
 const client = new twitter_1.default({
     consumer_key: environment_1.TWITTER_CONSUMER_KEY,
     consumer_secret: environment_1.TWITTER_CONSUMER_SECRET,
@@ -27,11 +12,26 @@ const client = new twitter_1.default({
     access_token_secret: environment_1.TWITTER_ACCESS_TOKEN_SECRET,
 });
 exports.client = client;
+const checkTwitterKeys = () => {
+    if (!environment_1.TWITTER_CONSUMER_KEY) {
+        throw new Error('missing TWITTER_CONSUMER_KEY');
+    }
+    else if (!environment_1.TWITTER_CONSUMER_SECRET) {
+        throw new Error('missing TWITTER_CONSUMER_SECRET');
+    }
+    else if (!environment_1.TWITTER_ACCESS_TOKEN_KEY) {
+        throw new Error('missing TWITTER_ACCESS_TOKEN_KEY');
+    }
+    else if (!environment_1.TWITTER_ACCESS_TOKEN_SECRET) {
+        throw new Error('missing TWITTER_ACCESS_TOKEN_SECRET');
+    }
+};
 /**
  * Get twitter status from a twitter user
  * @param screenName twitter handle
  */
 const getTwitterStatus = (screenName) => {
+    checkTwitterKeys();
     return new Promise((response, reject) => {
         const options = {
             screen_name: screenName,
@@ -51,6 +51,7 @@ exports.getTwitterStatus = getTwitterStatus;
  * @param screenName twitter handler
  */
 const checkAndReturnTwitterUser = (screenName) => {
+    checkTwitterKeys();
     return new Promise((resolve, reject) => {
         const options = {
             screen_name: screenName,

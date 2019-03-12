@@ -11,7 +11,7 @@ const controller_1 = require("./controller");
 const TEMP_AUDIO_PATH = 'temp.aac';
 /**
  * Transcribe the audio into text
- * @param {URI of the recorded audio file} AudioUrl
+ * @param {string} AudioUrl URI of the recorded audio file
  */
 const speechToText = (AudioUrl) => {
     return new Promise((resolve, reject) => {
