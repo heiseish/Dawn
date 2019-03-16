@@ -27,9 +27,8 @@ const MODEL_FILE_PATH = 'file://dist/main/externalApis/@google/tensorflow/model.
  */
 const predict = (s) => __awaiter(this, void 0, void 0, function* () {
     try {
-        if (!model) {
-            model = yield tf.loadModel(MODEL_FILE_PATH);
-        }
+        if (!model)
+            model = yield tf.loadLayersModel(MODEL_FILE_PATH);
         const x = [];
         x.push(utils_1.characterLevelEmbed(s));
         const inputTensor = tf.tensor3d(x);

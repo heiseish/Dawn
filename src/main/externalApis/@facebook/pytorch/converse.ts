@@ -17,7 +17,7 @@ const generateDataPackage = (sentence: string) => ({
  * @param {string} sentence sentence to be replied back to
  * @return {string} reply to the sentence
  */
-const converse = async (sentence: string): Promise<string | Error> => {
+const converse = async (sentence: string): Promise<string> => {
 	try {
 		const ans = await rp(generateDataPackage(sentence))
 		return ans
