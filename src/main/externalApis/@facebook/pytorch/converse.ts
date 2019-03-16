@@ -1,18 +1,30 @@
 import request from 'request'
-const PYTORCH_SERVER = 'https://converseserver.herokuapp.com/conversation/'
+const PYTORCH_SERVER = 'https://dlinterface.herokuapp.com/conversation'
+import rp from 'request-promise'
+
+const generateDataPackage = (sentence: string) => ({
+	method: 'POST',
+	uri: PYTORCH_SERVER,
+	form: {
+        sentence
+    }
+})
+
+
 
 /**
  * conversation if intent classified is unclear
  * @param {string} sentence sentence to be replied back to
  * @return {string} reply to the sentence
  */
-const converse = (sentence: string): Promise<string> => {
-	return new Promise((response, reject) => {
-		request(PYTORCH_SERVER + sentence, async (error, res, body) => {
-			if (error) { reject(error) }
-			response(body)
-		})
-	})
+const converse = async (sentence: string): Promise<string | Error> => {
+	try {
+		const ans = await rp(generateDataPackage(sentence))
+		return ans
+	} catch(e) {
+		return Promise.reject(e)
+	}
+	
 }
 
 export default converse
