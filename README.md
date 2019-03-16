@@ -1,47 +1,14 @@
-# Help manual for Serena bot 
+# Messaging Interface
 
-An automatically generated and updated help manual of Serena bot
 
-### Notation:![Imgur](https://i.imgur.com/JQheM1b.png)
+[![Language](https://img.shields.io/static/v1.svg?label=Language&message=Typescript&color=informational)]([https://travis-ci.com/username/projectname](https://github.com/heiseish/MessagingRestServer))
+[![Node Version](https://img.shields.io/static/v1.svg?label=Node&message=10.9.0&color=success)]([https://travis-ci.com/username/projectname](https://github.com/heiseish/MessagingRestServer))
+[![Platform](https://img.shields.io/static/v1.svg?label=Platform&message=Messenger&color=9cf&logo=bitcoin)]([https://travis-ci.com/username/projectname](https://github.com/heiseish/MessagingRestServer))
+[![Platform](https://img.shields.io/static/v1.svg?label=Platform&message=Telegram&color=9cf&logo=telegram)]([https://travis-ci.com/username/projectname](https://github.com/heiseish/MessagingRestServer))
 
-Intent: The service that Serena could execute/respond to.Ask questions along with line of the intent and the bot should be able to answer
 
-Description: more details about the service.
 
-***
-
-- __Intent:__ `greetings` 
-
-> __Description:__ Greet people. 
-
-- __Intent:__ `thanks` 
-
-> __Description:__ Thanks! xD 
-
-- __Intent:__ `bye` 
-
-> __Description:__ Bye bai :3 
-
-- __Intent:__ `news` 
-
-> __Description:__ Update the person with list of latest news. 
-
-- __Intent:__ `pkmGo` 
-
-> __Description:__ Show latest tweets by Pokemon Go on Twitter. 
-
-- __Intent:__ `weather` 
-
-> __Description:__ Show nearby weather forecast. 
-
-- __Intent:__ `help` 
-
-> __Description:__ Return help manual for the bot. 
-
-- __Intent:__ `updateManual` 
-
-> __Description:__ Update the help manual. Admins only! 
-
-- __Intent:__ `listenToTwitter` 
-
-> __Description:__ Get real time twitter update from a twitter account. Need to specific source. 
+- Build: `tsc`
+- Start Development: `yarn start`
+- Deploy: Git commit and then `heroku push origin master`
+- Test: `yarn test`
