@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/static/v1.svg?label=Platform&message=Telegram&color=9cf&logo=telegram)]([https://travis-ci.com/username/projectname](https://github.com/heiseish/MessagingRestServer))
 [![IDE](https://img.shields.io/static/v1.svg?label=IDE&message=VSCode&color=blueviolet&logo=Visual-Studio-Code)]([https://travis-ci.com/username/projectname](https://github.com/heiseish/MessagingRestServer))
 [![Package Manager](https://img.shields.io/static/v1.svg?label=Package%20Manager&message=Yarn&color=blue&logo=Yarn)]([https://travis-ci.com/username/projectname](https://github.com/heiseish/MessagingRestServer))
-
+[![Container](https://img.shields.io/static/v1.svg?label=Container&message=Docker%20Image&color=blue&logo=Docker)]([https://travis-ci.com/username/projectname](https://github.com/heiseish/MessagingRestServer))
 
 
 - Build: `tsc`
