@@ -2,6 +2,7 @@ import encryptedServiceAccount from './account.json'
 import * as admin from 'firebase-admin'
 import { decrypt } from '../../lib/encrypt'
 import Logger from '../../logger'
+import { temporalPadding } from '@tensorflow/tfjs-layers/dist/layers/padding';
 
 export default class Firebase {
 	private db
@@ -39,26 +40,18 @@ export default class Firebase {
 	 * Get codeforce handle
 	 * @returns {Promise<string>} handle
 	 */
-	public async getCodeforceHandle():Promise<string> {
-		const snap = await this.db.database().ref('restricted_access/codeforce/handle').once('value')
-		return snap.val()
+	public async getCodeforceHandle():Promise<CFUser[]> {
+		const snap = await this.db.database().ref('restricted_access/codeforce/').once('value')
+		let users =  snap.val()
+		return users
 	}
 
-	/**
-	 * Get current codeforce standing
-	 * @returns {Promise<CFRanking>} cf ranking
-	 */
-	public async getCurrentCodeforceStanding():Promise<CFRanking> {
-		const snap = await this.db.database().ref('restricted_access/codeforce/standing/').once('value')
-		return snap.val()
-	}
 
 	/**
 	 * Get current codeforce standing
 	 * @param {CFRanking} cf ranking
 	 */
-	public async setCurrentCodeforceStanding(ranking: CFRanking):Promise<void> {
-		await this.db.database().ref('restricted_access/codeforce/standing/').set(ranking)
+	public async setCurrentCodeforceStanding(handle: string, ranking: CFRanking):Promise<void> {
+		await this.db.database().ref(`restricted_access/codeforce/${handle}/standing/`).set(ranking)
 	}
 }
-

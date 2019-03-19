@@ -60,27 +60,18 @@ class Firebase {
      */
     getCodeforceHandle() {
         return __awaiter(this, void 0, void 0, function* () {
-            const snap = yield this.db.database().ref('restricted_access/codeforce/handle').once('value');
-            return snap.val();
-        });
-    }
-    /**
-     * Get current codeforce standing
-     * @returns {Promise<CFRanking>} cf ranking
-     */
-    getCurrentCodeforceStanding() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const snap = yield this.db.database().ref('restricted_access/codeforce/standing/').once('value');
-            return snap.val();
+            const snap = yield this.db.database().ref('restricted_access/codeforce/').once('value');
+            let users = snap.val();
+            return users;
         });
     }
     /**
      * Get current codeforce standing
      * @param {CFRanking} cf ranking
      */
-    setCurrentCodeforceStanding(ranking) {
+    setCurrentCodeforceStanding(handle, ranking) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.db.database().ref('restricted_access/codeforce/standing/').set(ranking);
+            yield this.db.database().ref(`restricted_access/codeforce/${handle}/standing/`).set(ranking);
         });
     }
 }

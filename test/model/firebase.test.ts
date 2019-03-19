@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import Firebase from '../../src/main/model/firebase'
 
-const HANDLE = 'giangdao'
+
 const useInTest = ():void => {
 	before(function initializeConnectionToFirebase() {
 		this.db = new Firebase()
@@ -29,10 +29,9 @@ describe('Firebase', function() {
 	// TODO: create a test database to automate this shit
 	describe('#getCodeforceHandle()', function() {
 		it('Should be able to get codeforce handle', async function() {
-			const handle = await this.db.getCodeforceHandle()
-			expect(handle)
-				.to.be.a('string')
-				.and.to.be.equal(HANDLE)
+			const users = await this.db.getCodeforceHandle()
+			expect(users)
+				.to.be.an('object')
 		})
 	})
 })

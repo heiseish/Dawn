@@ -76,16 +76,16 @@ class App {
     * @param {string[]} people list of people to send to
     */
     loadStreamingEndpoint(people) {
-        if (process.env.NODE_ENV === 'production') {
-            this.streams = [];
-            this.streams.push(new twitter_1.default());
-            this.streams.push(new morningNasa_1.default());
-            this.streams.push(new codeforce_1.default(this.firebase));
-            for (let st of this.streams)
-                st.startStreaming(people);
-            for (let st of this.streams)
-                this.sweeper.add(st.stopStreaming);
-        }
+        // if (process.env.NODE_ENV === 'production') {
+        this.streams = [];
+        this.streams.push(new twitter_1.default());
+        this.streams.push(new morningNasa_1.default());
+        this.streams.push(new codeforce_1.default(this.firebase));
+        for (let st of this.streams)
+            st.startStreaming(people);
+        for (let st of this.streams)
+            this.sweeper.add(st.stopStreaming);
+        // }
     }
     /**
     * Configure setting for express

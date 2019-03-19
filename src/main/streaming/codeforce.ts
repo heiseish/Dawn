@@ -19,15 +19,17 @@ export default class CodeforceStream {
 	 */
 	public startStreaming(list: string[]) {
 		this.scheduler = schedule.scheduleJob('*/20 * * * *', async () => {
-			let handle = await this.firebase.getCodeforceHandle()
-			let info: CFRanking = await getUserRating(handle)
-			let current: null | CFRanking = await this.firebase.getCurrentCodeforceStanding()
-			if (!current || info.rating != current.rating) {
-				await this.firebase.setCurrentCodeforceStanding(info)
-				stream({
-					text: 'New codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank
-				}, list)
+			let users:CFUser[] = await this.firebase.getCodeforceHandle()
+			for (let user of Object.values(users)) {
+				let info: CFRanking = await getUserRating(user.handle)
+				if (!user.standing || info.rating != user.standing.rating) {
+					await this.firebase.setCurrentCodeforceStanding(user.handle, info)
+					stream({
+						text: 'Codeforce user ' + user.handle + ':\nNew codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank
+					}, list)
+				}
 			}
+			
 		});
 	}
 

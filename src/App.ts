@@ -81,7 +81,7 @@ export default class App {
 	* @param {string[]} people list of people to send to
 	*/
 	private loadStreamingEndpoint(people: string[]): void {
-		if (process.env.NODE_ENV === 'production') {
+		// if (process.env.NODE_ENV === 'production') {
 			this.streams = []
 			this.streams.push(new TwitterStreaming())
 			this.streams.push(new MorningNasa())
@@ -89,7 +89,7 @@ export default class App {
 			
 			for (let st of this.streams) st.startStreaming(people)
 			for (let st of this.streams) this.sweeper.add(st.stopStreaming)
-		}
+		// }
 	}
 	
 	/**

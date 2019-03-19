@@ -33,14 +33,15 @@ class CodeforceStream {
      */
     startStreaming(list) {
         this.scheduler = node_schedule_1.default.scheduleJob('*/20 * * * *', () => __awaiter(this, void 0, void 0, function* () {
-            let handle = yield this.firebase.getCodeforceHandle();
-            let info = yield codeforce_1.getUserRating(handle);
-            let current = yield this.firebase.getCurrentCodeforceStanding();
-            if (!current || info.rating != current.rating) {
-                yield this.firebase.setCurrentCodeforceStanding(info);
-                _1.default({
-                    text: 'New codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank
-                }, list);
+            let users = yield this.firebase.getCodeforceHandle();
+            for (let user of Object.values(users)) {
+                let info = yield codeforce_1.getUserRating(user.handle);
+                if (!user.standing || info.rating != user.standing.rating) {
+                    yield this.firebase.setCurrentCodeforceStanding(user.handle, info);
+                    _1.default({
+                        text: 'Codeforce user ' + user.handle + ':\nNew codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank
+                    }, list);
+                }
             }
         }));
     }
