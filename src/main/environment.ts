@@ -22,7 +22,11 @@ const MONGO_DB_URI = process.env.MONGO_DB_URI;
 const CACHE_DURATION = process.env.CACHE_DURATION;
 const NASA_APIKEY = process.env.NASA_APIKEY;
 const GIPHY_KEY = process.env.GIPHY_KEY;
+const CIPHER = process.env.CIPHER;
+const PASSKEY = process.env.PASSKEY;
 export {
+	CIPHER,
+	PASSKEY,
 	FB_PAGE_ID,
 	FB_VERIFY_TOKEN,
 	FB_PAGE_TOKEN,
