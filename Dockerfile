@@ -1,6 +1,6 @@
-FROM node:10
+FROM node:12
 
-WORKDIR /Users/heiseish/Projects/potts
+WORKDIR /Users/heiseish/Projects/Dawn
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied

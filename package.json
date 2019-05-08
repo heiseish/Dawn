@@ -6,13 +6,13 @@
   "main": "dist/index.js",
   "private": true,
   "scripts": {
-    "test": "ts-node --files test/index.ts",
+    "test": "npx ts-node --files test/index.ts",
     "start": "node dist/index.js",
     "testrun": "yarn build && yarn start",
     "lint": "tslint --fix -c ./tslint.json 'src/**/*{.ts,.tsx}'"
   },
   "engines": {
-    "node": "10.9.0"
+    "node": "12.2.0"
   },
   "dependencies": {
     "@google-cloud/speech": "^2.3.1",
@@ -65,7 +65,8 @@
     "axios": "^0.18.0",
     "get-port": "^5.0.0",
     "mocha": "^6.1.4",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "ts-node": "^8.1.0"
   },
   "pre-commit": [
     "test"
