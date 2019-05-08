@@ -7,4 +7,6 @@ const image_1 = __importDefault(require("./image"));
 exports.tlgImage = image_1.default;
 const message_1 = __importDefault(require("./message"));
 exports.tlgMessage = message_1.default;
+const document_1 = __importDefault(require("./document"));
+exports.tlgDocument = document_1.default;
 //# sourceMappingURL=index.js.map

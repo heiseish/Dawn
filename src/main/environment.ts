@@ -21,6 +21,7 @@ const PGURI = process.env.PGURI
 const MONGO_DB_URI = process.env.MONGO_DB_URI
 const CACHE_DURATION = process.env.CACHE_DURATION
 const NASA_APIKEY = process.env.NASA_APIKEY
+const GIPHY_KEY = process.env.GIPHY_KEY
 export {
 	FB_PAGE_ID,
 	FB_VERIFY_TOKEN,
@@ -46,5 +47,6 @@ export {
 	PGURI,
 	MONGO_DB_URI,
 	CACHE_DURATION,
-	NASA_APIKEY
+	NASA_APIKEY,
+	GIPHY_KEY
 }

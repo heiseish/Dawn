@@ -24,6 +24,7 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 			default:
 
 		}
+		user.response = {/* Sanitize reponse object */}
 		log.stop('Responded.')
 	} catch (e) {
 		return Promise.reject(e)

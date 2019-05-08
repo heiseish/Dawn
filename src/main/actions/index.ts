@@ -4,7 +4,7 @@ import greet from './greet'
 import help from './help'
 import news from './news'
 import pkmGo from './pkmGo'
-import replyToDocument from './replyToDocument'
+import sendDocument from './sendDocument'
 import thanks from './thanks'
 import weather from './weather'
 import worldCup from './worldCup'
@@ -40,8 +40,8 @@ export default [
 		description: 'Reply to people thanking',
 	},
 	{
-		name: 'replyToDocument',
-		execute: replyToDocument,
+		name: 'sendDocument',
+		execute: sendDocument,
 		description: 'Reply to people sending files',
 	},
 	{

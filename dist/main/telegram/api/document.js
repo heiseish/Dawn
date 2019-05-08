@@ -15,15 +15,15 @@ const __1 = __importDefault(require("../"));
 exports.default = (chatId, url, reply, messageId) => __awaiter(this, void 0, void 0, function* () {
     try {
         if (reply) {
-            return yield __1.default.sendPhoto(chatId, url, {
+            return yield __1.default.sendDocument(chatId, url, {
                 reply_to_message_id: messageId,
             });
         }
         else
-            return yield __1.default.sendPhoto(chatId, url);
+            return yield __1.default.sendDocument(chatId, url);
     }
     catch (e) {
         return Promise.reject(e);
     }
 });
-//# sourceMappingURL=image.js.map
+//# sourceMappingURL=document.js.map

@@ -9,18 +9,16 @@ import { randomIndex } from '../utils/array'
  * @param {userType} user
  * @return updated user
  */
-export default (user: userType): Promise<userType> => {
-	return new Promise((resolve, reject) => {
+export default async (user: userType): Promise<userType> => {
+	try {
 		switch (user.lastDoc.type) {
 		case 'image':
-			getRandomGif()
-				.then((res) => {
-					user.response = {
-						answerable: true,
-						image:  res,
-					}
-				})
-				.catch((err) => reject(err))
+			let res = await getRandomGif()
+			user.response = {
+				simpleText: null,
+				answerable: true,
+				image:  res,
+			}
 			break
 
 		case 'video':
@@ -32,7 +30,8 @@ export default (user: userType): Promise<userType> => {
 
 		case 'location':
 			geocoder.reverseGeocode(user.lastLocation.lat, user.lastLocation.long, (err, data) => {
-				if (err) { reject(err) }
+				if (err) 
+					return Promise.reject(err)
 				const lastLocation = typeof user.toObject === 'function' ? user.toObject().lastLocation : user.lastLocation
 				user.lastLocation = {
 					...lastLocation,
@@ -69,8 +68,9 @@ export default (user: userType): Promise<userType> => {
 			break
 
 		default:
-			resolve(user)
 		}
-		resolve(user)
-	})
+		return user
+	} catch(e) {
+		return Promise.reject(e)
+	}
 }

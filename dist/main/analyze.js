@@ -25,7 +25,7 @@ const CLASSIFY_CONFIDENCE_THRESHOLD = 0.9;
 exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, function* () {
     const log = logger_1.default.info('Analyzing...', true);
     try {
-        const { text, document, entity, sentiment, } = getInformationFromMessage(platform, payload);
+        const { text, document, sentiment, } = getInformationFromMessage(platform, payload);
         if (document) {
             user.entity.lastIntent = 'sendDocument';
             user.lastDoc = document;
@@ -35,19 +35,15 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
             user.lastText = reformat(text);
             const intent = yield findIntent(text);
             if (typeof intent === 'string') {
-                user.entity = {
-                    lastIntent: intent,
-                    sentiment,
-                };
+                user.entity.lastIntent = intent;
+                user.entity.sentiment = sentiment;
             }
             else {
-                user.entity = {
-                    lastIntent: 'unknown',
-                    sentiment,
-                };
+                user.entity.lastIntent = 'unknown';
+                user.entity.sentiment = sentiment;
             }
-            return user;
         }
+        return user;
     }
     catch (e) {
         return Promise.reject(e);
@@ -65,19 +61,20 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
 const getInformationFromMessage = (platform, payload) => {
     let info = {
         text: null,
-        document: null,
-        entity: null,
         sentiment: 'neutral',
+        document: {}
     };
     switch (platform) {
+        /* Telegram */
         case 'telegram':
-            info = {
-                text: payload.text || null,
-                document: payload.document || payload.photo || null,
-                entity: payload.document || payload.photo ? 'replyToDocument' : null,
-                sentiment: 'neutral',
-            };
+            info.text = payload.text || null,
+                info.sentiment = 'neutral'; /* TODO */
+            if (payload.photo) {
+                info.document.type = 'image';
+                info.document.payload = payload.photo[0];
+            }
             break;
+        /* Messager */
         case 'messenger':
             if (idx_1.default(payload, (_) => _.message.quick_reply)) {
                 const Msgpayload = idx_1.default(payload, (_) => _.message.quick_reply.payload);
@@ -90,10 +87,8 @@ const getInformationFromMessage = (platform, payload) => {
             }
             else if (idx_1.default(payload, (_) => _.message.text)) {
                 info.text = payload.message.text;
-                info.entity = null;
             }
             else if (idx_1.default(payload, (_) => _.message.attachments)) {
-                info.entity = 'replyToDocument';
                 switch (payload.message.attachments[0].type) {
                     case 'image':
                         info.document = {

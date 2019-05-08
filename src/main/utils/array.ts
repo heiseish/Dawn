@@ -47,21 +47,7 @@ const shuffle = (array: any[]): any[] => {
 	return array
 }
 
-/**
- * Check if an  array of objects hay any object that contains a key with a specific attribute value.
- * @param {any[]} arr
- * @param {string} attribute
- * @param {string} key
- * @return object with key equal to some values, null if there is no such object
- */
-const containsObjectWithNameAttribute = (arr: any[], attribute: string, key: string = 'name'): any => {
-	for (const object of arr) {
-		if (object[key] === attribute) {
-			return object
-		}
-	}
-	return false
-}
+
 
 /**
  * Return a random member of an array
@@ -86,7 +72,6 @@ export {
 	checkIfArrayMutual,
 	shuffle,
 	getCommonMembersFromTwoArrays,
-	containsObjectWithNameAttribute,
 	randomIndex,
 	removeFromArray,
 }

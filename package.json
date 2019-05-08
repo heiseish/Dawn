@@ -7,7 +7,9 @@
   "private": true,
   "scripts": {
     "test": "ts-node --files test/index.ts",
-    "start": "node dist/index.js"
+	"start": "node dist/index.js",
+	"build": "tsc",
+	"testrun": "yarn build && yarn start"
   },
   "engines": {
     "node": "10.9.0"
@@ -24,7 +26,6 @@
     "chalk": "^2.3.1",
     "crypto-json": "^2.0.0",
     "dotenv": "^6.0.0",
-    "es6-promise": "^4.2.4",
     "esdoc": "^1.1.0",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
@@ -32,8 +33,6 @@
     "express": "^4.16.2",
     "fbgraph": "^1.4.1",
     "firebase-admin": "^6.1.0",
-    "flow": "^0.2.3",
-    "flow-node": "^1.2.3",
     "forecast": "^0.3.2",
     "geocoder": "^0.2.3",
     "gists": "^2.0.0",

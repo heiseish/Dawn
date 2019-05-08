@@ -1,6 +1,7 @@
 import idx from 'idx'
 import { predict } from './externalApis/@google/tensorflow/intentClassification'
 import Logger from './logger'
+import { stringByteLength } from '@tensorflow/tfjs-core/dist/io/io_utils';
 const CLASSIFY_CONFIDENCE_THRESHOLD = 0.9
 
 /**
@@ -16,7 +17,6 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 		const {
 			text,
 			document,
-			entity,
 			sentiment,
 		} = getInformationFromMessage(platform, payload)
 
@@ -28,18 +28,14 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 			user.lastText = reformat(text)
 			const intent = await findIntent(text)
 			if (typeof intent === 'string') {
-				user.entity = {
-					lastIntent: intent,
-					sentiment,
-				}
+				user.entity.lastIntent = intent
+				user.entity.sentiment = sentiment
 			} else {
-				user.entity = {
-					lastIntent: 'unknown',
-					sentiment,
-				}
+				user.entity.lastIntent = 'unknown'
+				user.entity.sentiment = sentiment
 			}
-			return user
 		}
+		return user
 	} catch (e) {
 		return Promise.reject(e)
 	} finally {
@@ -48,10 +44,9 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 }
 
 interface Info {
-	text: any
-	document: any
-	entity: any
-	sentiment: any
+	text: string
+	document?: any
+	sentiment: string
 }
 /**
 * Get the information from the message sent by user
@@ -62,20 +57,21 @@ interface Info {
 const getInformationFromMessage = (platform: supportedPlatform, payload: any): Info => {
 	let info: Info = {
 		text: null,
-		document: null,
-		entity: null,
 		sentiment: 'neutral',
+		document: {}
 	}
 	switch (platform) {
+		/* Telegram */
 		case 'telegram':
-		info =  {
-			text: payload.text || null,
-			document: payload.document || payload.photo || null,
-			entity: payload.document || payload.photo ? 'replyToDocument' : null,
-			sentiment: 'neutral',
+		info.text =  payload.text || null,
+		info.sentiment =  'neutral' /* TODO */
+		if (payload.photo)  {
+			info.document.type = 'image'
+			info.document.payload = payload.photo[0]
 		}
 		break
 
+		/* Messager */
 		case 'messenger':
 		if (idx(payload, (_) => _.message.quick_reply)) {
 			const Msgpayload = idx(payload, (_) => _.message.quick_reply.payload)
@@ -87,9 +83,7 @@ const getInformationFromMessage = (platform: supportedPlatform, payload: any): I
 			}
 		} else if (idx(payload, (_) => _.message.text)) {
 			info.text = payload.message.text
-			info.entity = null
 		} else if (idx(payload, (_) => _.message.attachments)) {
-			info.entity = 'replyToDocument'
 			switch (payload.message.attachments[0].type) {
 				case 'image':
 				info.document = {

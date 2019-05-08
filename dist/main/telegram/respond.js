@@ -30,6 +30,9 @@ exports.default = (payload, user) => __awaiter(this, void 0, void 0, function* (
                 yield api_1.tlgImage(chat, response.image);
             }
         }
+        else if (response.image) {
+            yield api_1.tlgDocument(chat, response.image);
+        }
         else if (response.cascadeText) {
             for (const i of response.cascadeText) {
                 yield api_1.tlgMessage(chat, i.title + '\n' + i.buttons[0].url);

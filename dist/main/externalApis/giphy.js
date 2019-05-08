@@ -4,13 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const request_1 = __importDefault(require("request"));
+const environment_1 = require("../environment");
 /**
  * Generate a ranodm gif from Giphi
  */
 exports.default = () => {
     const giphy = {
         baseURL: 'https://api.giphy.com/v1/gifs/',
-        key: 'dc6zaTOxFJmzC',
+        key: environment_1.GIPHY_KEY,
         tag: 'fail',
         type: 'random',
         rating: 'pg-13',

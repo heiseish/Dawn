@@ -46,4 +46,6 @@ const CACHE_DURATION = process.env.CACHE_DURATION;
 exports.CACHE_DURATION = CACHE_DURATION;
 const NASA_APIKEY = process.env.NASA_APIKEY;
 exports.NASA_APIKEY = NASA_APIKEY;
+const GIPHY_KEY = process.env.GIPHY_KEY;
+exports.GIPHY_KEY = GIPHY_KEY;
 //# sourceMappingURL=environment.js.map

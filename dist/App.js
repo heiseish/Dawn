@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_1 = __importDefault(require("express"));
+const logger_1 = __importDefault(require("./main/logger"));
 const environment_1 = require("./main/environment");
 const twitter_1 = __importDefault(require("./main/streaming/twitter"));
 const morningNasa_1 = __importDefault(require("./main/streaming/morningNasa"));
@@ -67,9 +68,11 @@ class App {
     loadTelegramEndpoint() {
         telegram_1.default.on('message', (msg) => {
             const result = preprocess_1.telegramPreprocess(msg);
+            console.log(result);
             if (result)
                 this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
         });
+        telegram_1.default.on("polling_error", (err) => logger_1.default.error(err));
     }
     /**
     *

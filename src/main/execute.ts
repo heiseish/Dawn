@@ -2,7 +2,6 @@ import chalk from 'chalk'
 import actions from './actions'
 import { converse } from './externalApis/@facebook/pytorch/'
 import Logger from './logger'
-import { containsObjectWithNameAttribute } from './utils/array'
 /**
 * Return a partial unique userId from incoming event to identify user
 * @param {supportedPlatform} platform supported platform currently
@@ -10,19 +9,9 @@ import { containsObjectWithNameAttribute } from './utils/array'
 * @return updated user
 */
 export default async (platform: supportedPlatform, payload: any, user: userType): Promise<userType> => {
+	const log = Logger.info('Executing', true)
 	try {
-		const log = Logger.info('Executing', true)
-		let action
-		switch (platform) {
-		case 'telegram':
-			action = containsObjectWithNameAttribute(actions, user.entity.lastIntent)
-			break
-		case 'messenger':
-			action = containsObjectWithNameAttribute(actions, user.entity.lastIntent)
-			break
-		default:
-		}
-
+		let action = getAction(actions, user.entity.lastIntent)
 		if (action) {
 			user = await action.execute(user)
 			log.stop('Executed with intent: ' + chalk.blue(user.entity.lastIntent) + '.')
@@ -35,7 +24,24 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 		}
 		return user
 	} catch (e) {
+		log.stop('Error')
 		return Promise.reject(e)
 	}
 
+}
+
+/**
+ * Check if an  array of objects hay any object that contains a key with a specific attribute value.
+ * @param {any[]} arr
+ * @param {string} attribute
+ * @param {string} key
+ * @return object with key equal to some values, null if there is no such object
+ */
+const getAction = (arr: any[], attribute: string, key: string = 'name'): any => {
+	for (const object of arr) {
+		if (object[key] === attribute) {
+			return object
+		}
+	}
+	return null
 }

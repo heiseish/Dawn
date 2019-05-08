@@ -2,7 +2,6 @@ import { expect } from 'chai'
 import {
 	checkDuplicates,
 	checkIfArrayMutual,
-	containsObjectWithNameAttribute,
 	getCommonMembersFromTwoArrays,
 	randomIndex,
 	removeFromArray,
@@ -70,77 +69,6 @@ describe('Array Utils', function() {
 		it('Should contains the same element as the original array' , function() {
 			expect(res.sort())
 				.to.be.deep.equal(array.sort())
-		})
-	})
-
-	describe('containsObjectWithNameAttribute()', function() {
-		it('Should return true for object with name attribute' , function() {
-			const array = [
-				{
-					name: 'It\'s a disasterr',
-					id: 1,
-				},
-				{
-					name: 'yoyoyoyoyooyo',
-					id: 10,
-				},
-				{
-					name: 'Brutal, Savage, Rekt',
-					id: 10,
-					age: 20,
-				},
-			]
-			const res = containsObjectWithNameAttribute(array, 'yoyoyoyoyooyo')
-			expect(res)
-				.to.be.an('object')
-				.and.to.be.deep.equal({
-					name: 'yoyoyoyoyooyo',
-					id: 10,
-				})
-		})
-
-		it('Should return false for object without name attribute' , function() {
-			const array = [
-				{
-					name: 'It\'s a disasterr',
-					id: 1,
-				},
-				{
-					name: 'yoyoyoyoyooyo',
-					id: 10,
-				},
-				{
-					name: 'Brutal, Savage, Rekt',
-					id: 10,
-					age: 20,
-				},
-			]
-			const res = containsObjectWithNameAttribute(array, 'yoyoyoyoyooyok')
-			expect(res)
-				.to.be.an('boolean')
-				.and.to.be.equal(false)
-		})
-
-		it('Should return false for object without name attribute' , function() {
-			const array = [
-				{
-					name: 'It\'s a disasterr',
-					id: 1,
-				},
-				{
-					name: 'yoyoyoyoyooyo',
-					id: 10,
-				},
-				{
-					name: 'Brutal, Savage, Rekt',
-					id: 10,
-					age: 20,
-				},
-			]
-			const res = containsObjectWithNameAttribute(array, 'yoyoyoyoyooyo', 'id')
-			expect(res)
-				.to.be.an('boolean')
-				.and.to.be.equal(false)
 		})
 	})
 

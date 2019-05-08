@@ -6,10 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 * @return a string if message is valid or null
 */
 exports.default = (msg) => {
-    if (msg.from.id === msg.chat.id
-        || msg.text.indexOf('@openAImatchThis_bot') !== -1)
+    if (msg.text && (msg.from.id === msg.chat.id
+        || msg.text.indexOf('@openAImatchThis_bot') !== -1))
         return Object.assign({}, msg, { text: msg.text.replace('@openAImatchThis_bot ', '') });
-    else
-        return null;
+    return msg;
 };
 //# sourceMappingURL=preprocess.js.map

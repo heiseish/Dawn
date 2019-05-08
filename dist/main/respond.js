@@ -34,6 +34,7 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
                 break;
             default:
         }
+        user.response = { /* Sanitize reponse object */};
         log.stop('Responded.');
     }
     catch (e) {

@@ -9,7 +9,7 @@ const greet_1 = __importDefault(require("./greet"));
 const help_1 = __importDefault(require("./help"));
 const news_1 = __importDefault(require("./news"));
 const pkmGo_1 = __importDefault(require("./pkmGo"));
-const replyToDocument_1 = __importDefault(require("./replyToDocument"));
+const sendDocument_1 = __importDefault(require("./sendDocument"));
 const thanks_1 = __importDefault(require("./thanks"));
 const weather_1 = __importDefault(require("./weather"));
 const worldCup_1 = __importDefault(require("./worldCup"));
@@ -45,8 +45,8 @@ exports.default = [
         description: 'Reply to people thanking',
     },
     {
-        name: 'replyToDocument',
-        execute: replyToDocument_1.default,
+        name: 'sendDocument',
+        execute: sendDocument_1.default,
         description: 'Reply to people sending files',
     },
     {

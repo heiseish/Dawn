@@ -57,7 +57,7 @@ declare interface userType {
 	toObject?: () => userType
 	response?: {
 		answerable?: Boolean,
-		simpleText?: string,
+		simpleText?: string | null,
 		image?: string,
 		cascadeText?: cascadeTextType,
 		multipleText?: string[],

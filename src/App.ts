@@ -55,7 +55,8 @@ export default class App {
 			if (!FB_VERIFY_TOKEN) 
 				throw new Error('missing FB_VERIFY_TOKEN')
 			if (req.query['hub.mode'] === 'subscribe' &&
-				req.query['hub.verify_token'] === FB_VERIFY_TOKEN) res.status(200).send(req.query['hub.challenge'])
+			req.query['hub.verify_token'] === FB_VERIFY_TOKEN) 
+				res.status(200).send(req.query['hub.challenge'])
 			else 
 				res.sendStatus(403)
 		})
@@ -72,8 +73,13 @@ export default class App {
 	private loadTelegramEndpoint(): void {
 		telegramBot.on('message', (msg) => {
 			const result = telegramPreprocess(msg)
-			if (result) this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache)
+			console.log(result)
+			if (result) 
+				this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache)
 		})
+		telegramBot.on("polling_error", (err) => 
+			Logger.error(err)
+		);
 	}
 	
 	/**
