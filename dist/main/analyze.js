@@ -15,6 +15,7 @@ const idx_1 = __importDefault(require("idx"));
 const intentClassification_1 = require("./externalApis/@google/tensorflow/intentClassification");
 const logger_1 = __importDefault(require("./logger"));
 const CLASSIFY_CONFIDENCE_THRESHOLD = 0.9;
+const core_1 = __importDefault(require("lodash/core"));
 /**
 * Return the text or document along with the intent of the message
 * @param {supportedPlatform} platform
@@ -26,7 +27,7 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
     const log = logger_1.default.info('Analyzing...', true);
     try {
         const { text, document, sentiment, } = getInformationFromMessage(platform, payload);
-        if (document) {
+        if (!core_1.default.isEmpty(document)) {
             user.entity.lastIntent = 'sendDocument';
             user.lastDoc = document;
         }

@@ -112,7 +112,6 @@ class App {
     loadTelegramEndpoint() {
         telegram_1.default.on('message', (msg) => {
             const result = preprocess_1.telegramPreprocess(msg);
-            console.log(result);
             if (result) {
                 this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
             }

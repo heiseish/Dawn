@@ -117,7 +117,6 @@ export default class App {
 	private loadTelegramEndpoint(): void {
 		telegramBot.on('message', (msg) => {
 			const result = telegramPreprocess(msg);
-			console.log(result);
 			if (result) {
 				this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
 			}

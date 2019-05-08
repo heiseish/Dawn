@@ -3,7 +3,7 @@ import idx from 'idx';
 import { predict } from './externalApis/@google/tensorflow/intentClassification';
 import Logger from './logger';
 const CLASSIFY_CONFIDENCE_THRESHOLD = 0.9;
-
+import _ from 'lodash/core';
 /**
 * Return the text or document along with the intent of the message
 * @param {supportedPlatform} platform
@@ -19,8 +19,7 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 			document,
 			sentiment,
 		} = getInformationFromMessage(platform, payload);
-
-		if (document) {
+		if (!_.isEmpty(document)) {
 			user.entity.lastIntent = 'sendDocument';
 			user.lastDoc = document;
 		} else if (text) {
