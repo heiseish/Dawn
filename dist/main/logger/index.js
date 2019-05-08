@@ -10,7 +10,7 @@ class Logger {
         this.prefixColor = chalk_1.default.magenta;
     }
     /**
-    * log the info
+    * Display the info under [info] tag
     * @param text Text to display
     * @param load whether the text animation is loading
     * @returns object with method stop that takes in after-text as a string
@@ -31,15 +31,13 @@ class Logger {
                 spinner.stopAndPersist({
                     text: this.generateDateTimePrefix()
                         + chalk_1.default.green('info: ') + chalk_1.default.cyan(afterText),
-                    spinner: 'arc' || 'done',
                     symbol: '✓',
                 });
             };
             return { stop };
         }
-        else {
+        else
             this.log(text, 'info');
-        }
     }
     /**
      * Logging the warning text
@@ -66,10 +64,10 @@ class Logger {
      * Generate date and time prefix for logging
      */
     generateDateTimePrefix() {
-        if (process.env.NODE_ENV === 'production')
-            return '';
-        else
+        if (process.env.NODE_ENV != 'production') {
             return '[' + this.prefixColor(new Date().toString()) + ']';
+        }
+        return '';
     }
     /**
      * Logging out the text with prefix color
@@ -92,7 +90,7 @@ class Logger {
                 color = chalk_1.default.white;
         }
         console.log(this.generateDateTimePrefix()
-            + color(`${level}: `) + chalk_1.default.cyan(text));
+            + color(`[${level}]: `) + chalk_1.default.cyan(text));
     }
 }
 exports.default = new Logger();

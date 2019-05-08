@@ -1,4 +1,4 @@
-import converse from './converse'
+import converse from './converse';
 export  {
 	converse,
-}
+};

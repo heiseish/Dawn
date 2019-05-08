@@ -5,10 +5,11 @@
 */
 export default (msg: any): string | null => {
 	if (msg.text && (msg.from.id === msg.chat.id
-		|| msg.text.indexOf('@openAImatchThis_bot') !== -1))
+		|| msg.text.indexOf('@openAImatchThis_bot') !== -1)) {
 			return {
 				...msg,
-				text: msg.text.replace('@openAImatchThis_bot ', '')
-			}
-	return msg
-}
+				text: msg.text.replace('@openAImatchThis_bot ', ''),
+			};
+	}
+	return msg;
+};

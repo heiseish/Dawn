@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const analyze_1 = __importDefault(require("./analyze"));
 const execute_1 = __importDefault(require("./execute"));
+const getUser_1 = __importDefault(require("./getUser"));
 const identifySource_1 = __importDefault(require("./identifySource"));
 const logger_1 = __importDefault(require("./logger"));
 const respond_1 = __importDefault(require("./respond"));
-const retrieveOrCreateUser_1 = __importDefault(require("./retrieveOrCreateUser"));
 class Headquarter {
     /**
      * Handle receving events
@@ -30,8 +30,8 @@ class Headquarter {
         return __awaiter(this, void 0, void 0, function* () {
             logger_1.default.info('Transfering event to headquarter..');
             try {
-                const partialUniqueId = yield identifySource_1.default(platform, payload);
-                let user = yield retrieveOrCreateUser_1.default(partialUniqueId, platform, payload, UserDb, cache);
+                const partialUniqueId = identifySource_1.default(platform, payload);
+                let user = yield getUser_1.default(partialUniqueId, platform, payload, UserDb, cache);
                 user = yield analyze_1.default(platform, payload, user);
                 user = yield execute_1.default(platform, payload, user);
                 yield respond_1.default(platform, payload, user);

@@ -1,4 +1,4 @@
-import { randomResponseToComplimentMessage } from '../lib/string'
+import { randomResponseToComplimentMessage } from '../lib/string';
 /**
  * Reply to people's compliment
  * @param {userType} user
@@ -8,6 +8,6 @@ export default (user: userType): userType => {
 	user.response = {
 		simpleText: randomResponseToComplimentMessage(user.name.first),
 		answerable: true,
-	}
-	return user
-}
+	};
+	return user;
+};

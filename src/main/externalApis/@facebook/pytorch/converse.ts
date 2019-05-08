@@ -1,16 +1,14 @@
-import request from 'request'
-const PYTORCH_SERVER = 'https://dlinterface.herokuapp.com/conversation'
-import rp from 'request-promise'
+import request from 'request';
+const PYTORCH_SERVER = 'https://dlinterface.herokuapp.com/conversation';
+import rp from 'request-promise';
 
 const generateDataPackage = (sentence: string) => ({
 	method: 'POST',
 	uri: PYTORCH_SERVER,
 	form: {
-        sentence
-    }
-})
-
-
+        sentence,
+    },
+});
 
 /**
  * conversation if intent classified is unclear
@@ -19,12 +17,12 @@ const generateDataPackage = (sentence: string) => ({
  */
 const converse = async (sentence: string): Promise<string> => {
 	try {
-		const ans = await rp(generateDataPackage(sentence))
-		return ans
-	} catch(e) {
-		return Promise.reject(e)
+		const ans = await rp(generateDataPackage(sentence));
+		return ans;
+	} catch (e) {
+		return Promise.reject(e);
 	}
-	
-}
 
-export default converse
+};
+
+export default converse;

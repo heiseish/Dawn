@@ -11,13 +11,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = __importDefault(require("./"));
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const codeforce_1 = require("../externalApis/codeforce");
 const logger_1 = __importDefault(require("../logger"));
+const _1 = __importDefault(require("./"));
 class CodeforceStream {
     /**
-     *
      * @param handle Create a codeforce stream with a user
      */
     constructor(firebase) {
@@ -33,13 +32,13 @@ class CodeforceStream {
      */
     startStreaming(list) {
         this.scheduler = node_schedule_1.default.scheduleJob('*/20 * * * *', () => __awaiter(this, void 0, void 0, function* () {
-            let users = yield this.firebase.getCodeforceHandle();
-            for (let user of Object.values(users)) {
-                let info = yield codeforce_1.getUserRating(user.handle);
+            const users = yield this.firebase.getCodeforceHandle();
+            for (const user of Object.values(users)) {
+                const info = yield codeforce_1.getUserRating(user.handle);
                 if (!user.standing || info.rating != user.standing.rating) {
                     yield this.firebase.setCurrentCodeforceStanding(user.handle, info);
                     _1.default({
-                        text: 'Codeforce user ' + user.handle + ':\nNew codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank
+                        text: 'Codeforce user ' + user.handle + ':\nNew codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank,
                     }, list);
                 }
             }

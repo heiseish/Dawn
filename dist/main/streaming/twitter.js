@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const idx_1 = __importDefault(require("idx"));
 const rxjs_1 = require("rxjs");
-const logger_1 = __importDefault(require("../logger"));
 const _twitter_1 = require("../externalApis/@twitter");
+const logger_1 = __importDefault(require("../logger"));
 const _1 = __importDefault(require("./"));
 const POKEMONGO_TWITTER = '2839430431';
 const WYK_TWITTER = '44680622';
@@ -26,7 +26,7 @@ const listOfStreams = [
     GH_TWITTER,
     MIRACLE_TWITTER,
     MC_TWITTER,
-    NORDAX_TWITTER
+    NORDAX_TWITTER,
 ];
 /**
  * Class for twitter streaming
@@ -50,7 +50,7 @@ class TwitterStreaming {
                     observer.next({
                         name: tweet.user.name,
                         text: tweet.text,
-                        image: idx_1.default(tweet, (_) => _.extended_entities.media[0].media_url_https) || null
+                        image: idx_1.default(tweet, (_) => _.extended_entities.media[0].media_url_https) || null,
                     });
                 }
             });
@@ -72,7 +72,7 @@ class TwitterStreaming {
             next: (x) => {
                 _1.default({
                     text: x.name + ': ' + x.text,
-                    image: x.image
+                    image: x.image,
                 }, people);
             },
             error: (err) => logger_1.default.error('something wrong occurred: ' + err),

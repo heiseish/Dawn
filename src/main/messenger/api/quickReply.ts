@@ -1,11 +1,11 @@
-import Logger from '../../logger'
-import { messaging } from '../fbrequest'
+import Logger from '../../logger';
+import { messaging } from '../fbrequest';
 
 interface QuickReply {
-	content_type: string
-	title: string
-	payload: string
-	image_url: string
+	content_type: string;
+	title: string;
+	payload: string;
+	image_url: string;
 }
 /**
  * Send Media template
@@ -26,8 +26,8 @@ export default async (senderId: string, msg: string, ...quickReplies: QuickReply
 			},
 			messaging_type: 'RESPONSE',
 		},
-	}
+	};
 	messaging(opts, (err) => {
-		if (err) { Logger.error(err) }
-	})
-}
+		if (err) { Logger.error(err); }
+	});
+};

@@ -19,8 +19,9 @@ exports.default = (chatId, url, reply, messageId) => __awaiter(this, void 0, voi
                 reply_to_message_id: messageId,
             });
         }
-        else
+        else {
             return yield __1.default.sendDocument(chatId, url);
+        }
     }
     catch (e) {
         return Promise.reject(e);

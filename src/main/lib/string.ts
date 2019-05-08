@@ -1,5 +1,5 @@
-import { getNingOfTheDay } from '../externalApis/moment'
-import { randomIndex } from '../utils/array'
+import { getNingOfTheDay } from '../externalApis/moment';
+import { randomIndex } from '../utils/array';
 
 /**
  * Handle unknown queries
@@ -10,15 +10,15 @@ const randomConfusedMessage = (name: string | null): string => {
 		'Hmmmm  ',
 		'err.. ',
 		'Ayay  ',
-	]
+	];
 	const suffixes = [
 		'I am not really sure about that..',
 		'idk',
 		'let me think',
-	]
-	const n = name ? name : 'friend'
-	return `${randomIndex(prefixes)} ${n}, ${randomIndex(suffixes)}`
-}
+	];
+	const n = name ? name : 'friend';
+	return `${randomIndex(prefixes)} ${n}, ${randomIndex(suffixes)}`;
+};
 
 /**
  * Generate good bye message
@@ -29,11 +29,11 @@ const randomByeMessage = (name: string | null): string => {
 		'Have a good day!',
 		'Hope to talk to you again soon mate',
 		'Smell ya later ;)',
-	]
-	const prefixes = ['Good bye', 'Baii', 'Bye bye', 'Aye aye']
-	const n = name ? name : 'friend'
-	return `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`
-}
+	];
+	const prefixes = ['Good bye', 'Baii', 'Bye bye', 'Aye aye'];
+	const n = name ? name : 'friend';
+	return `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`;
+};
 
 /**
  * Generate reply to compliment
@@ -42,15 +42,15 @@ const randomByeMessage = (name: string | null): string => {
 const randomResponseToComplimentMessage = (name: string | null): string => {
 	const suffixes = [
 		'I really appreciate it!',
-		'I\'m touched..',
+		"I'm touched..",
 		'FeelsGoodMan',
-	]
+	];
 
-	const prefixes = ['Thanks', 'Ty', 'woah', 'Aye aye']
-	const n = name ? name : 'friend'
-	return `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`
+	const prefixes = ['Thanks', 'Ty', 'woah', 'Aye aye'];
+	const n = name ? name : 'friend';
+	return `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`;
 
-}
+};
 
 /**
  * Response to thanks
@@ -58,25 +58,25 @@ const randomResponseToComplimentMessage = (name: string | null): string => {
  */
 const randomResponseToThanksMessage = (name: string | null): string => {
 
-	const prefixes = ['No problemo', 'Np', 'Aye', 'Aye aye']
+	const prefixes = ['No problemo', 'Np', 'Aye', 'Aye aye'];
 
 	const suffixes = [
 		'Glad I could help!',
 		'Hope to be of service again~',
 		'¯\\_(ツ)_/¯',
-	]
-	const n = name ? name : 'friend'
-	return `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`
+	];
+	const n = name ? name : 'friend';
+	return `${randomIndex(prefixes)}, ${n}! ${randomIndex(suffixes)}`;
 
-}
+};
 
 /**
  * Greeting suffix
  */
 const randomGreetingSuffix = () => {
-	const suffixes = ['What\'s up man!~', 'How are you doing!', 'Such a nice day isn\'t it?', 'Here\'s a photo you might like: ']
-	return randomIndex(suffixes)
-}
+	const suffixes = ["What's up man!~", 'How are you doing!', "Such a nice day isn't it?", "Here's a photo you might like: "];
+	return randomIndex(suffixes);
+};
 
 /**
  * Greeting prefix
@@ -88,10 +88,10 @@ const randomGreetingPrefix = async (name: string | null) => {
 		'Yo',
 		'Hello',
 		`Good ${await getNingOfTheDay()}`,
-	]
-	const n = name ? name : 'friend'
-	return `${randomIndex(prefixes)}, ${n}!`
-}
+	];
+	const n = name ? name : 'friend';
+	return `${randomIndex(prefixes)}, ${n}!`;
+};
 
 const possibleYay: string[] = [
 	'Yoshhh!',
@@ -99,14 +99,14 @@ const possibleYay: string[] = [
 	'Hue hue hue',
 	'Ye :>',
 	'Nice la',
-]
+];
 
 const possibleNay: string[] = [
 	'Sorry :<',
 	'NANI',
 	'Mada Mada',
 	'...',
-]
+];
 
 export {
 	randomConfusedMessage,
@@ -117,4 +117,4 @@ export {
 	randomResponseToThanksMessage,
 	possibleNay,
 	possibleYay,
-}
+};

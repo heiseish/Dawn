@@ -1,6 +1,6 @@
-import idx from 'idx'
-import { formatTimeForListTemplate } from '../externalApis/moment'
-import Logger from '../logger'
+import idx from 'idx';
+import { formatTimeForListTemplate } from '../externalApis/moment';
+import Logger from '../logger';
 
 /**
  * Parse articles to become viewable formats
@@ -8,14 +8,14 @@ import Logger from '../logger'
  * @return parsed article
  */
 const parseArticles = (items: any[]): cascadeTextType  => {
-	let elements = [], i = 0
-	if (items.length > 4) { Logger.error('Trying to send list template message with more than 4 particles') }
+	let elements = [], i = 0;
+	if (items.length > 4) { Logger.error('Trying to send list template message with more than 4 particles'); }
 	for (const item of items) {
-		elements[i] = {}
-		elements[i].title  = item.title
+		elements[i] = {};
+		elements[i].title  = item.title;
 		elements[i].subtitle =
-		`${idx(item, (_) => _.source.name)}\n${formatTimeForListTemplate(item.publishedAt)}`
-		elements[i].image_url = item.urlToImage
+		`${idx(item, (_) => _.source.name)}\n${formatTimeForListTemplate(item.publishedAt)}`;
+		elements[i].image_url = item.urlToImage;
 		elements[i].buttons = [
 			{
 				title: 'View',
@@ -23,12 +23,12 @@ const parseArticles = (items: any[]): cascadeTextType  => {
 				url: item.url,
 				webview_height_ratio: 'tall',
 			},
-		]
-		i++
+		];
+		i++;
 	}
-	return elements
-}
+	return elements;
+};
 
 export {
 	parseArticles,
-}
+};

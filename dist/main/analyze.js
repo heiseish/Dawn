@@ -59,10 +59,10 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
 * @return Info object
 */
 const getInformationFromMessage = (platform, payload) => {
-    let info = {
+    const info = {
         text: null,
         sentiment: 'neutral',
-        document: {}
+        document: {},
     };
     switch (platform) {
         /* Telegram */
@@ -113,11 +113,9 @@ const getInformationFromMessage = (platform, payload) => {
                             long: idx_1.default(payload, (_) => _.message.attachments[0].payload.coordinates.long),
                         };
                         break;
-                    default:
                 }
             }
             break;
-        default:
     }
     return info;
 };
@@ -147,7 +145,7 @@ const checkLang = () => 'en';
  * @returns formatted text
  */
 const reformat = (text) => {
-    text = text.replace('/', '');
+    text = text.replace('/', ' ');
     text = text.replace('https:', '');
     return text;
 };

@@ -3,17 +3,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const account_1 = require("./../utils/account");
 const message_1 = __importDefault(require("../messenger/api/message"));
 const sendImage_1 = __importDefault(require("../messenger/api/sendImage"));
 const api_1 = require("../telegram/api/");
+const account_1 = require("./../utils/account");
 /**
 *
 * @param {StreamableObject} toStream object to stream
 * @param {string[]} list list of people to send stream to
 */
 const stream = (toStream, list) => {
-    for (let userId of list) {
+    for (const userId of list) {
         const { platform, id, } = account_1.getPlatformAndId(userId);
         let message, image;
         if (platform === 'messenger') {

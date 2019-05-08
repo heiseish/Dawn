@@ -17,10 +17,10 @@ const getUserRating = (handle) => {
                 const result = JSON.parse(body);
                 if (error)
                     reject(error);
-                let user = result.result[0];
-                let res = {
+                const user = result.result[0];
+                const res = {
                     rating: user.rating,
-                    rank: user.rank
+                    rank: user.rank,
                 };
                 resolve(res);
             }

@@ -1,4 +1,4 @@
-import { getWeatherMessage } from '../externalApis/weather'
+import { getWeatherMessage } from '../externalApis/weather';
 
 /**
  * Inform user of the current weather
@@ -13,10 +13,10 @@ export default (user: userType): Promise<userType |  Error> => {
 				image: imageId,
 				answerable: true,
 
-			}
-			resolve(user)
+			};
+			resolve(user);
 		}).catch((err) => {
-			reject(err)
-		})
-	})
-}
+			reject(err);
+		});
+	});
+};

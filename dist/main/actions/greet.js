@@ -37,7 +37,7 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
         if (SUFFIX !== null && typeof SUFFIX === 'object') {
             user.response = SUFFIX;
         }
-        else if (SUFFIX === 'Here\'s a photo you might like: ') {
+        else if (SUFFIX === "Here's a photo you might like: ") {
             user.response = {
                 simpleText: `${PREFIX} ${SUFFIX}`,
                 image: RANDOM_IMAGE_URL,

@@ -1,6 +1,6 @@
-import marked from 'marked'
-import os from 'os'
-import { createGist, editGist} from './gists'
+import marked from 'marked';
+import os from 'os';
+import { createGist, editGist} from './gists';
 
 marked.setOptions({
 	renderer: new marked.Renderer(),
@@ -12,10 +12,10 @@ marked.setOptions({
 	smartLists: true,
 	smartypants: false,
 	xhtml: false,
-})
-const GIST_ID = '522028088e49110b4511d4cabea361f9'
-const MANUAL_DESC = 'An automatically generated and updated help manual of Serena bot'
-const ICON = '![Imgur](https://i.imgur.com/JQheM1b.png)'
+});
+const GIST_ID = '522028088e49110b4511d4cabea361f9';
+const MANUAL_DESC = 'An automatically generated and updated help manual of Serena bot';
+const ICON = '![Imgur](https://i.imgur.com/JQheM1b.png)';
 
 /**
  * Generate help manual
@@ -23,7 +23,7 @@ const ICON = '![Imgur](https://i.imgur.com/JQheM1b.png)'
  */
 const generateHelpManual = async (actions: any[]): Promise<string> => {
 	try {
-		const fileString: string = await generateFileString(actions)
+		const fileString: string = await generateFileString(actions);
 		const opts = {
 			description: MANUAL_DESC,
 			public: true,
@@ -32,13 +32,13 @@ const generateHelpManual = async (actions: any[]): Promise<string> => {
 					content: fileString,
 				},
 			},
-		}
-		const result = await createGist(opts)
-		return result
+		};
+		const result = await createGist(opts);
+		return result;
 	} catch (e) {
-		return Promise.reject(e)
+		return Promise.reject(e);
 	}
-}
+};
 
 /**
  *  A function to update the list manual with the manual containing all the functions available
@@ -46,7 +46,7 @@ const generateHelpManual = async (actions: any[]): Promise<string> => {
  */
 const updateHelpManual = async (actions: any[]): Promise<string> => {
 	try {
-		const fileString = await generateFileString(actions)
+		const fileString = await generateFileString(actions);
 		const opts = {
 			id: GIST_ID,
 			files: {
@@ -54,36 +54,36 @@ const updateHelpManual = async (actions: any[]): Promise<string> => {
 					content: fileString,
 				},
 			},
-		}
-		const result = await editGist(opts)
-		return result
+		};
+		const result = await editGist(opts);
+		return result;
 	} catch (e) {
-		return Promise.reject(e)
+		return Promise.reject(e);
 	}
-}
+};
 
 /**
  * A function to generate a file string with all actions listed
  * @param actions
  */
 const generateFileString = (actions: any[]): string => {
-	const linebr = os.EOL + os.EOL
-	let fileString = `# Help manual for Serena bot ${linebr}`
-	fileString += MANUAL_DESC + linebr
-	fileString += '### Notation:' + ICON + linebr
+	const linebr = os.EOL + os.EOL;
+	let fileString = `# Help manual for Serena bot ${linebr}`;
+	fileString += MANUAL_DESC + linebr;
+	fileString += '### Notation:' + ICON + linebr;
 	fileString += 'Intent: The service that Serena could execute/respond to.'
-	+ 'Ask questions along with line of the intent and the bot should be able to answer' + linebr
-	fileString += 'Description: more details about the service.' + linebr
-	fileString += '***' + linebr
+	+ 'Ask questions along with line of the intent and the bot should be able to answer' + linebr;
+	fileString += 'Description: more details about the service.' + linebr;
+	fileString += '***' + linebr;
 
 	for (const action of actions) {
-		fileString += '- __Intent:__ `' + action.name + '` ' + linebr
-		fileString += `> __Description:__ ${action.description} ${linebr}`
+		fileString += '- __Intent:__ `' + action.name + '` ' + linebr;
+		fileString += `> __Description:__ ${action.description} ${linebr}`;
 	}
-	return fileString
-}
+	return fileString;
+};
 
 export {
 	generateHelpManual,
 	updateHelpManual,
-}
+};

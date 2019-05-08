@@ -33,12 +33,14 @@ const getAllHeadlines = (user) => {
     else {
         const common = array_1.getCommonMembersFromTwoArrays(Object.keys(MAP_TOPIC_TO_CATEGORY), user.text[user.text.length - 1].tokenizedText);
         const category = MAP_TOPIC_TO_CATEGORY[common[0]] || null;
-        if (category)
+        if (category) {
             return new Promise((resolve) => getHeadlinesWithCategory(category)
                 .then((articles) => resolve(articles)));
-        else
+        }
+        else {
             return new Promise((resolve) => getRandomTop5Headlines()
                 .then((articles) => resolve(articles)));
+        }
     }
 };
 exports.getAllHeadlines = getAllHeadlines;

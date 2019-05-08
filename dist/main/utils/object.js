@@ -20,10 +20,11 @@ const maskObject = (target, mask) => {
     for (const key in target) {
         if (mask[key] == true)
             res[key] = target[key];
-        else if (typeof target[key] != 'object' && typeof mask[key] != 'boolean')
+        else if (typeof target[key] != 'object' && typeof mask[key] != 'boolean') {
             logger_1.default.warn('Object ' + target
                 + ' at key ' + key + ' is not an object'
                 + 'but mask ' + mask + ' at this key is an object');
+        }
         else if (typeof target[key] == 'object' && typeof mask[key] == 'object') {
             const val = maskObject(target[key], mask[key]);
             res[key] = val;

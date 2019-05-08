@@ -13,18 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_1 = __importDefault(require("express"));
-const logger_1 = __importDefault(require("./main/logger"));
 const environment_1 = require("./main/environment");
-const twitter_1 = __importDefault(require("./main/streaming/twitter"));
-const morningNasa_1 = __importDefault(require("./main/streaming/morningNasa"));
+const logger_1 = __importDefault(require("./main/logger"));
 const codeforce_1 = __importDefault(require("./main/streaming/codeforce"));
+const morningNasa_1 = __importDefault(require("./main/streaming/morningNasa"));
+const twitter_1 = __importDefault(require("./main/streaming/twitter"));
 const hq_1 = __importDefault(require("./main/hq"));
-const preprocess_1 = require("./main/preprocess");
-const telegram_1 = __importDefault(require("./main/telegram"));
+const cache_1 = __importDefault(require("./main/model/cache"));
 const firebase_1 = __importDefault(require("./main/model/firebase"));
 const mongoDB_1 = __importDefault(require("./main/model/mongoDB"));
+const preprocess_1 = require("./main/preprocess");
 const sweeper_1 = __importDefault(require("./main/sweeper"));
-const cache_1 = __importDefault(require("./main/model/cache"));
+const telegram_1 = __importDefault(require("./main/telegram"));
 /**
 * REST API
 */
@@ -38,65 +38,13 @@ class App {
         this.headquarter = new hq_1.default();
     }
     /**
-    * Endpoint for ping related service
-    */
-    loadPingEndpoints() {
-        this.express.get('/', (req, res) => res.status(200).json({ name: 'potts-backend' }));
-        this.express.get('/ping', (req, res) => res.sendStatus(200));
-    }
-    /**
-    * Endpoint for facebook messenger
-    */
-    loadFacebookEndpoint() {
-        this.express.get('/fb', (req, res) => {
-            if (!environment_1.FB_VERIFY_TOKEN)
-                throw new Error('missing FB_VERIFY_TOKEN');
-            if (req.query['hub.mode'] === 'subscribe' &&
-                req.query['hub.verify_token'] === environment_1.FB_VERIFY_TOKEN)
-                res.status(200).send(req.query['hub.challenge']);
-            else
-                res.sendStatus(403);
-        });
-        this.express.post('/fb', (req, res) => {
-            preprocess_1.messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event, this.mongodb.users, this.cache));
-            res.sendStatus(200);
-        });
-    }
-    /**
-    * Endpoint for telegram
-    */
-    loadTelegramEndpoint() {
-        telegram_1.default.on('message', (msg) => {
-            const result = preprocess_1.telegramPreprocess(msg);
-            console.log(result);
-            if (result)
-                this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
-        });
-        telegram_1.default.on("polling_error", (err) => logger_1.default.error(err));
-    }
-    /**
-    *
-    * @param {string[]} people list of people to send to
-    */
-    loadStreamingEndpoint(people) {
-        // if (process.env.NODE_ENV === 'production') {
-        this.streams = [];
-        this.streams.push(new twitter_1.default());
-        this.streams.push(new morningNasa_1.default());
-        this.streams.push(new codeforce_1.default(this.firebase));
-        for (let st of this.streams)
-            st.startStreaming(people);
-        for (let st of this.streams)
-            this.sweeper.add(st.stopStreaming);
-        // }
-    }
-    /**
     * Configure setting for express
     * @param {string | number} port port that express should be listening to
     */
     configureExpress(port) {
-        if (typeof port === 'string')
+        if (typeof port === 'string') {
             port = parseInt(port);
+        }
         this.express.listen(port);
         this.express.use(body_parser_1.default.json());
         this.express.use(body_parser_1.default.urlencoded({ extended: true }));
@@ -107,8 +55,9 @@ class App {
     */
     startServer() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.express)
+            if (!this.express) {
                 throw new Error('Express is not set up when firing endpoint listener');
+            }
             this.loadFacebookEndpoint();
             this.loadPingEndpoints();
             this.loadTelegramEndpoint();
@@ -128,6 +77,63 @@ class App {
             this.sweeper.add(this.mongodb.terminateConnection);
             this.sweeper.add(this.firebase.terminateConnection);
         });
+    }
+    /**
+    * Endpoint for ping related service
+    */
+    loadPingEndpoints() {
+        this.express.get('/', (req, res) => res.status(200).json({ name: 'potts-backend' }));
+        this.express.get('/ping', (req, res) => res.sendStatus(200));
+    }
+    /**
+    * Endpoint for facebook messenger
+    */
+    loadFacebookEndpoint() {
+        this.express.get('/fb', (req, res) => {
+            if (!environment_1.FB_VERIFY_TOKEN) {
+                throw new Error('missing FB_VERIFY_TOKEN');
+            }
+            if (req.query['hub.mode'] === 'subscribe' &&
+                req.query['hub.verify_token'] === environment_1.FB_VERIFY_TOKEN) {
+                res.status(200).send(req.query['hub.challenge']);
+            }
+            else {
+                res.sendStatus(403);
+            }
+        });
+        this.express.post('/fb', (req, res) => {
+            preprocess_1.messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event, this.mongodb.users, this.cache));
+            res.sendStatus(200);
+        });
+    }
+    /**
+    * Endpoint for telegram
+    */
+    loadTelegramEndpoint() {
+        telegram_1.default.on('message', (msg) => {
+            const result = preprocess_1.telegramPreprocess(msg);
+            console.log(result);
+            if (result) {
+                this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
+            }
+        });
+        telegram_1.default.on('polling_error', (err) => logger_1.default.error(err));
+    }
+    /**
+    *
+    * @param {string[]} people list of people to send to
+    */
+    loadStreamingEndpoint(people) {
+        if (process.env.NODE_ENV === 'production') {
+            this.streams = [];
+            this.streams.push(new twitter_1.default());
+            this.streams.push(new morningNasa_1.default());
+            this.streams.push(new codeforce_1.default(this.firebase));
+            for (const st of this.streams)
+                st.startStreaming(people);
+            for (const st of this.streams)
+                this.sweeper.add(st.stopStreaming);
+        }
     }
 }
 exports.default = App;

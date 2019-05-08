@@ -16,7 +16,7 @@ const TEMP_AUDIO_PATH = 'temp.aac';
 const speechToText = (AudioUrl) => {
     return new Promise((resolve, reject) => {
         if (!controller_1.USING_VISION) {
-            resolve('Nice voice you\'ve got there!');
+            resolve("Nice voice you've got there!");
         }
         else {
             logger_1.default.info('Transcribing speech to text...');

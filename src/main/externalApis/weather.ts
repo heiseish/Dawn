@@ -1,8 +1,8 @@
-import Forecast from 'forecast'
-import { DARKSKY_KEY } from '../environment'
+import Forecast from 'forecast';
+import { DARKSKY_KEY } from '../environment';
 
-const WHITE_HAVEN_LAT = 1.28891123
-const WHITE_HAVEN_LONG = 103.7768478
+const WHITE_HAVEN_LAT = 1.28891123;
+const WHITE_HAVEN_LONG = 103.7768478;
 // clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night
 const MAP_ICON_TO_PICTURE = {
 	'clear-day': '1018927418276670',
@@ -15,7 +15,7 @@ const MAP_ICON_TO_PICTURE = {
 	'cloudy': '1018931408276271',
 	'partly-cloudy-day': '1018932811609464',
 	'partly-cloudy-night': '1018933201609425',
-}
+};
 
 // Initialize
 const forecast = new Forecast({
@@ -28,7 +28,7 @@ const forecast = new Forecast({
 		minutes: 27,
 		seconds: 45,
 	},
-})
+});
 
 /**
  * Return weather object based on coordinate
@@ -36,31 +36,31 @@ const forecast = new Forecast({
  */
 const getWeather = (coordinate: number[]): Promise<any> => {
 	return new Promise((response, reject) => {
-		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY')
+		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY');
 		forecast.get(coordinate, (err, weather) => {
-			if (err) { reject(err) } else { response(weather) }
-		})
-	})
-}
+			if (err) { reject(err); } else { response(weather); }
+		});
+	});
+};
 
 const getWeatherMessage = (...params: number[]): Promise<any> => {
 	return new Promise((response, reject) => {
-		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY')
+		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY');
 		const coordinate: number[] =
-		params.length === 2  ? [params[0], params[1]] : [WHITE_HAVEN_LAT, WHITE_HAVEN_LONG]
+		params.length === 2  ? [params[0], params[1]] : [WHITE_HAVEN_LAT, WHITE_HAVEN_LONG];
 		getWeather(coordinate)
 			.then((weather) => {
 				response({
 					current: `It's ${weather.currently.summary.toLowerCase()}  near your house now! `,
 					summary: `In general, it is ${weather.hourly.summary.toLowerCase()} and this week there is ${weather.daily.summary.toLowerCase()}`,
 					imageId: MAP_ICON_TO_PICTURE[weather.currently.icon],
-				})
+				});
 			})
-			.catch((err) => reject(err))
-	})
-}
+			.catch((err) => reject(err));
+	});
+};
 
 export  {
 	getWeather,
 	getWeatherMessage,
-}
+};

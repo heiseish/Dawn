@@ -51,7 +51,7 @@ exports.randomByeMessage = randomByeMessage;
 const randomResponseToComplimentMessage = (name) => {
     const suffixes = [
         'I really appreciate it!',
-        'I\'m touched..',
+        "I'm touched..",
         'FeelsGoodMan',
     ];
     const prefixes = ['Thanks', 'Ty', 'woah', 'Aye aye'];
@@ -78,7 +78,7 @@ exports.randomResponseToThanksMessage = randomResponseToThanksMessage;
  * Greeting suffix
  */
 const randomGreetingSuffix = () => {
-    const suffixes = ['What\'s up man!~', 'How are you doing!', 'Such a nice day isn\'t it?', 'Here\'s a photo you might like: '];
+    const suffixes = ["What's up man!~", 'How are you doing!', "Such a nice day isn't it?", "Here's a photo you might like: "];
     return array_1.randomIndex(suffixes);
 };
 exports.randomGreetingSuffix = randomGreetingSuffix;

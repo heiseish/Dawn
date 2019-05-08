@@ -11,9 +11,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../logger"));
 const node_cache_1 = __importDefault(require("node-cache"));
 const environment_1 = require("../environment");
+const logger_1 = __importDefault(require("../logger"));
 const numericCacheDuration = parseInt(environment_1.CACHE_DURATION);
 class Cache {
     constructor(UserDB) {

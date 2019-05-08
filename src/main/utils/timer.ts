@@ -5,10 +5,10 @@
  */
 const waitToDo = (time: number, cb: () => void): void => {
 	setTimeout(() =>  {
-		cb()
-	}, time)
-}
+		cb();
+	}, time);
+};
 
 export {
 	waitToDo,
-}
+};

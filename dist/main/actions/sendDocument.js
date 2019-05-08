@@ -25,7 +25,7 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
     try {
         switch (user.lastDoc.type) {
             case 'image':
-                let res = yield giphy_1.default();
+                const res = yield giphy_1.default();
                 user.response = {
                     simpleText: null,
                     answerable: true,
@@ -40,12 +40,14 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
                 break;
             case 'location':
                 geocoder_1.default.reverseGeocode(user.lastLocation.lat, user.lastLocation.long, (err, data) => {
-                    if (err)
+                    if (err) {
                         return Promise.reject(err);
+                    }
                     const lastLocation = typeof user.toObject === 'function' ? user.toObject().lastLocation : user.lastLocation;
-                    user.lastLocation = Object.assign({}, lastLocation, { formattedAddress: idx_1.default(data, (_) => _.results[0].formatted_address) });
+                    const addr = idx_1.default(data, (_) => _.results[0].formatted_address);
+                    user.lastLocation = Object.assign({}, lastLocation, { formattedAddress: addr });
                     user.response = {
-                        simpleText: 'I see that you are @ ' + idx_1.default(data, (_) => _.results[0].formatted_address) + ' right now!',
+                        simpleText: 'I see that you are @ ' + addr + ' right now!',
                         answerable: true,
                     };
                 });

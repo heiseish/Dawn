@@ -1,7 +1,7 @@
-import request from 'request'
+import request from 'request';
 import {
-	GIPHY_KEY
-} from '../environment'
+	GIPHY_KEY,
+} from '../environment';
 /**
  * Generate a ranodm gif from Giphi
  */
@@ -12,7 +12,7 @@ export default (): Promise<string> => {
 		tag: 'fail',
 		type: 'random',
 		rating: 'pg-13',
-	}
+	};
 
 	return new Promise((resolve, reject) => {
 		request(giphy.baseURL +
@@ -23,12 +23,12 @@ export default (): Promise<string> => {
 			giphy.tag +
 			'&rating=' +
 			giphy.rating, (error, res, body) => {
-			const result = JSON.parse(body)
-			if (error) { 
-				reject(error)
+			const result = JSON.parse(body);
+			if (error) {
+				reject(error);
 			} else {
-				resolve(result.data.image_original_url)
+				resolve(result.data.image_original_url);
 			}
-		})
-	})
-}
+		});
+	});
+};

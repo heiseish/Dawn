@@ -1,6 +1,6 @@
-import Logger from '../../logger'
-import { messaging } from '../fbrequest'
-import { uploadMedia } from './utility'
+import Logger from '../../logger';
+import { messaging } from '../fbrequest';
+import { uploadMedia } from './utility';
 
 /**
  * Send Media template
@@ -39,11 +39,11 @@ export default async (senderId: string, media: MessengerTextMedia, button?: Mess
 			},
 			messaging_type: 'RESPONSE',
 		},
-	}
+	};
 	messaging(opts, (err, resp, data) => {
-		if (err) { Logger.error(err) }
+		if (err) { Logger.error(err); }
 		if (cb) {
-			cb(err || (data.error && data.error.message), data)
+			cb(err || (data.error && data.error.message), data);
 		}
-	})
-}
+	});
+};

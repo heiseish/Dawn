@@ -24,7 +24,7 @@ const logger_1 = __importDefault(require("./logger"));
 exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, function* () {
     const log = logger_1.default.info('Executing', true);
     try {
-        let action = getAction(actions_1.default, user.entity.lastIntent);
+        const action = getAction(actions_1.default, user.entity.lastIntent);
         if (action) {
             user = yield action.execute(user);
             log.stop('Executed with intent: ' + chalk_1.default.blue(user.entity.lastIntent) + '.');
@@ -45,7 +45,7 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
 });
 /**
  * Check if an  array of objects hay any object that contains a key with a specific attribute value.
- * @param {any[]} arr
+ * @param {Action[]}} arr
  * @param {string} attribute
  * @param {string} key
  * @return object with key equal to some values, null if there is no such object

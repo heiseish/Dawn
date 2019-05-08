@@ -1,5 +1,5 @@
-import { getTwitterStatus } from '../externalApis/@twitter'
-const POKEMONGO_SCREEN_NAME = '@PokemonGoApp'
+import { getTwitterStatus } from '../externalApis/@twitter';
+const POKEMONGO_SCREEN_NAME = '@PokemonGoApp';
 
 /**
  * Get pokemon go tweets for user
@@ -8,19 +8,19 @@ const POKEMONGO_SCREEN_NAME = '@PokemonGoApp'
  */
 export default async (user: userType): Promise<userType | Error> => {
 	try {
-		const conf = `Here's the news from ${POKEMONGO_SCREEN_NAME}`
-		const tweets = await getTwitterStatus(POKEMONGO_SCREEN_NAME)
-		const texts = [conf]
+		const conf = `Here's the news from ${POKEMONGO_SCREEN_NAME}`;
+		const tweets = await getTwitterStatus(POKEMONGO_SCREEN_NAME);
+		const texts = [conf];
 		for (const tweet of tweets) {
-			texts.push(tweet.text)
+			texts.push(tweet.text);
 		}
 		user.response =  {
 			multipleText: texts,
 			answerable: true,
-		}
-		return user
+		};
+		return user;
 
 	} catch (e) {
-		return Promise.reject(e)
+		return Promise.reject(e);
 	}
-}
+};

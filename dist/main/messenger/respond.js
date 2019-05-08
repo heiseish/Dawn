@@ -89,7 +89,7 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
 * @param {string} fbId
 */
 const sendResponseConfirmation = (fbId) => {
-    quickReply_1.default(fbId, 'Is this what you\'s asking for?', {
+    quickReply_1.default(fbId, "Is this what you's asking for?", {
         content_type: 'text',
         title: 'Yup!',
         payload: 'CORRECT_SERVICE',

@@ -1,5 +1,5 @@
-import Logger from '../../logger'
-import { messaging } from '../fbrequest'
+import Logger from '../../logger';
+import { messaging } from '../fbrequest';
 
 /**
  * Show typing on animation
@@ -15,14 +15,14 @@ const typingOn = async (senderId: string,  cb?: (err: any, data: any) => any): P
 			sender_action: 'typing_on',
 			messaging_type: 'RESPONSE',
 		},
-	}
+	};
 	messaging(opts, (err, resp, data) => {
-		if (err) { Logger.error(err) }
+		if (err) { Logger.error(err); }
 		if (cb) {
-			cb(err || (data.error && data.error.message), data)
+			cb(err || (data.error && data.error.message), data);
 		}
-	})
-}
+	});
+};
 
 /**
  * Show typing off animation
@@ -38,14 +38,14 @@ const typingOff = async (senderId: string,  cb?: (err: any, data: any) => any): 
 			sender_action: 'typing_off',
 			messaging_type: 'RESPONSE',
 		},
-	}
+	};
 	messaging(opts, (err, resp, data) => {
-		if (err) { Logger.error(err) }
+		if (err) { Logger.error(err); }
 		if (cb) {
-			cb(err || (data.error && data.error.message), data)
+			cb(err || (data.error && data.error.message), data);
 		}
-	})
-}
+	});
+};
 
 /**
  * Show marking seen animation
@@ -61,17 +61,17 @@ const markSeen = async (senderId: string,  cb?: (err: any, data: any) => any): P
 			sender_action: 'mark_seen',
 			messaging_type: 'RESPONSE',
 		},
-	}
+	};
 	messaging(opts, (err, resp, data) => {
-		if (err) { Logger.error(err) }
+		if (err) { Logger.error(err); }
 		if (cb) {
-			cb(err || (data.error && data.error.message), data)
+			cb(err || (data.error && data.error.message), data);
 		}
-	})
-}
+	});
+};
 
 export {
 	typingOn,
 	typingOff,
 	markSeen,
-}
+};

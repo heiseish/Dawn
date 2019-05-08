@@ -1,13 +1,13 @@
-import bye from './bye'
-import compliment from './compliment'
-import greet from './greet'
-import help from './help'
-import news from './news'
-import pkmGo from './pkmGo'
-import sendDocument from './sendDocument'
-import thanks from './thanks'
-import weather from './weather'
-import worldCup from './worldCup'
+import bye from './bye';
+import compliment from './compliment';
+import greet from './greet';
+import help from './help';
+import news from './news';
+import pkmGo from './pkmGo';
+import sendDocument from './sendDocument';
+import thanks from './thanks';
+import weather from './weather';
+import worldCup from './worldCup';
 export default [
 	{
 		name: 'greetings',
@@ -59,4 +59,4 @@ export default [
 		execute: help,
 		description: 'Return help manual for the bot.',
 	},
-]
+];

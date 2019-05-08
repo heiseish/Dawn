@@ -1,4 +1,4 @@
-import getWCSchedule from '../externalApis/worldCup'
+import getWCSchedule from '../externalApis/worldCup';
 /**
  * Return today world cup schedule
  * @param {userType} user
@@ -6,14 +6,14 @@ import getWCSchedule from '../externalApis/worldCup'
  */
 export default async (user: userType): Promise<userType | Error> => {
 	try {
-		const message = await getWCSchedule()
+		const message = await getWCSchedule();
 		user.response = {
 			answerable: true,
 			simpleText: message,
-		}
-		return user
+		};
+		return user;
 	} catch (e) {
-		return Promise.reject(e)
+		return Promise.reject(e);
 	}
 
-}
+};

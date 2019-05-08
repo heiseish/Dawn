@@ -17,8 +17,8 @@ const generateDataPackage = (sentence) => ({
     method: 'POST',
     uri: PYTORCH_SERVER,
     form: {
-        sentence
-    }
+        sentence,
+    },
 });
 /**
  * conversation if intent classified is unclear

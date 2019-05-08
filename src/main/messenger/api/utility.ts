@@ -1,8 +1,8 @@
-import idx from 'idx'
-import Logger from '../../logger'
-import { uploading } from '../fbrequest'
+import idx from 'idx';
+import Logger from '../../logger';
+import { uploading } from '../fbrequest';
 
-type media = 'image' | 'video'
+type media = 'image' | 'video';
 /**
  *
  * @param url URL of the media to be uploaded
@@ -10,7 +10,7 @@ type media = 'image' | 'video'
  */
 const uploadMedia = (url?: string, type?: media): Promise<any> => {
 	return new Promise((resolve) => {
-		if (!url) { resolve(null) }
+		if (!url) { resolve(null); }
 		const opts = {
 			form: {
 				message: {
@@ -23,14 +23,14 @@ const uploadMedia = (url?: string, type?: media): Promise<any> => {
 					},
 				},
 			},
-		}
+		};
 		uploading(opts, (err, resp) => {
-			if (err) { Logger.error(err) }
-			resolve(idx(resp, (_) => _.body.attachment_id))
-		})
-	})
-}
+			if (err) { Logger.error(err); }
+			resolve(idx(resp, (_) => _.body.attachment_id));
+		});
+	});
+};
 
 export {
 	uploadMedia,
-}
+};

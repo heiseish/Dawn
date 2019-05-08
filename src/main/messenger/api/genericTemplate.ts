@@ -1,5 +1,5 @@
-import Logger from '../../logger'
-import { messaging } from '../fbrequest'
+import Logger from '../../logger';
+import { messaging } from '../fbrequest';
 
 /**
  * Send generic template
@@ -43,11 +43,11 @@ export default async (senderId: string, text: string, subtitle?: string, urlMedi
 				messaging_type: 'RESPONSE',
 			},
 		},
-	}
+	};
 	messaging(opts, (err, resp, data) => {
-		if (err) { Logger.error(err) }
+		if (err) { Logger.error(err); }
 		if (cb) {
-			cb(err || (data.error && data.error.message), data)
+			cb(err || (data.error && data.error.message), data);
 		}
-	})
-}
+	});
+};

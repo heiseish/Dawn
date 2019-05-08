@@ -7,8 +7,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 */
 exports.default = (msg) => {
     if (msg.text && (msg.from.id === msg.chat.id
-        || msg.text.indexOf('@openAImatchThis_bot') !== -1))
+        || msg.text.indexOf('@openAImatchThis_bot') !== -1)) {
         return Object.assign({}, msg, { text: msg.text.replace('@openAImatchThis_bot ', '') });
+    }
     return msg;
 };
 //# sourceMappingURL=preprocess.js.map

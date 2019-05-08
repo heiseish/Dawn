@@ -91,7 +91,7 @@ const synchFilter = (matches, filter, n) => {
 };
 const getWCSchedule = () => __awaiter(this, void 0, void 0, function* () {
     try {
-        const NO_MATCH_TODAY = 'There isn\'t any match today!';
+        const NO_MATCH_TODAY = "There isn't any match today!";
         const matches = yield getMatches();
         const past = yield synchFilter(matches, isCompletedOrInProgress, 3);
         const present = yield synchFilter(matches, matchHappeningToday, 10);

@@ -10,9 +10,5 @@ if (!environment_1.TELEGRAM_TOKEN) {
     throw new Error('missing telegram token');
 }
 const telegramBot = new node_telegram_bot_api_1.default(environment_1.TELEGRAM_TOKEN, { polling: true });
-telegramBot.on('polling-error', (err) => {
-    const Logger = require('../logger');
-    Logger.error(err);
-});
 exports.default = telegramBot;
 //# sourceMappingURL=index.js.map
