@@ -8,7 +8,6 @@
   "scripts": {
     "test": "ts-node --files test/index.ts",
     "start": "node dist/index.js",
-    "build": "tsc",
     "testrun": "yarn build && yarn start",
     "lint": "tslint --fix -c ./tslint.json 'src/**/*{.ts,.tsx}'"
   },
