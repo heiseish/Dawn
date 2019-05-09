@@ -30,6 +30,7 @@
     "@types/mongoose": "^5.5.0",
     "@types/node": "^12.0.0",
     "@types/node-telegram-bot-api": "^0.31.0",
+    "@types/request-promise": "^4.1.43",
     "@types/validator": "^10.11.0",
     "async": "^2.6.2",
     "body-parser": "^1.19.0",

@@ -3,15 +3,14 @@ node_js:
   - "12"
 
 before_script:
-  - npm run setup
-  - npm run build-only
+  - yarn  setup
+  - yarn build-only
 
 script:
-  - npm run test
+  - yarn test
 
 after_success:
-  - npm run typedoc
-  - npm pack
+  - yarn typedoc
 
 deploy:
   - provider: pages
