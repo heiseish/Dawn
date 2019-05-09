@@ -6,8 +6,8 @@ const MODEL_FILE_PATH = 'file://dist/main/externalApis/@google/tensorflow/model.
 
 /**
  * Predict the intent of a message
- * @param {string} s
- * @return {{intent: string, confidence: number}}
+ * @param {string} text to be classified
+ * @return {{intent: string, confidence: number}} object contains the intent and confidence of the prediction
  */
 const predict = async (s: string): Promise<{intent: string, confidence: number}> => {
 	try {

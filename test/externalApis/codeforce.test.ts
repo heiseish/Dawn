@@ -1,8 +1,8 @@
 import { getUserRating }  from '../../src/main/externalApis/codeforce'
 import { expect } from 'chai'
 import { CODEFORCE_API_RESPONSE_TIME } from '../data/api'
-const MOCK_HANLE1 = 'DmitriyH'
-const MOCK_HANDLE2 = 'Fefer_Ivan'
+const MOCK_HANLE1 = 'BetterThanNobita'
+const MOCK_HANDLE2 = 'giang-dao'
 
 const useInTest = (): void => {
 	before(async function getCodeforcesResult() {
