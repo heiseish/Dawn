@@ -19,13 +19,12 @@ const graphApi_1 = require("./messenger/api/graphApi");
 * @param {any} payload
 * @return promise contains the updated user
 */
-exports.default = (partialUniqueId, platform, payload, UserDB, cache) => __awaiter(this, void 0, void 0, function* () {
+exports.default = (partialUniqueId, platform, payload, cache) => __awaiter(this, void 0, void 0, function* () {
     try {
         const user = yield cache.getUser(partialUniqueId);
         if (user)
             return user;
         const newUser = yield createNewUser(partialUniqueId, platform, payload);
-        yield UserDB.addUser(newUser);
         cache.saveUser(partialUniqueId, newUser);
         return newUser;
     }

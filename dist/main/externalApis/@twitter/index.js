@@ -12,27 +12,24 @@ const client = new twitter_1.default({
     access_token_secret: environment_1.TWITTER_ACCESS_TOKEN_SECRET,
 });
 exports.client = client;
-const checkTwitterKeys = () => {
-    if (!environment_1.TWITTER_CONSUMER_KEY) {
-        throw new Error('missing TWITTER_CONSUMER_KEY');
-    }
-    else if (!environment_1.TWITTER_CONSUMER_SECRET) {
-        throw new Error('missing TWITTER_CONSUMER_SECRET');
-    }
-    else if (!environment_1.TWITTER_ACCESS_TOKEN_KEY) {
-        throw new Error('missing TWITTER_ACCESS_TOKEN_KEY');
-    }
-    else if (!environment_1.TWITTER_ACCESS_TOKEN_SECRET) {
-        throw new Error('missing TWITTER_ACCESS_TOKEN_SECRET');
-    }
-};
 /**
  * Get twitter status from a twitter user
  * @param screenName twitter handle
  */
 const getTwitterStatus = (screenName) => {
-    checkTwitterKeys();
     return new Promise((response, reject) => {
+        if (!environment_1.TWITTER_CONSUMER_KEY) {
+            reject(new Error('missing TWITTER_CONSUMER_KEY'));
+        }
+        else if (!environment_1.TWITTER_CONSUMER_SECRET) {
+            reject(new Error('missing TWITTER_CONSUMER_SECRET'));
+        }
+        else if (!environment_1.TWITTER_ACCESS_TOKEN_KEY) {
+            reject(new Error('missing TWITTER_ACCESS_TOKEN_KEY'));
+        }
+        else if (!environment_1.TWITTER_ACCESS_TOKEN_SECRET) {
+            reject(new Error('missing TWITTER_ACCESS_TOKEN_SECRET'));
+        }
         const options = {
             screen_name: screenName,
             count: 4,
@@ -51,8 +48,19 @@ exports.getTwitterStatus = getTwitterStatus;
  * @param screenName twitter handler
  */
 const checkAndReturnTwitterUser = (screenName) => {
-    checkTwitterKeys();
     return new Promise((resolve, reject) => {
+        if (!environment_1.TWITTER_CONSUMER_KEY) {
+            reject(new Error('missing TWITTER_CONSUMER_KEY'));
+        }
+        else if (!environment_1.TWITTER_CONSUMER_SECRET) {
+            reject(new Error('missing TWITTER_CONSUMER_SECRET'));
+        }
+        else if (!environment_1.TWITTER_ACCESS_TOKEN_KEY) {
+            reject(new Error('missing TWITTER_ACCESS_TOKEN_KEY'));
+        }
+        else if (!environment_1.TWITTER_ACCESS_TOKEN_SECRET) {
+            reject(new Error('missing TWITTER_ACCESS_TOKEN_SECRET'));
+        }
         const options = {
             screen_name: screenName,
         };

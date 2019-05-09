@@ -2,14 +2,14 @@ import NodeCache from 'node-cache';
 import { CACHE_DURATION } from '../environment';
 import Logger from '../logger';
 
-const numericCacheDuration = parseInt(CACHE_DURATION);
+const numericCacheDuration = parseInt(CACHE_DURATION) + 10;
 
 export default class Cache implements Dawn.Cache {
 	private cache;
 	private UserDB;
 
 	constructor(UserDB: any) {
-		this.cache = new NodeCache( { stdTTL: numericCacheDuration, checkperiod: numericCacheDuration + 10 });
+		this.cache = new NodeCache( { stdTTL: numericCacheDuration, checkperiod: numericCacheDuration});
 		this.UserDB = UserDB;
 		this.cache.on('expired', (key, value) => {
 			try {
@@ -43,10 +43,12 @@ export default class Cache implements Dawn.Cache {
 	* @param id id of user
 	* @return promise that contains the user
 	*/
-	public  getUser = async (id: string): Promise<userType> => {
+	public getUser = async (id: string): Promise<userType> => {
 		try {
 			const account = await this.get(id);
-			if (account !== undefined) { return account; } else {
+			if (account !== undefined) { 
+				return account; 
+			} else {
 				const user = await this.UserDB.findUser(id);
 				return user;
 			}

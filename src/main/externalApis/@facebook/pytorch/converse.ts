@@ -1,10 +1,9 @@
-import request from 'request';
-const PYTORCH_SERVER = 'https://dlinterface.herokuapp.com/conversation';
+import {CONVERSE_SERVER} from '../../../environment';
 import rp from 'request-promise';
 
 const generateDataPackage = (sentence: string) => ({
 	method: 'POST',
-	uri: PYTORCH_SERVER,
+	uri: CONVERSE_SERVER,
 	form: {
         sentence,
     },

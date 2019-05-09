@@ -10,7 +10,9 @@ import { USING_TRANSLATION } from './controller';
  */
 const translate = (textToTranslate: string, languageToTranslateTo = 'en'): Promise<string> => {
 	return new Promise((resolve, reject) => {
-		if (!USING_TRANSLATION) { resolve(textToTranslate); } else {
+		if (!USING_TRANSLATION) { 
+			resolve(textToTranslate); 
+		} else {
 			Logger.info(`Translating ${textToTranslate} to ${languageToTranslateTo}...`);
 			const PROJECT_ID = GOOGLE_PROJECT_ID;
 			const translate = new Translate({

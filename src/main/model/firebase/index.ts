@@ -18,7 +18,7 @@ export default class Firebase {
 	/**
 	 * Terminate connection to firebase database
 	 */
-	terminateConnection = (): void => {
+	public terminateConnection = (): void => {
 		Logger.warn('Closing connection to firebase db...');
 		this.db.app().delete();
 	}
@@ -27,7 +27,7 @@ export default class Firebase {
 	 * Get a list of streaming audience
 	 * @returns {Promise<string[]>} list of streaming audience
 	 */
-	async getStreamingAudience(): Promise<string[]> {
+	public async getStreamingAudience(): Promise<string[]> {
 		const snap = await this.db.database().ref('restricted_access/streaming/').once('value');
 		const result = snap.val();
 		let audience = [] as string[];
@@ -40,7 +40,7 @@ export default class Firebase {
 	 * Get codeforce handle
 	 * @returns {Promise<string>} handle
 	 */
-	async getCodeforceHandle(): Promise<CodeforceUser[]> {
+	public async getCodeforceHandle(): Promise<CodeforceUser[]> {
 		const snap = await this.db.database().ref('restricted_access/codeforce/').once('value');
 		const users =  snap.val();
 		return users;
@@ -51,7 +51,7 @@ export default class Firebase {
 	 * @param {string} handle
 	 * @param {CodeforceRanking} ranking ranking
 	 */
-	async setCurrentCodeforceStanding(handle: string, ranking: CodeforceRanking): Promise<void> {
+	public async setCurrentCodeforceStanding(handle: string, ranking: CodeforceRanking): Promise<void> {
 		await this.db.database().ref(`restricted_access/codeforce/${handle}/standing/`).set(ranking);
 	}
 }

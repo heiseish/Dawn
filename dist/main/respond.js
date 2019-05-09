@@ -44,6 +44,7 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
 /**
 * Sync the language of the response with the locale of the convo
 * @param {userType} user
+* @returns {userType} updated user
 */
 const prepareResponseForSending = (user) => __awaiter(this, void 0, void 0, function* () {
     try {

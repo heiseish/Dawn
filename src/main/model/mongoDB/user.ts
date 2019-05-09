@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 import docSchema from './doc';
 import entitySchema from './entity';
 import locationSchema from './location';
@@ -6,10 +6,11 @@ import nameSchema from './name';
 import responseSchema from './response';
 import textSchema from './text';
 
-export default class UserDB {
-	private schema;
-	private model;
+type userMongooseType = userType & mongoose.Document;
 
+export default class UserDB {
+	private schema: mongoose.Schema;
+	private model: mongoose.Model<userMongooseType>;
 	constructor(mongoose: any) {
 		this.schema = new mongoose.Schema({
 			id: { type: String, require: true, unique: true, index: true },
@@ -22,19 +23,34 @@ export default class UserDB {
 			response: responseSchema(mongoose),
 			locale: String,
 		}, { strict: false });
-		this.model = mongoose.model('User', this.schema);
+		this.model = <mongoose.Model<userMongooseType>>mongoose.model('User', this.schema);
 	}
 
-	updateUser(id: string, user: any): Promise<userType> {
+	/**
+	 * Update the user in database
+	 * @param {string} id id of the user to be updated
+	 * @param {userType} user updated information of the user
+	 * @returns updated user
+	 */
+	public updateUser = (id: string, user: userType): Promise<userType | null> => {
 		return new Promise((resolve, reject) => {
-			this.model.findOneAndUpdate({id: new RegExp(id, 'i')}, user, { lean: true }, (err, newUser) => {
-				if (err) return reject(err);
-				else return resolve(newUser);
+			this.model.findOneAndUpdate({id: new RegExp(id, 'i')}, user).lean().exec((err, newUser) => {
+				if (err) reject(err);
+				if (newUser) resolve(newUser);
+				else {
+					this.addUser(user);
+					return user;
+				}
 			});
-		});
+		})
 	}
 
-	findUser(id: string): Promise<null | userType> {
+	/**
+	 * Find user in the database
+	 * @param id string
+	 * @returns User if user if found, null otherwise
+	 */
+	public findUser = (id: string): Promise<null | userType>=> {
 		return new Promise((resolve, reject) => {
 			this.model.findOne({id: new RegExp(id, 'i')}).lean().exec((err, user) => {
 				if (err) reject(err);
@@ -44,7 +60,12 @@ export default class UserDB {
 		});
 	}
 
-	addUser(user: userType): Promise<string | Error> {
+	/**
+	 * Add user to database
+	 * @param user user to be add
+	 * @returns {Promise<'OK'>} OK string if there is no error
+	 */
+	public addUser = (user: userType): Promise<'OK'> => {
 		return new Promise((resolve, reject) => {
 			this.model.create(user, (err, res) => {
 				if (err) reject(err);

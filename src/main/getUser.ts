@@ -8,12 +8,11 @@ import { getUserName } from './messenger/api/graphApi';
 * @return promise contains the updated user
 */
 export default async (partialUniqueId: string, platform: supportedPlatform,
-                      payload: any, UserDB: any, cache: any): Promise<userType> => {
+                      payload: any, cache: any): Promise<userType> => {
 	try {
 		const user = await cache.getUser(partialUniqueId);
 		if (user) return user;
 		const newUser = await createNewUser(partialUniqueId, platform, payload);
-		await UserDB.addUser(newUser);
 		cache.saveUser(partialUniqueId, newUser);
 		return newUser;
 	} catch (e) {

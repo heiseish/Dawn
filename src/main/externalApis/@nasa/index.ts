@@ -18,7 +18,7 @@ interface nasaApiObject {
  * @returns an object returned by nasa api
  * @throws error if json not valid or API not accessible
  */
-const getDailyNasaNews =  (): Promise<nasaApiObject> => {
+const getDailyNasaNews = (): Promise<nasaApiObject> => {
 	return new Promise((resolve, reject) => {
 		request(NASA_API_URL, (error, res, body) => {
 			if (error) return Promise.reject(error);
@@ -26,7 +26,7 @@ const getDailyNasaNews =  (): Promise<nasaApiObject> => {
 				const result = JSON.parse(body);
 				resolve(result);
 			} catch (e) {
-				return Promise.reject(e);
+				reject(e)
 			}
 
 		});

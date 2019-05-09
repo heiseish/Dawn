@@ -29,7 +29,6 @@ export default class App implements Dawn.App {
 	private streams: Dawn.Streamer[];
 	private firebase: Firebase;
 	private mongodb: MongoDB;
-	private UserDB: userType;
 	private cache: Cache;
 	private sweeper: Sweeper;
 	/**
@@ -69,7 +68,7 @@ export default class App implements Dawn.App {
 		});
 		this.express.post('/fb', (req: express.Request, res: express.Response) => {
 			messengerPreprocess(req.body.entry[0].messaging,
-					(event) => this.headquarter.receive('messenger', event, this.mongodb.users, this.cache));
+					(event) => this.headquarter.receive('messenger', event, this.cache));
 			res.sendStatus(200);
 		});
 	}
@@ -82,7 +81,7 @@ export default class App implements Dawn.App {
 		telegramEndpoint.on('message', (msg) => {
 			const result = telegramPreprocess(msg);
 			if (result) {
-				this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
+				this.headquarter.receive('telegram', msg,  this.cache);
 			}
 		});
 		telegramEndpoint.on('polling_error', (err) =>
@@ -141,8 +140,7 @@ export default class App implements Dawn.App {
 	public async setUpDatabase(): Promise<void> {
 		this.firebase = new Firebase();
 		this.mongodb = new MongoDB();
-		this.UserDB = await this.mongodb.users;
-		this.cache = new Cache(this.UserDB);
+		this.cache = new Cache(this.mongodb.users);
 		this.sweeper.add(this.cache.close);
 		this.sweeper.add(this.mongodb.terminateConnection);
 		this.sweeper.add(this.firebase.terminateConnection);

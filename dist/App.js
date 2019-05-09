@@ -63,7 +63,7 @@ class App {
             }
         });
         this.express.post('/fb', (req, res) => {
-            preprocess_1.messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event, this.mongodb.users, this.cache));
+            preprocess_1.messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event, this.cache));
             res.sendStatus(200);
         });
     }
@@ -75,7 +75,7 @@ class App {
         telegram_1.telegramEndpoint.on('message', (msg) => {
             const result = preprocess_1.telegramPreprocess(msg);
             if (result) {
-                this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
+                this.headquarter.receive('telegram', msg, this.cache);
             }
         });
         telegram_1.telegramEndpoint.on('polling_error', (err) => logger_1.default.error(err.toString()));
@@ -132,8 +132,7 @@ class App {
         return __awaiter(this, void 0, void 0, function* () {
             this.firebase = new firebase_1.default();
             this.mongodb = new mongoDB_1.default();
-            this.UserDB = yield this.mongodb.users;
-            this.cache = new cache_1.default(this.UserDB);
+            this.cache = new cache_1.default(this.mongodb.users);
             this.sweeper.add(this.cache.close);
             this.sweeper.add(this.mongodb.terminateConnection);
             this.sweeper.add(this.firebase.terminateConnection);

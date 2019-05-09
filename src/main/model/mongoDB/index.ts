@@ -7,8 +7,7 @@ import UserDB from './user';
 // import textSchema from './text'
 
 export default class MongoDB {
-
-	users;
+	public users: UserDB;
 	private db;
 	private options = {
 		autoReconnect: true,
@@ -38,7 +37,7 @@ export default class MongoDB {
 	/**
 	 * Terminate connection to mongoose database
 	 */
-	terminateConnection = (): void => {
+	public terminateConnection = (): void => {
 		Logger.warn('Closing connection to Mongo DB...');
 		this.db.connection.close();
 	}

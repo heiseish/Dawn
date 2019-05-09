@@ -11,11 +11,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const PYTORCH_SERVER = 'https://dlinterface.herokuapp.com/conversation';
+const environment_1 = require("../../../environment");
 const request_promise_1 = __importDefault(require("request-promise"));
 const generateDataPackage = (sentence) => ({
     method: 'POST',
-    uri: PYTORCH_SERVER,
+    uri: environment_1.CONVERSE_SERVER,
     form: {
         sentence,
     },

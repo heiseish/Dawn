@@ -1,8 +1,10 @@
+import { Schema } from 'mongoose';
 /**
  * Create text schema
  * @param mongoose mongodb connection
+ * @returns {Schema} mongoose schema for text
  */
-const createTextSchema = (mongoose: any): any => {
+const createTextSchema = (mongoose: any): Schema => {
 	const Schema = mongoose.Schema;
 	const textSchema = new Schema({
 		correctlyResponded: { type: Boolean, default: false, index: true},

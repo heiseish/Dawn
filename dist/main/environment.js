@@ -52,4 +52,6 @@ const CIPHER = process.env.CIPHER;
 exports.CIPHER = CIPHER;
 const PASSKEY = process.env.PASSKEY;
 exports.PASSKEY = PASSKEY;
+const CONVERSE_SERVER = process.env.CONVERSE_SERVER;
+exports.CONVERSE_SERVER = CONVERSE_SERVER;
 //# sourceMappingURL=environment.js.map
