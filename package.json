@@ -1,16 +1,20 @@
 {
-  "name": "potts-reborn",
+  "name": "dawn",
   "version": "1.0.0",
   "author": "Dao Truong Giang",
   "license": "MIT",
   "main": "dist/index.js",
   "private": true,
   "scripts": {
+    "setup": "npm install",
+    "build-only": "npx tsc",
     "test": "npx ts-node --files test/index.ts",
     "start": "node dist/index.js",
     "testrun": "npx tsc && yarn start",
     "lint": "tslint --fix -c ./tslint.json 'src/**/*{.ts,.tsx}'",
-    "cpn": "npx ts-node temp/index.ts"
+    "cpn": "npx ts-node temp/index.ts",
+    "typedoc": "npx typedoc --out docs/ --mode modules --tsconfig ./tsconfig.json src/",
+    "posttypedoc": "shx cp .nojekyll docs/.nojekyll"
   },
   "engines": {
     "node": "12.2.0"
@@ -75,7 +79,9 @@
     "get-port": "^5.0.0",
     "mocha": "^6.1.4",
     "pre-commit": "^1.2.2",
-    "ts-node": "^8.1.0"
+    "shx": "^0.3.2",
+    "ts-node": "^8.1.0",
+    "typedoc": "^0.14.2"
   },
   "pre-commit": [
     "test"
