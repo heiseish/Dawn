@@ -7,14 +7,16 @@ const request_1 = __importDefault(require("request"));
 const catFactUrl = 'https://catfact.ninja/fact';
 /**
  * Retrieve a random cat from cat fact API
+ * @returns {Promise<string>} promise with cat fact string
  */
 exports.default = () => {
     return new Promise((response, reject) => {
         request_1.default(catFactUrl, (error, res, body) => {
             try {
                 const result = JSON.parse(body);
-                if (error)
+                if (error) {
                     reject(error);
+                }
                 else if (result.fact.length >= 320) {
                     response('Cat is an animal😺');
                 }
@@ -25,7 +27,7 @@ exports.default = () => {
                 }
             }
             catch (e) {
-                return Promise.reject(e);
+                return reject(e);
             }
         });
     });

@@ -24,6 +24,8 @@ const NASA_APIKEY = process.env.NASA_APIKEY;
 const GIPHY_KEY = process.env.GIPHY_KEY;
 const CIPHER = process.env.CIPHER;
 const PASSKEY = process.env.PASSKEY;
+const CONVERSE_SERVER = process.env.CONVERSE_SERVER;
+const WAIT_TIME_FOR_EXTERNAL_API = 10000;
 export {
 	CIPHER,
 	PASSKEY,
@@ -53,4 +55,7 @@ export {
 	CACHE_DURATION,
 	NASA_APIKEY,
 	GIPHY_KEY,
+	CONVERSE_SERVER,
+
+	WAIT_TIME_FOR_EXTERNAL_API
 };

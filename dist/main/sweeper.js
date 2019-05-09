@@ -13,13 +13,15 @@ class Sweeper {
         this.sweepWhenTerminating();
     }
     /**
-     * @param fn Add a function to sweeper list
+     * @param {Function} fn Add a function to sweeper list
+     * @returns {void}
      */
     add(fn) {
         this.list.push(fn);
     }
     /**
      * terminate all required process
+     * @returns {void}
      */
     sweepWhenTerminating() {
         process.on('SIGINT', () => {

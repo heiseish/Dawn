@@ -27,12 +27,12 @@ class Headquarter {
      * @return Promise<void>
      * @throws Error if any errors with child processes
      */
-    receive(platform, payload, UserDb, cache) {
+    receive(platform, payload, cache) {
         return __awaiter(this, void 0, void 0, function* () {
             logger_1.default.info('Transfering event to headquarter..');
             try {
                 const partialUniqueId = identifySource_1.default(platform, payload);
-                let user = yield getUser_1.default(partialUniqueId, platform, payload, UserDb, cache);
+                let user = yield getUser_1.default(partialUniqueId, platform, payload, cache);
                 user = yield analyze_1.default(platform, payload, user);
                 user = yield execute_1.default(user);
                 yield respond_1.default(platform, payload, user);

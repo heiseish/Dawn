@@ -1,16 +1,23 @@
 import request from 'request';
 const catFactUrl = 'https://catfact.ninja/fact';
-
+import {
+	WAIT_TIME_FOR_EXTERNAL_API
+} from '../environment';
 /**
  * Retrieve a random cat from cat fact API
+ * @returns {Promise<string>} promise with cat fact string
  */
 export default (): Promise<string> => {
 	return new Promise((response, reject) => {
-		request(catFactUrl, (error, res, body) => {
+		request({
+			uri: catFactUrl,
+			timeout: WAIT_TIME_FOR_EXTERNAL_API
+		}, (error, res, body) => {
 			try {
 				const result = JSON.parse(body);
-				if (error) reject(error);
-				else if (result.fact.length >= 320) {
+				if (error) {
+					reject(error);
+				} else if (result.fact.length >= 320) {
 					response('Cat is an animal😺');
 				} else {
 					let fact: string = result.fact[0].toLowerCase() + result.fact.substring(1);
@@ -18,7 +25,7 @@ export default (): Promise<string> => {
 					response(`Do you know that ${fact}?`);
 				}
 			} catch (e) {
-				return Promise.reject(e);
+				return reject(e)
 			}
 
 		});

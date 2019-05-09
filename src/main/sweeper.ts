@@ -7,16 +7,16 @@ export default class Sweeper {
 		else this.list = [] as Function[];
 		this.sweepWhenTerminating();
 	}
-
 	/**
-	 * @param fn Add a function to sweeper list
+	 * @param {Function} fn Add a function to sweeper list
+	 * @returns {void} 
 	 */
 	public add(fn: Function): void {
 		this.list.push(fn);
 	}
-
 	/**
 	 * terminate all required process
+	 * @returns {void}
 	 */
 	private sweepWhenTerminating(): void {
 		process.on('SIGINT', () => {

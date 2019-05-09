@@ -20,7 +20,7 @@ const getDailyNasaNews = () => {
                 resolve(result);
             }
             catch (e) {
-                return Promise.reject(e);
+                reject(e);
             }
         });
     });

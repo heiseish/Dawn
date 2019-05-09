@@ -1,181 +1,419 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="default no-js">
 <head>
-  <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">Home | potts-reborn</title>
-  <link type="text/css" rel="stylesheet" href="css/style.css">
-  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
-  <script src="script/prettify/prettify.js"></script>
-  <script src="script/manual.js"></script>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>dawn</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
 </head>
-<body class="layout-container" data-ice="rootContainer">
-
+<body>
 <header>
-  <a href="./">Home</a>
-  
-  <a href="identifiers.html">Reference</a>
-  <a href="source.html">Source</a>
-  
-  <div class="search-box">
-  <span>
-    <img src="./image/search.png">
-    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
-  </span>
-    <ul class="search-result"></ul>
-  </div>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">dawn</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> dawn</h1>
+		</div>
+	</div>
 </header>
-
-<nav class="navigation" data-ice="nav"><div>
-  <ul>
-    
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/App.ts~App.html">App</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main">main</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/main/hq.ts~Headquarter.html">Headquarter</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-analyze">analyze</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-execute">execute</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-identifySource">identifySource</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-respond">respond</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-retrieveOrCreateUser">retrieveOrCreateUser</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ADMIN_ID">ADMIN_ID</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-CACHE_DURATION">CACHE_DURATION</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DARKSKY_KEY">DARKSKY_KEY</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FB_PAGE_ID">FB_PAGE_ID</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FB_PAGE_TOKEN">FB_PAGE_TOKEN</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-FB_VERIFY_TOKEN">FB_VERIFY_TOKEN</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GIT_ID">GIT_ID</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GIT_PW">GIT_PW</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GOOGLE_APPLICATION_CREDENTIALS">GOOGLE_APPLICATION_CREDENTIALS</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-GOOGLE_PROJECT_ID">GOOGLE_PROJECT_ID</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-MONGO_DB_URI">MONGO_DB_URI</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NASA_APIKEY">NASA_APIKEY</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NEWSAPI_KEY">NEWSAPI_KEY</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PGURI">PGURI</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PORT">PORT</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-TELEGRAM_TOKEN">TELEGRAM_TOKEN</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-TWITTER_ACCESS_TOKEN_KEY">TWITTER_ACCESS_TOKEN_KEY</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-TWITTER_ACCESS_TOKEN_SECRET">TWITTER_ACCESS_TOKEN_SECRET</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-TWITTER_CONSUMER_KEY">TWITTER_CONSUMER_KEY</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-TWITTER_CONSUMER_SECRET">TWITTER_CONSUMER_SECRET</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UNSPLASH_ID">UNSPLASH_ID</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UNSPLASH_SECRET">UNSPLASH_SECRET</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ZAMZAR_APIKEY">ZAMZAR_APIKEY</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-actions">main/actions</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-bye">bye</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-compliment">compliment</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-greet">greet</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-help">help</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-news">news</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pkmGo">pkmGo</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-replyToDocument">replyToDocument</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-thanks">thanks</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-parseArticles">parseArticles</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-weather">weather</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-worldCup">worldCup</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-externalapis">main/externalApis</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-catFact">catFact</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-giphy">giphy</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createGist">createGist</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-editGist">editGist</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateHelpManual">generateHelpManual</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-updateHelpManual">updateHelpManual</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-formatTimeForListTemplate">formatTimeForListTemplate</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getNingOfTheDay">getNingOfTheDay</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllHeadlines">getAllHeadlines</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getHeadlinesWithCategory">getHeadlinesWithCategory</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getHeadlinesWithQuery">getHeadlinesWithQuery</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getRandomHeadlines">getRandomHeadlines</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getRandomTop5Headlines">getRandomTop5Headlines</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-close">close</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-flush">flush</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-get">get</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-save">save</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getWeather">getWeather</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getWeatherMessage">getWeatherMessage</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getWCSchedule">getWCSchedule</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-myCache">myCache</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-externalapis--facebook-pytorch">main/externalApis/@facebook/pytorch</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-converse">converse</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-externalapis--google">main/externalApis/@google</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-speechToText">speechToText</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-translate">translate</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-USING_TRANSLATION">USING_TRANSLATION</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-USING_VISION">USING_VISION</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-externalapis--google-tensorflow">main/externalApis/@google/tensorflow</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-predict">predict</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-characterLevelEmbed">characterLevelEmbed</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toWordIntent">toWordIntent</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-externalapis--nasa">main/externalApis/@nasa</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getDailyNasaNews">getDailyNasaNews</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-externalapis--twitter">main/externalApis/@twitter</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-checkAndReturnTwitterUser">checkAndReturnTwitterUser</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getTwitterStatus">getTwitterStatus</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-client">client</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-lib">main/lib</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-decrypt">decrypt</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-encrypt">encrypt</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-randomByeMessage">randomByeMessage</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-randomConfusedMessage">randomConfusedMessage</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-randomGreetingPrefix">randomGreetingPrefix</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-randomGreetingSuffix">randomGreetingSuffix</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-randomResponseToComplimentMessage">randomResponseToComplimentMessage</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-randomResponseToThanksMessage">randomResponseToThanksMessage</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-possibleNay">possibleNay</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-possibleYay">possibleYay</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-logger">main/logger</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/main/logger/index.ts~Logger.html">Logger</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-logger">logger</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-messenger">main/messenger</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-preprocess">preprocess</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-respond">respond</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-messaging">messaging</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-uploading">uploading</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-messenger-api">main/messenger/api</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-genericTemplate">genericTemplate</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUserName">getUserName</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-listTemplate">listTemplate</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mediaTemplate">mediaTemplate</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-message">message</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-parseArticles">parseArticles</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-quickReply">quickReply</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sendImage">sendImage</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-markSeen">markSeen</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-typingOff">typingOff</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-typingOn">typingOn</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-uploadMedia">uploadMedia</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-model">main/model</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUser">getUser</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-saveUser">saveUser</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-model-firebase">main/model/firebase</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-initiateConnectionToFirebase">initiateConnectionToFirebase</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-model-mongodb">main/model/mongoDB</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Text">Text</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-textSchema">textSchema</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-streaming">main/streaming</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/main/streaming/twitter.ts~TwitterStreaming.html">TwitterStreaming</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-stream">stream</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-telegram">main/telegram</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-preprocess">preprocess</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-respond">respond</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-telegram-api">main/telegram/api</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-image">image</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-message">message</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#main-utils">main/utils</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getPlatformAndId">getPlatformAndId</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-checkDuplicates">checkDuplicates</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-checkIfArrayMutual">checkIfArrayMutual</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-containsObjectWithNameAttribute">containsObjectWithNameAttribute</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getCommonMembersFromTwoArrays">getCommonMembersFromTwoArrays</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-randomIndex">randomIndex</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-removeFromArray">removeFromArray</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-shuffle">shuffle</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-maskObject">maskObject</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateRandomId">generateRandomId</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getNumberStringFromString">getNumberStringFromString</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-padLeft">padLeft</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-padRight">padRight</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-replaceAll">replaceAll</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-replaceAllSubstring">replaceAllSubstring</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-tokenizeText">tokenizeText</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-waitToDo">waitToDo</a></span></span></li>
-</ul>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="dawn">Dawn</h1>
+				<p><a href="%5Bhttps://travis-ci.com/username/projectname%5D(https://github.com/heiseish/MessagingRestServer)"><img src="https://img.shields.io/static/v1.svg?label=Language&message=Typescript&color=informational&logo=Javascript" alt="Language"></a>
+					<a href="%5Bhttps://travis-ci.com/username/projectname%5D(https://github.com/heiseish/MessagingRestServer)"><img src="https://img.shields.io/static/v1.svg?label=Node&message=10.9.0&color=success" alt="Node Version"></a>
+					<a href="%5Bhttps://travis-ci.com/username/projectname%5D(https://github.com/heiseish/MessagingRestServer)"><img src="https://img.shields.io/static/v1.svg?label=Platform&message=Messenger&color=9cf&logo=Messenger" alt="Platform"></a>
+					<a href="%5Bhttps://travis-ci.com/username/projectname%5D(https://github.com/heiseish/MessagingRestServer)"><img src="https://img.shields.io/static/v1.svg?label=Platform&message=Telegram&color=9cf&logo=telegram" alt="Platform"></a>
+					<a href="%5Bhttps://travis-ci.com/username/projectname%5D(https://github.com/heiseish/MessagingRestServer)"><img src="https://img.shields.io/static/v1.svg?label=IDE&message=VSCode&color=blueviolet&logo=Visual-Studio-Code" alt="IDE"></a>
+					<a href="%5Bhttps://travis-ci.com/username/projectname%5D(https://github.com/heiseish/MessagingRestServer)"><img src="https://img.shields.io/static/v1.svg?label=Package%20Manager&message=Yarn&color=blue&logo=Yarn" alt="Package Manager"></a>
+				<a href="%5Bhttps://travis-ci.com/username/projectname%5D(https://github.com/heiseish/MessagingRestServer)"><img src="https://img.shields.io/static/v1.svg?label=Container&message=Docker%20Image&color=blue&logo=Docker" alt="Container"></a></p>
+				<ul>
+					<li>Build: <code>tsc</code></li>
+					<li>Start Development: <code>yarn start</code></li>
+					<li>Deploy: Git commit and then <code>heroku push origin master</code></li>
+					<li>Test: <code>yarn test</code></li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_app_.html">"<wbr>App"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_bye_.html">"main/actions/bye"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_compliment_.html">"main/actions/compliment"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_greet_.html">"main/actions/greet"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_help_.html">"main/actions/help"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_index_.html">"main/actions/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_news_.html">"main/actions/news"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_pkmgo_.html">"main/actions/pkm<wbr>Go"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_senddocument_.html">"main/actions/send<wbr>Document"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_thanks_.html">"main/actions/thanks"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_utils_.html">"main/actions/utils"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_weather_.html">"main/actions/weather"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_actions_worldcup_.html">"main/actions/world<wbr>Cup"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_analyze_.html">"main/analyze"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_environment_.html">"main/environment"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_execute_.html">"main/execute"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__facebook_pytorch_converse_.html">"main/external<wbr>Apis/@facebook/pytorch/converse"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__facebook_pytorch_index_.html">"main/external<wbr>Apis/@facebook/pytorch/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__google_controller_.html">"main/external<wbr>Apis/@google/controller"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__google_speech_.html">"main/external<wbr>Apis/@google/speech"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__google_tensorflow_intentclassification_.html">"main/external<wbr>Apis/@google/tensorflow/intent<wbr>Classification"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__google_tensorflow_utils_.html">"main/external<wbr>Apis/@google/tensorflow/utils"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__google_translate_.html">"main/external<wbr>Apis/@google/translate"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__nasa_index_.html">"main/external<wbr>Apis/@nasa/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis__twitter_index_.html">"main/external<wbr>Apis/@twitter/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_catfact_.html">"main/external<wbr>Apis/cat<wbr>Fact"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_codeforce_.html">"main/external<wbr>Apis/codeforce"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_giphy_.html">"main/external<wbr>Apis/giphy"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_gists_.html">"main/external<wbr>Apis/gists"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_marked_.html">"main/external<wbr>Apis/marked"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_moment_.html">"main/external<wbr>Apis/moment"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_news_.html">"main/external<wbr>Apis/news"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_weather_.html">"main/external<wbr>Apis/weather"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_externalapis_worldcup_.html">"main/external<wbr>Apis/world<wbr>Cup"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_getuser_.html">"main/get<wbr>User"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_headquarter_.html">"main/headquarter"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_identifysource_.html">"main/identify<wbr>Source"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_lib_encrypt_.html">"main/lib/encrypt"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_lib_string_.html">"main/lib/string"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_logger_index_.html">"main/logger/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_generictemplate_.html">"main/messenger/api/generic<wbr>Template"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_graphapi_.html">"main/messenger/api/graph<wbr>Api"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_listtemplate_.html">"main/messenger/api/list<wbr>Template"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_mediatemplate_.html">"main/messenger/api/media<wbr>Template"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_message_.html">"main/messenger/api/message"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_parser_.html">"main/messenger/api/parser"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_quickreply_.html">"main/messenger/api/quick<wbr>Reply"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_sendimage_.html">"main/messenger/api/send<wbr>Image"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_senderaction_.html">"main/messenger/api/sender<wbr>Action"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_api_utility_.html">"main/messenger/api/utility"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_fbrequest_.html">"main/messenger/fbrequest"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_preprocess_.html">"main/messenger/preprocess"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_messenger_respond_.html">"main/messenger/respond"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_cache_.html">"main/model/cache"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_firebase_index_.html">"main/model/firebase/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_doc_.html">"main/model/mongoDB/doc"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_entity_.html">"main/model/mongoDB/entity"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_index_.html">"main/model/mongoDB/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_listtemplatebutton_.html">"main/model/mongoDB/list<wbr>Template<wbr>Button"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_location_.html">"main/model/mongoDB/location"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_name_.html">"main/model/mongoDB/name"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_response_.html">"main/model/mongoDB/response"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_singlecascadetext_.html">"main/model/mongoDB/single<wbr>Cascade<wbr>Text"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_text_.html">"main/model/mongoDB/text"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_model_mongodb_user_.html">"main/model/mongoDB/user"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_preprocess_.html">"main/preprocess"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_respond_.html">"main/respond"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_streaming_codeforce_.html">"main/streaming/codeforce"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_streaming_index_.html">"main/streaming/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_streaming_morningnasa_.html">"main/streaming/morning<wbr>Nasa"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_streaming_twitter_.html">"main/streaming/twitter"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_sweeper_.html">"main/sweeper"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_telegram_api_document_.html">"main/telegram/api/document"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_telegram_api_image_.html">"main/telegram/api/image"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_telegram_api_index_.html">"main/telegram/api/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_telegram_api_message_.html">"main/telegram/api/message"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_telegram_index_.html">"main/telegram/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_telegram_preprocess_.html">"main/telegram/preprocess"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_telegram_respond_.html">"main/telegram/respond"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_utils_account_.html">"main/utils/account"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_utils_array_.html">"main/utils/array"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_utils_object_.html">"main/utils/object"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_utils_string_.html">"main/utils/string"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_utils_timer_.html">"main/utils/timer"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
-</nav>
-
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="pottts">pottTs</h1></div>
-</div>
-
-<footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
 </footer>
-
-<script src="script/search_index.js"></script>
-<script src="script/search.js"></script>
-<script src="script/pretty-print.js"></script>
-<script src="script/inherited-summary.js"></script>
-<script src="script/test-summary.js"></script>
-<script src="script/inner-link.js"></script>
-<script src="script/patch-for-local.js"></script>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>

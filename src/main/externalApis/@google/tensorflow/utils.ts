@@ -1,5 +1,5 @@
-const allASCIIletters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,;'";
-const numLetters = allASCIIletters.length;
+const allASCIIletters:string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,;'";
+const numLetters:number = allASCIIletters.length;
 /**
  * Convert intent number to string
  * @param {number} n Number to intent
@@ -31,8 +31,8 @@ const toWordIntent = (n: number): string => {
 
 /**
  * Vector array with absolute index of 1-hot vectors
- * @param {Array<number>} sentence of index
- * @return {Array<Array<number>>} array of 1-hot vector
+ * @param {number[]} sentence of index
+ * @return {number[][]} array of 1-hot vector (2-D array)
  */
 const sentenceToOneHotVectors = (sentence: number[]): number[][] => {
 	const res = [];
@@ -47,12 +47,14 @@ const sentenceToOneHotVectors = (sentence: number[]): number[][] => {
 /**
  * Convert letter to index based on allASCIIletters
  * @param {string} letter
+ * @returns numeric index
  */
 const letterToIndex = (letter: string): number =>  allASCIIletters.indexOf(letter) + 1;
 
 /**
  * Convert sentence to array of indices
  * @param sentence
+ * @return array of numeric indexes
  */
 const sentenceToIndex = (sentence: string): number[] => {
 	const res = [];

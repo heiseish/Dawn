@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Create text schema
  * @param mongoose mongodb connection
+ * @returns {Schema} mongoose schema for text
  */
 const createTextSchema = (mongoose) => {
     const Schema = mongoose.Schema;

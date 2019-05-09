@@ -34,6 +34,7 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 /**
 * Sync the language of the response with the locale of the convo
 * @param {userType} user
+* @returns {userType} updated user
 */
 const prepareResponseForSending = async (user: userType): Promise<userType> => {
 	try {
@@ -51,5 +52,4 @@ const prepareResponseForSending = async (user: userType): Promise<userType> => {
 	} catch (e) {
 		return Promise.reject(e);
 	}
-
 };

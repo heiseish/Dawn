@@ -9,6 +9,10 @@ const gists = new gists_1.default({
     username: environment_1.GIT_ID,
     password: environment_1.GIT_PW,
 });
+/**
+ * Edit gist
+ * @param opts options
+ */
 const editGist = (opts) => {
     return new Promise((resolve, reject) => {
         gists.edit(opts, (err, res) => {
@@ -22,6 +26,10 @@ const editGist = (opts) => {
     });
 };
 exports.editGist = editGist;
+/**
+ * Create gist
+ * @param opts options
+ */
 const createGist = (opts) => {
     return new Promise((resolve, reject) => {
         gists.create(opts, (err, res) => {

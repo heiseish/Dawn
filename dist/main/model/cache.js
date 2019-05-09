@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_cache_1 = __importDefault(require("node-cache"));
 const environment_1 = require("../environment");
 const logger_1 = __importDefault(require("../logger"));
-const numericCacheDuration = parseInt(environment_1.CACHE_DURATION);
+const numericCacheDuration = parseInt(environment_1.CACHE_DURATION) + 10;
 class Cache {
     constructor(UserDB) {
         /**
@@ -107,7 +107,7 @@ class Cache {
                 }
             });
         };
-        this.cache = new node_cache_1.default({ stdTTL: numericCacheDuration, checkperiod: numericCacheDuration + 10 });
+        this.cache = new node_cache_1.default({ stdTTL: numericCacheDuration, checkperiod: numericCacheDuration });
         this.UserDB = UserDB;
         this.cache.on('expired', (key, value) => {
             try {

@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+  - "12"
+
+before_script:
+  - yarn  setup
+  - yarn build-only
+
+script:
+  - yarn test
+
+after_success:
+  - yarn typedoc
+
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    local_dir: docs/
+    github_token: $GITHUB_TOKEN
+    on:
+      tags: true

@@ -2,16 +2,19 @@ import _ from 'lodash/core';
 import mojiTranslate from 'moji-translate';
 import rp from 'request-promise';
 import { padLeft, padRight } from '../utils/string';
-
+import {
+	WAIT_TIME_FOR_EXTERNAL_API
+} from '../environment';
 const MAX_COUNTRY_LENGTH = 10;
 const MAX_GOALS_LENGTH = 2;
 
-const options = {
+const options:rp.OptionsWithUri = {
 	uri: 'http://worldcup.sfg.io/matches',
 	headers: {
 		'User-Agent': 'Request-Promise',
 	},
-	json: true, // Automatically parses the JSON string in the response
+	json: true, // Automatically parses the JSON string in the response,
+	timeout: WAIT_TIME_FOR_EXTERNAL_API
 };
 
 const rpad = ( value, char, length ): string | void => {

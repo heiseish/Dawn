@@ -49,9 +49,11 @@ class Logger {
     }
     /**
      * Logging the error text
-     * @param text error text
+     * @param {string | Error} text error text
      */
     error(text, component = null) {
+        if (text instanceof Error)
+            text = text.toString();
         this.log(text, 'error', component);
     }
     /**

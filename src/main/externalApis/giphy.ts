@@ -2,6 +2,9 @@ import request from 'request';
 import {
 	GIPHY_KEY,
 } from '../environment';
+import {
+	WAIT_TIME_FOR_EXTERNAL_API
+} from '../environment';
 /**
  * Generate a ranodm gif from Giphi
  */
@@ -15,14 +18,17 @@ export default (): Promise<string> => {
 	};
 
 	return new Promise((resolve, reject) => {
-		request(giphy.baseURL +
+		request({
+			uri: giphy.baseURL +
 			giphy.type +
 			'?api_key=' +
 			giphy.key +
 			'&tag=' +
 			giphy.tag +
 			'&rating=' +
-			giphy.rating, (error, res, body) => {
+			giphy.rating,
+			timeout: WAIT_TIME_FOR_EXTERNAL_API
+		}, (error, res, body) => {
 			const result = JSON.parse(body);
 			if (error) {
 				reject(error);

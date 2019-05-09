@@ -32,8 +32,8 @@ const toWordIntent = (n) => {
 exports.toWordIntent = toWordIntent;
 /**
  * Vector array with absolute index of 1-hot vectors
- * @param {Array<number>} sentence of index
- * @return {Array<Array<number>>} array of 1-hot vector
+ * @param {number[]} sentence of index
+ * @return {number[][]} array of 1-hot vector (2-D array)
  */
 const sentenceToOneHotVectors = (sentence) => {
     const res = [];
@@ -47,11 +47,13 @@ const sentenceToOneHotVectors = (sentence) => {
 /**
  * Convert letter to index based on allASCIIletters
  * @param {string} letter
+ * @returns numeric index
  */
 const letterToIndex = (letter) => allASCIIletters.indexOf(letter) + 1;
 /**
  * Convert sentence to array of indices
  * @param sentence
+ * @return array of numeric indexes
  */
 const sentenceToIndex = (sentence) => {
     const res = [];

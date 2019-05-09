@@ -1,6 +1,8 @@
 import request from 'request';
 const CODEFORCE_API = 'http://codeforces.com/api/user.info?handles=';
-
+import {
+	WAIT_TIME_FOR_EXTERNAL_API
+} from '../environment';
 /**
  * Get user rating
  * @param {string} handle handle of codeforce user
@@ -8,7 +10,11 @@ const CODEFORCE_API = 'http://codeforces.com/api/user.info?handles=';
  */
 const getUserRating = (handle: string): Promise<CodeforceRanking> => {
 	return new Promise((resolve, reject) => {
-		request(CODEFORCE_API + handle, (error, res, body) => {
+		request({
+			uri: CODEFORCE_API + handle,
+			timeout: WAIT_TIME_FOR_EXTERNAL_API
+		}
+			, (error, res, body) => {
 			try {
 				const result = JSON.parse(body);
 				if (error) reject(error);
