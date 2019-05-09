@@ -15,15 +15,15 @@ const possibleGreetLines = [
 ];
 
 /**
- * Greet user
- * @param user user to greet
- * @return promise containing the updated user
- */
+* Greet user
+* @param user user to greet
+* @return promise containing the updated user
+* @throws error if API fails
+*/
 export default async (user: userType): Promise<userType> => {
 	try {
-		let SUFFIX;
-		const PREFIX = await randomGreetingPrefix(user.name.first);
-		SUFFIX = await randomIndex(possibleGreetLines)();
+		let PREFIX = await randomGreetingPrefix(user.name.first);
+		let SUFFIX = await randomIndex(possibleGreetLines)();
 		if (SUFFIX !== null && typeof SUFFIX === 'object') {
 			user.response = SUFFIX;
 		} else if (SUFFIX === "Here's a photo you might like: ") {
@@ -31,18 +31,18 @@ export default async (user: userType): Promise<userType> => {
 				simpleText: `${PREFIX} ${SUFFIX}`,
 				image: RANDOM_IMAGE_URL,
 				answerable: true,
-
+				
 			};
-									} else {
+		} else {
 			user.response =  {
 				simpleText: `${PREFIX} ${SUFFIX}`,
 				answerable: true,
-
+				
 			};
-									}
+		}
 		return user;
 	} catch (e) {
 		return Promise.reject(e);
 	}
-
+	
 };

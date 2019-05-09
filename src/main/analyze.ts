@@ -1,4 +1,3 @@
-import { stringByteLength } from '@tensorflow/tfjs-core/dist/io/io_utils';
 import idx from 'idx';
 import { predict } from './externalApis/@google/tensorflow/intentClassification';
 import Logger from './logger';

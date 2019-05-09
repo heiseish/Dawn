@@ -12,9 +12,9 @@ class Logger {
 	* @param load whether the text animation is loading
 	* @returns object with method stop that takes in after-text as a string
 	*/
-	info(text: string, load?: boolean): void | any {
+	info(text: string, load?: boolean, component: string | null = null): void | any {
 		if (load) {
-			const spinner = ora({
+			const spinner: ora.Ora = ora({
 				text: this.generateDateTimePrefix()
 				+ chalk.green('info: ') + chalk.cyan(text),
 				spinner: 'arc',
@@ -25,7 +25,7 @@ class Logger {
 			* Stop the loading animation and display afterText
 			* @param afterText text to displat after loading animation
 			*/
-			const stop = (afterText?: string) => {
+			const stop = (afterText?: string): void => {
 				spinner.stopAndPersist({
 					text: this.generateDateTimePrefix()
 					+ chalk.green('info: ') + chalk.cyan(afterText),
@@ -33,24 +33,25 @@ class Logger {
 				});
 			};
 			return { stop };
-		} else this.log(text, 'info');
+		} else this.log(text, 'info', component);
 
 	}
 
 	/**
 	 * Logging the warning text
 	 * @param text warning text
+	 * @param component component to display the message
 	 */
-	warn(text: string) {
-		this.log(text, 'warn');
+	warn(text: string, component: string | null = null) {
+		this.log(text, 'warn', component);
 	}
 
 	/**
 	 * Logging the error text
 	 * @param text error text
 	 */
-	error(text: string) {
-		this.log(text, 'error');
+	error(text: string, component: string | null = null) {
+		this.log(text, 'error', component);
 	}
 	/**
 	* Logging separator symbols
@@ -73,7 +74,7 @@ class Logger {
 	 * @param text text to log
 	 * @param color color of primary text
 	 */
-	private log(text: string, level?: 'info' | 'error' | 'warn') {
+	private log(text: string, level: 'info' | 'error' | 'warn', component: string | null) {
 		let color;
 		switch (level) {
 			case 'info':
@@ -92,7 +93,7 @@ class Logger {
 			color = chalk.white;
 		}
 		console.log(this.generateDateTimePrefix()
-		+ color(`[${level}]: `) + chalk.cyan(text));
+		+ color(`[${level}]: `) + (component ? `[${component}]` : ``)+ chalk.cyan(text));
 	}
 }
 

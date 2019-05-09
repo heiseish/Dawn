@@ -20,6 +20,7 @@ const array_1 = require("../utils/array");
  * Handle document from messenger
  * @param {userType} user
  * @return updated user
+ * @throws if gif api or geocoder api fails
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
     try {
@@ -73,7 +74,6 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
                     simpleText: 'Nice voice!',
                 };
                 break;
-            default:
         }
         return user;
     }

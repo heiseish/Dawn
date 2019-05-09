@@ -1,10 +1,14 @@
-import bot from '../';
-export default async (chatId: string | number, text: string, reply?: boolean, messageId?: string | number): Promise<void | Error> => {
+import {
+	telegramEndpoint,
+	moduleBot
+} from '../';
+export default async (chatId: string | number, text: string, reply?: boolean, 
+	messageId?: number): Promise<moduleBot.Message> => {
 	try {
 		if (reply) {
-			return await bot.sendMessage(chatId, text, {reply_to_message_id: messageId});
+			return await telegramEndpoint.sendMessage(chatId, text, {reply_to_message_id: messageId});
 		} else {
-			return await bot.sendMessage(chatId, text);
+			return await telegramEndpoint.sendMessage(chatId, text);
 		}
 	} catch (e) {
 		return Promise.reject(e);

@@ -19,12 +19,14 @@ class Cache {
     constructor(UserDB) {
         /**
         * Flush all data
+        * @returns void
         */
         this.flush = () => {
             this.cache.flushAll();
         };
         /**
         * Close the cache
+        * @returns void
         */
         this.close = () => {
             logger_1.default.warn('Closing cache...');
@@ -64,6 +66,47 @@ class Cache {
                 return Promise.reject(e);
             }
         });
+        /**
+        * Save data to cache. Successful if returned 'OK'
+        * @param {string} key
+        * @param {any} data
+        */
+        this.save = (key, data) => {
+            return new Promise((resolve, reject) => {
+                if (!key)
+                    reject('Missing key');
+                else if (!data)
+                    reject('Missing data');
+                else {
+                    this.cache.set(key, data, (err, success) => {
+                        if (err)
+                            reject(err);
+                        else if (!err && success)
+                            resolve('OK');
+                    });
+                }
+            });
+        };
+        /**
+        * Get data from cache. Return undefined if data not found.
+        * @param {string} key
+        */
+        this.get = (key) => {
+            return new Promise((resolve, reject) => {
+                if (!key)
+                    reject('Missing key');
+                else {
+                    this.cache.get(key, (err, value) => {
+                        if (err) {
+                            reject(err);
+                        }
+                        else {
+                            resolve(value);
+                        }
+                    });
+                }
+            });
+        };
         this.cache = new node_cache_1.default({ stdTTL: numericCacheDuration, checkperiod: numericCacheDuration + 10 });
         this.UserDB = UserDB;
         this.cache.on('expired', (key, value) => {
@@ -73,47 +116,6 @@ class Cache {
             }
             catch (e) {
                 logger_1.default.error(e);
-            }
-        });
-    }
-    /**
-    * Save data to cache. Successful if returned 'OK'
-    * @param {string} key
-    * @param {any} data
-    */
-    save(key, data) {
-        return new Promise((resolve, reject) => {
-            if (!key)
-                reject('Missing key');
-            else if (!data)
-                reject('Missing data');
-            else {
-                this.cache.set(key, data, (err, success) => {
-                    if (err)
-                        reject(err);
-                    else if (!err && success)
-                        resolve('OK');
-                });
-            }
-        });
-    }
-    /**
-    * Get data from cache. Return undefined if data not found.
-    * @param {string} key
-    */
-    get(key) {
-        return new Promise((resolve, reject) => {
-            if (!key)
-                reject('Missing key');
-            else {
-                this.cache.get(key, (err, value) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    else {
-                        resolve(value);
-                    }
-                });
             }
         });
     }

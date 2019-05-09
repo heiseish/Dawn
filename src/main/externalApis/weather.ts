@@ -43,7 +43,12 @@ const getWeather = (coordinate: number[]): Promise<any> => {
 	});
 };
 
-const getWeatherMessage = (...params: number[]): Promise<any> => {
+interface WeatherResponse {
+	current: string,
+	summary: string,
+	imageId: string
+}
+const getWeatherMessage = (...params: number[]): Promise<WeatherResponse> => {
 	return new Promise((response, reject) => {
 		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY');
 		const coordinate: number[] =

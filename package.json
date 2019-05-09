@@ -19,7 +19,10 @@
     "@google-cloud/translate": "^3.0.1",
     "@tensorflow/tfjs": "^1.1.2",
     "@tensorflow/tfjs-node": "^1.1.2",
+    "@types/express": "^4.16.1",
     "@types/mocha": "^5.2.6",
+    "@types/node": "^12.0.0",
+    "@types/node-telegram-bot-api": "^0.31.0",
     "async": "^2.6.2",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
@@ -61,7 +64,6 @@
     "typescript": "^3.4.5"
   },
   "devDependencies": {
-    "@types/node": "^12.0.0",
     "axios": "^0.18.0",
     "get-port": "^5.0.0",
     "mocha": "^6.1.4",

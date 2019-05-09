@@ -25,15 +25,15 @@ const possibleGreetLines = [
     news_1.getRandomHeadlines,
 ];
 /**
- * Greet user
- * @param user user to greet
- * @return promise containing the updated user
- */
+* Greet user
+* @param user user to greet
+* @return promise containing the updated user
+* @throws error if API fails
+*/
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
     try {
-        let SUFFIX;
-        const PREFIX = yield string_1.randomGreetingPrefix(user.name.first);
-        SUFFIX = yield array_1.randomIndex(possibleGreetLines)();
+        let PREFIX = yield string_1.randomGreetingPrefix(user.name.first);
+        let SUFFIX = yield array_1.randomIndex(possibleGreetLines)();
         if (SUFFIX !== null && typeof SUFFIX === 'object') {
             user.response = SUFFIX;
         }

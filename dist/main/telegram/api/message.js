@@ -7,18 +7,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const __1 = __importDefault(require("../"));
+const __1 = require("../");
 exports.default = (chatId, text, reply, messageId) => __awaiter(this, void 0, void 0, function* () {
     try {
         if (reply) {
-            return yield __1.default.sendMessage(chatId, text, { reply_to_message_id: messageId });
+            return yield __1.telegramEndpoint.sendMessage(chatId, text, { reply_to_message_id: messageId });
         }
         else {
-            return yield __1.default.sendMessage(chatId, text);
+            return yield __1.telegramEndpoint.sendMessage(chatId, text);
         }
     }
     catch (e) {

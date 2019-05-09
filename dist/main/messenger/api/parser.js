@@ -9,6 +9,7 @@ const logger_1 = __importDefault(require("../../logger"));
 /**
  * Parse News API articles to display on facebook messenger list template.
  * @param items Array of items to be parsed.
+ * @returns parsed articles
  */
 const parseArticles = (items) => {
     let elements = [], i = 0;

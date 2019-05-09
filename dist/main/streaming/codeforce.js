@@ -20,15 +20,12 @@ class CodeforceStream {
      * @param handle Create a codeforce stream with a user
      */
     constructor(firebase) {
-        this.stopStreaming = () => {
-            logger_1.default.warn('Terminating codeforce streaming job');
-            this.scheduler.cancel();
-        };
         this.firebase = firebase;
     }
     /**
-     * Schedule a job @8.30 am every day to send daily nasa picture
+     * Schedule 20-min interval check for codeforce ranking change
      * @param list list of person to send message to
+     * @returns void
      */
     startStreaming(list) {
         this.scheduler = node_schedule_1.default.scheduleJob('*/20 * * * *', () => __awaiter(this, void 0, void 0, function* () {
@@ -43,6 +40,14 @@ class CodeforceStream {
                 }
             }
         }));
+    }
+    /**
+     * Terminal codeforce streaming job
+     * @returns void
+     */
+    stopStreaming() {
+        logger_1.default.warn('Terminating codeforce streaming job');
+        this.scheduler.cancel();
     }
 }
 exports.default = CodeforceStream;

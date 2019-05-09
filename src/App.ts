@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser';
-import express from 'express';
+import express = require('express');
 import {
 	FB_VERIFY_TOKEN,
 } from './main/environment';
@@ -9,7 +9,7 @@ import CodeforceStream from './main/streaming/codeforce';
 import MorningNasa from './main/streaming/morningNasa';
 import TwitterStreaming from  './main/streaming/twitter';
 
-import Headquarter from './main/hq';
+import Headquarter from './main/headquarter';
 import Cache from './main/model/cache';
 import Firebase from './main/model/firebase';
 import MongoDB from './main/model/mongoDB';
@@ -18,19 +18,20 @@ import {
 	telegramPreprocess,
 } from './main/preprocess';
 import Sweeper from './main/sweeper';
-import telegramBot from './main/telegram';
+import { telegramEndpoint } from './main/telegram';
+
 /**
 * REST API
 */
-export default class App {
-	private express;
-	private headquarter;
-	private streams;
-	private firebase;
-	private mongodb;
-	private UserDB;
-	private cache;
-	private sweeper;
+export default class App implements Dawn.App {
+	private express: express.Application;
+	private headquarter: Headquarter;
+	private streams: Dawn.Streamer[];
+	private firebase: Firebase;
+	private mongodb: MongoDB;
+	private UserDB: userType;
+	private cache: Cache;
+	private sweeper: Sweeper;
 	/**
 	* Constructor for main REST API
 	*/
@@ -41,59 +42,21 @@ export default class App {
 	}
 
 	/**
-	* Configure setting for express
-	* @param {string | number} port port that express should be listening to
-	*/
-	configureExpress(port: string | number): void {
-		if (typeof port === 'string') {
-			port = parseInt(port);
-		}
-		this.express.listen(port);
-		this.express.use(bodyParser.json());
-		this.express.use(bodyParser.urlencoded({extended: true}));
-	}
-	/**
-	* Fire up endpoint listener
-	* @throws error if express is appropriately set up beforehand.
-	*/
-	async startServer(): Promise<void> {
-		if (!this.express) {
-			throw new Error('Express is not set up when firing endpoint listener');
-		}
-		this.loadFacebookEndpoint();
-		this.loadPingEndpoints();
-		this.loadTelegramEndpoint();
-
-		this.loadStreamingEndpoint(await this.firebase.getStreamingAudience());
-	}
-
-	/**
-	* Establish connection to database
-	*/
-	async setUpDatabase(): Promise<void> {
-		this.firebase = new Firebase();
-		this.mongodb = new MongoDB();
-		this.UserDB = await this.mongodb.users;
-		this.cache = new Cache(this.UserDB);
-		this.sweeper.add(this.cache.close);
-		this.sweeper.add(this.mongodb.terminateConnection);
-		this.sweeper.add(this.firebase.terminateConnection);
-
-	}
-
-	/**
 	* Endpoint for ping related service
+	* returns void
 	*/
 	private loadPingEndpoints(): void {
-		this.express.get('/', (req, res) =>  res.status(200).json({ name: 'potts-backend' }));
+		this.express.get('/', (req: express.Request, res: express.Response) =>  
+			res.status(200).json({ name: 'potts-backend' }));
 		this.express.get('/ping', (req, res) => res.sendStatus(200));
 	}
 
 	/**
 	* Endpoint for facebook messenger
+	* @returns void
 	*/
 	private loadFacebookEndpoint(): void {
-		this.express.get('/fb', (req, res) => {
+		this.express.get('/fb', (req: express.Request, res: express.Response) => {
 			if (!FB_VERIFY_TOKEN) {
 				throw new Error('missing FB_VERIFY_TOKEN');
 			}
@@ -104,7 +67,7 @@ export default class App {
 				res.sendStatus(403);
 			}
 		});
-		this.express.post('/fb', (req, res) => {
+		this.express.post('/fb', (req: express.Request, res: express.Response) => {
 			messengerPreprocess(req.body.entry[0].messaging,
 					(event) => this.headquarter.receive('messenger', event, this.mongodb.users, this.cache));
 			res.sendStatus(200);
@@ -113,16 +76,17 @@ export default class App {
 
 	/**
 	* Endpoint for telegram
+	* @returns void
 	*/
 	private loadTelegramEndpoint(): void {
-		telegramBot.on('message', (msg) => {
+		telegramEndpoint.on('message', (msg) => {
 			const result = telegramPreprocess(msg);
 			if (result) {
 				this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
 			}
 		});
-		telegramBot.on('polling_error', (err) =>
-			Logger.error(err)
+		telegramEndpoint.on('polling_error', (err) =>
+			Logger.error(err.toString())
 		);
 	}
 
@@ -140,6 +104,49 @@ export default class App {
 			for (const st of this.streams) st.startStreaming(people);
 			for (const st of this.streams) this.sweeper.add(st.stopStreaming);
 		}
+	}
+
+	/**
+	* Configure setting for express
+	* @param {string | number} port port that express should be listening to
+	*/
+	public configureExpress(port: string | number): void {
+		if (typeof port === 'string') {
+			port = parseInt(port);
+		}
+		this.express.listen(port);
+		this.express.use(bodyParser.json());
+		this.express.use(bodyParser.urlencoded({extended: true}));
+	}
+	/**
+	* Fire up endpoint listener
+	* @returns void
+	* @throws error if express is appropriately set up beforehand.
+	*/
+	public async startServer(): Promise<void> {
+		if (!this.express) {
+			throw new Error('Express is not set up when firing endpoint listener');
+		}
+		this.loadFacebookEndpoint();
+		this.loadPingEndpoints();
+		this.loadTelegramEndpoint();
+
+		this.loadStreamingEndpoint(await this.firebase.getStreamingAudience());
+	}
+
+	/**
+	* Establish connection to database
+	* @returns void
+	*/
+	public async setUpDatabase(): Promise<void> {
+		this.firebase = new Firebase();
+		this.mongodb = new MongoDB();
+		this.UserDB = await this.mongodb.users;
+		this.cache = new Cache(this.UserDB);
+		this.sweeper.add(this.cache.close);
+		this.sweeper.add(this.mongodb.terminateConnection);
+		this.sweeper.add(this.firebase.terminateConnection);
+
 	}
 
 }

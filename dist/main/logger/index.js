@@ -15,7 +15,7 @@ class Logger {
     * @param load whether the text animation is loading
     * @returns object with method stop that takes in after-text as a string
     */
-    info(text, load) {
+    info(text, load, component = null) {
         if (load) {
             const spinner = ora_1.default({
                 text: this.generateDateTimePrefix()
@@ -37,21 +37,22 @@ class Logger {
             return { stop };
         }
         else
-            this.log(text, 'info');
+            this.log(text, 'info', component);
     }
     /**
      * Logging the warning text
      * @param text warning text
+     * @param component component to display the message
      */
-    warn(text) {
-        this.log(text, 'warn');
+    warn(text, component = null) {
+        this.log(text, 'warn', component);
     }
     /**
      * Logging the error text
      * @param text error text
      */
-    error(text) {
-        this.log(text, 'error');
+    error(text, component = null) {
+        this.log(text, 'error', component);
     }
     /**
     * Logging separator symbols
@@ -74,7 +75,7 @@ class Logger {
      * @param text text to log
      * @param color color of primary text
      */
-    log(text, level) {
+    log(text, level, component) {
         let color;
         switch (level) {
             case 'info':
@@ -90,7 +91,7 @@ class Logger {
                 color = chalk_1.default.white;
         }
         console.log(this.generateDateTimePrefix()
-            + color(`[${level}]: `) + chalk_1.default.cyan(text));
+            + color(`[${level}]: `) + (component ? `[${component}]` : ``) + chalk_1.default.cyan(text));
     }
 }
 exports.default = new Logger();

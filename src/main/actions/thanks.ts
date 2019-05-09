@@ -4,8 +4,8 @@ import { randomResponseToThanksMessage } from '../lib/string';
  * @param {userType} user
  * @return parsed User
  */
-export default (user: userType): userType => {
-	user.response = {
+export default async (user: userType): Promise<userType> => {
+	user.response = await {
 		simpleText: randomResponseToThanksMessage(user.name.first),
 		answerable: true,
 	};

@@ -1,5 +1,4 @@
 import { randomByeMessage } from '../lib/string';
-
 /**
  * Reply to good bye message
  * @param {userType} user

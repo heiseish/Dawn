@@ -8,7 +8,8 @@ import sendDocument from './sendDocument';
 import thanks from './thanks';
 import weather from './weather';
 import worldCup from './worldCup';
-export default [
+
+let actions:Dawn.Action[] =  [
 	{
 		name: 'greetings',
 		execute: greet,
@@ -60,3 +61,5 @@ export default [
 		description: 'Return help manual for the bot.',
 	},
 ];
+
+export default actions;

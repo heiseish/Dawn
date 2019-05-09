@@ -87,7 +87,7 @@ const synchFilter = (matches: any, filter: (match: any) => boolean, n?: number):
 	});
 };
 
-const getWCSchedule = async (): Promise<any> => {
+const getWCSchedule = async (): Promise<string> => {
 	try {
 		const NO_MATCH_TODAY = "There isn't any match today!";
 		const matches = await getMatches();

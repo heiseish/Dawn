@@ -4,5 +4,8 @@ import { TELEGRAM_TOKEN } from '../environment';
 if (!TELEGRAM_TOKEN) {
 	throw new Error('missing telegram token');
 }
-const telegramBot: any = new moduleBot(TELEGRAM_TOKEN, {polling: true});
-export default telegramBot;
+const telegramEndpoint:moduleBot = new moduleBot(TELEGRAM_TOKEN, {polling: true});
+export  {
+	telegramEndpoint,
+	moduleBot
+};

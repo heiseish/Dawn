@@ -6,8 +6,6 @@ import {
 	CIPHER,
 	PASSKEY
 } from '../environment'
-// const CIPHER = process.env.CIPHER;
-// const PASSKEY = process.env.PASSKEY;
 const encoding = 'hex';
 
 /**

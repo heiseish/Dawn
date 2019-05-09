@@ -4,8 +4,8 @@ const MANUAL_LINK = 'https://gist.github.com/MadaraUCH/522028088e49110b4511d4cab
  * @param {userType} user
  * @return updated user
  */
-export default (user: userType): userType => {
-	user.response = {
+export default async (user: userType): Promise<userType> => {
+	user.response = await {
 		simpleText: 'You may find the help manual here: ' + MANUAL_LINK,
 		answerable: true,
 	};

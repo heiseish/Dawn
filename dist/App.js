@@ -12,19 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const body_parser_1 = __importDefault(require("body-parser"));
-const express_1 = __importDefault(require("express"));
+const express = require("express");
 const environment_1 = require("./main/environment");
 const logger_1 = __importDefault(require("./main/logger"));
 const codeforce_1 = __importDefault(require("./main/streaming/codeforce"));
 const morningNasa_1 = __importDefault(require("./main/streaming/morningNasa"));
 const twitter_1 = __importDefault(require("./main/streaming/twitter"));
-const hq_1 = __importDefault(require("./main/hq"));
+const headquarter_1 = __importDefault(require("./main/headquarter"));
 const cache_1 = __importDefault(require("./main/model/cache"));
 const firebase_1 = __importDefault(require("./main/model/firebase"));
 const mongoDB_1 = __importDefault(require("./main/model/mongoDB"));
 const preprocess_1 = require("./main/preprocess");
 const sweeper_1 = __importDefault(require("./main/sweeper"));
-const telegram_1 = __importDefault(require("./main/telegram"));
+const telegram_1 = require("./main/telegram");
 /**
 * REST API
 */
@@ -33,53 +33,13 @@ class App {
     * Constructor for main REST API
     */
     constructor() {
-        this.express = express_1.default();
+        this.express = express();
         this.sweeper = new sweeper_1.default();
-        this.headquarter = new hq_1.default();
-    }
-    /**
-    * Configure setting for express
-    * @param {string | number} port port that express should be listening to
-    */
-    configureExpress(port) {
-        if (typeof port === 'string') {
-            port = parseInt(port);
-        }
-        this.express.listen(port);
-        this.express.use(body_parser_1.default.json());
-        this.express.use(body_parser_1.default.urlencoded({ extended: true }));
-    }
-    /**
-    * Fire up endpoint listener
-    * @throws error if express is appropriately set up beforehand.
-    */
-    startServer() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.express) {
-                throw new Error('Express is not set up when firing endpoint listener');
-            }
-            this.loadFacebookEndpoint();
-            this.loadPingEndpoints();
-            this.loadTelegramEndpoint();
-            this.loadStreamingEndpoint(yield this.firebase.getStreamingAudience());
-        });
-    }
-    /**
-    * Establish connection to database
-    */
-    setUpDatabase() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.firebase = new firebase_1.default();
-            this.mongodb = new mongoDB_1.default();
-            this.UserDB = yield this.mongodb.users;
-            this.cache = new cache_1.default(this.UserDB);
-            this.sweeper.add(this.cache.close);
-            this.sweeper.add(this.mongodb.terminateConnection);
-            this.sweeper.add(this.firebase.terminateConnection);
-        });
+        this.headquarter = new headquarter_1.default();
     }
     /**
     * Endpoint for ping related service
+    * returns void
     */
     loadPingEndpoints() {
         this.express.get('/', (req, res) => res.status(200).json({ name: 'potts-backend' }));
@@ -87,6 +47,7 @@ class App {
     }
     /**
     * Endpoint for facebook messenger
+    * @returns void
     */
     loadFacebookEndpoint() {
         this.express.get('/fb', (req, res) => {
@@ -108,15 +69,16 @@ class App {
     }
     /**
     * Endpoint for telegram
+    * @returns void
     */
     loadTelegramEndpoint() {
-        telegram_1.default.on('message', (msg) => {
+        telegram_1.telegramEndpoint.on('message', (msg) => {
             const result = preprocess_1.telegramPreprocess(msg);
             if (result) {
                 this.headquarter.receive('telegram', msg, this.mongodb.users, this.cache);
             }
         });
-        telegram_1.default.on('polling_error', (err) => logger_1.default.error(err));
+        telegram_1.telegramEndpoint.on('polling_error', (err) => logger_1.default.error(err.toString()));
     }
     /**
     *
@@ -133,6 +95,49 @@ class App {
             for (const st of this.streams)
                 this.sweeper.add(st.stopStreaming);
         }
+    }
+    /**
+    * Configure setting for express
+    * @param {string | number} port port that express should be listening to
+    */
+    configureExpress(port) {
+        if (typeof port === 'string') {
+            port = parseInt(port);
+        }
+        this.express.listen(port);
+        this.express.use(body_parser_1.default.json());
+        this.express.use(body_parser_1.default.urlencoded({ extended: true }));
+    }
+    /**
+    * Fire up endpoint listener
+    * @returns void
+    * @throws error if express is appropriately set up beforehand.
+    */
+    startServer() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.express) {
+                throw new Error('Express is not set up when firing endpoint listener');
+            }
+            this.loadFacebookEndpoint();
+            this.loadPingEndpoints();
+            this.loadTelegramEndpoint();
+            this.loadStreamingEndpoint(yield this.firebase.getStreamingAudience());
+        });
+    }
+    /**
+    * Establish connection to database
+    * @returns void
+    */
+    setUpDatabase() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.firebase = new firebase_1.default();
+            this.mongodb = new mongoDB_1.default();
+            this.UserDB = yield this.mongodb.users;
+            this.cache = new cache_1.default(this.UserDB);
+            this.sweeper.add(this.cache.close);
+            this.sweeper.add(this.mongodb.terminateConnection);
+            this.sweeper.add(this.firebase.terminateConnection);
+        });
     }
 }
 exports.default = App;

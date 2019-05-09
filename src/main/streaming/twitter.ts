@@ -35,9 +35,9 @@ interface OberservableTweet {
 /**
  * Class for twitter streaming
  */
-export default class TwitterStreaming {
-	streaming;
-	twitterStreaming;
+export default class TwitterStreaming implements Dawn.Streamer {
+	private streaming;
+	private twitterStreaming;
 
 	/**
 	 * Constructor for twitter streaming class
@@ -68,7 +68,7 @@ export default class TwitterStreaming {
 	 * Start listenning to twitter streaming api
 	 * @param {string[]} people list of people to send message to
 	 */
-	startStreaming(people: string[]): void {
+	public startStreaming(people: string[]): void {
 		Logger.info('Starting twitter stream');
 		this.twitterStreaming = this.streaming.subscribe({
 			next: (x: OberservableTweet) => {
@@ -85,7 +85,7 @@ export default class TwitterStreaming {
 	/**
 	 * Terminate the stream
 	 */
-	stopStreaming = (): void => {
+	public stopStreaming = (): void => {
 		Logger.warn('Stopping Twitter stream');
 		this.twitterStreaming.unsubscribe();
 	}

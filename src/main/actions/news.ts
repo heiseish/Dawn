@@ -7,8 +7,9 @@ const NO_ARTICLE_FOUND = 'Sorry no article found :<';
 /**
  * Send news to user
  * @param {userType} user
+ * @returns updated user
  */
-export default async (user: userType): Promise<userType | Error> => {
+export default async (user: userType): Promise<userType> => {
 	try {
 		const articles = shuffle(await getAllHeadlines(user)).slice(0, 4);
 		if (!_.isEmpty(articles)) {
@@ -17,15 +18,13 @@ export default async (user: userType): Promise<userType | Error> => {
 				cascadeText: parsedArticles,
 				answerable: true,
 			};
-			return user;
 		} else {
 			user.response = {
 				answerable: true,
 				simpleText: NO_ARTICLE_FOUND,
 			};
-			return user;
 		}
-
+		return user;
 	} catch (e) {
 		return Promise.reject(e);
 	}

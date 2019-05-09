@@ -8,8 +8,6 @@ if (process.env.NODE_ENV !== 'production')
     dotenv_1.default.config();
 const crypto_json_1 = __importDefault(require("crypto-json"));
 const environment_1 = require("../environment");
-// const CIPHER = process.env.CIPHER;
-// const PASSKEY = process.env.PASSKEY;
 const encoding = 'hex';
 /**
  * Encode JSON object with hidden CIPHER

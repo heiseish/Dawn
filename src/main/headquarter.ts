@@ -5,8 +5,6 @@ import identifySource from './identifySource';
 import Logger from './logger';
 import respond from './respond';
 
-import Cache from './model/cache';
-
 export default class Headquarter {
 	/**
 	 * Handle receving events
@@ -14,15 +12,16 @@ export default class Headquarter {
 	 * @param payload message payload from user
 	 * @param UserDb Mongoose DB User schema
 	 * @param cache Cache server
+	 * @return Promise<void>
 	 * @throws Error if any errors with child processes
 	 */
-	async receive(platform: supportedPlatform, payload: any, UserDb: userType, cache: Cache): Promise<void | Error> {
+	async receive(platform: supportedPlatform, payload: any, UserDb: userType, cache: Dawn.Cache): Promise<void> {
 		Logger.info('Transfering event to headquarter..');
 		try {
 			const partialUniqueId: string = identifySource(platform, payload);
-			let user = await getUser(partialUniqueId, platform, payload, UserDb, cache);
+			let user: userType = await getUser(partialUniqueId, platform, payload, UserDb, cache);
 			user = await analyze(platform, payload, user);
-			user = await execute(platform, payload, user);
+			user = await execute(user);
 			await respond(platform, payload, user);
 			cache.saveUser(user.id, user);
 		} catch (err) {

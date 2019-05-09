@@ -27,7 +27,7 @@ class Sweeper {
                 st();
             process.exit(0);
         });
-        process.on('uncaughtException', function (err) {
+        process.on('uncaughtException', (err) => {
             logger_1.default.error('Uncaught Exception: ' + err);
             for (const st of this.list)
                 st();

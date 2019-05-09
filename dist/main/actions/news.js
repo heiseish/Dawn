@@ -19,6 +19,7 @@ const NO_ARTICLE_FOUND = 'Sorry no article found :<';
 /**
  * Send news to user
  * @param {userType} user
+ * @returns updated user
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
     try {
@@ -29,15 +30,14 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
                 cascadeText: parsedArticles,
                 answerable: true,
             };
-            return user;
         }
         else {
             user.response = {
                 answerable: true,
                 simpleText: NO_ARTICLE_FOUND,
             };
-            return user;
         }
+        return user;
     }
     catch (e) {
         return Promise.reject(e);

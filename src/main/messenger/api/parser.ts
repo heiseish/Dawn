@@ -5,6 +5,7 @@ import Logger from '../../logger';
 /**
  * Parse News API articles to display on facebook messenger list template.
  * @param items Array of items to be parsed.
+ * @returns parsed articles
  */
 const parseArticles = (items: any[]): any[]  => {
 	let elements = [], i = 0;

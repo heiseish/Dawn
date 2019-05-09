@@ -4,7 +4,7 @@ import { randomResponseToComplimentMessage } from '../lib/string';
  * @param {userType} user
  * @return updated user
  */
-export default (user: userType): userType => {
+export default async (user: userType): Promise<userType> => {
 	user.response = {
 		simpleText: randomResponseToComplimentMessage(user.name.first),
 		answerable: true,

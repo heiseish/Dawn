@@ -6,7 +6,7 @@ import getWCSchedule from '../externalApis/worldCup';
  */
 export default async (user: userType): Promise<userType | Error> => {
 	try {
-		const message = await getWCSchedule();
+		let message:string = await getWCSchedule();
 		user.response = {
 			answerable: true,
 			simpleText: message,

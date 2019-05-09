@@ -79,3 +79,12 @@ declare interface cascadeTextButton {
 	url: string;
 	webview_height_ratio: 'tall' | 'short';
 }
+
+declare namespace Dawn {
+	declare interface Cache {
+		flush: () => void,
+		close: () => void,
+		getUser: (id: string) => Promise<userType>,
+		saveUser: (id: string, user: any) => Promise<string>
+	}
+}

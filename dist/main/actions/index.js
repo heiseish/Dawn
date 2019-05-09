@@ -13,7 +13,7 @@ const sendDocument_1 = __importDefault(require("./sendDocument"));
 const thanks_1 = __importDefault(require("./thanks"));
 const weather_1 = __importDefault(require("./weather"));
 const worldCup_1 = __importDefault(require("./worldCup"));
-exports.default = [
+let actions = [
     {
         name: 'greetings',
         execute: greet_1.default,
@@ -65,4 +65,5 @@ exports.default = [
         description: 'Return help manual for the bot.',
     },
 ];
+exports.default = actions;
 //# sourceMappingURL=index.js.map

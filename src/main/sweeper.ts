@@ -11,7 +11,7 @@ export default class Sweeper {
 	/**
 	 * @param fn Add a function to sweeper list
 	 */
-	add(fn: Function): void {
+	public add(fn: Function): void {
 		this.list.push(fn);
 	}
 
@@ -23,7 +23,7 @@ export default class Sweeper {
 			for (const st of this.list) st();
 			process.exit(0);
 		});
-		process.on('uncaughtException', function(err) {
+		process.on('uncaughtException', (err) => {
 			Logger.error('Uncaught Exception: ' + err);
 			for (const st of this.list) st();
 			process.exit(0);

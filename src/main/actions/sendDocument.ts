@@ -8,6 +8,7 @@ import { randomIndex } from '../utils/array';
  * Handle document from messenger
  * @param {userType} user
  * @return updated user
+ * @throws if gif api or geocoder api fails
  */
 export default async (user: userType): Promise<userType> => {
 	try {
@@ -68,8 +69,6 @@ export default async (user: userType): Promise<userType> => {
 
 			};
 			break;
-
-		default:
 		}
 		return user;
 	} catch (e) {
