@@ -19,7 +19,7 @@ const worldCup_1 = __importDefault(require("../externalApis/worldCup"));
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
     try {
-        let message = yield worldCup_1.default();
+        const message = yield worldCup_1.default();
         user.response = {
             answerable: true,
             simpleText: message,

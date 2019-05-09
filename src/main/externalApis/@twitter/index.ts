@@ -6,14 +6,14 @@ import {
 	TWITTER_CONSUMER_SECRET,
 } from '../../environment';
 
-const client:Twitter = new Twitter({
+const client: Twitter = new Twitter({
 	consumer_key: TWITTER_CONSUMER_KEY,
 	consumer_secret: TWITTER_CONSUMER_SECRET,
 	access_token_key: TWITTER_ACCESS_TOKEN_KEY,
 	access_token_secret: TWITTER_ACCESS_TOKEN_SECRET,
 });
 interface Tweet {
-	text:string
+	text: string;
 }
 /**
  * Get twitter status from a twitter user
@@ -35,9 +35,9 @@ const getTwitterStatus = (screenName: string): Promise<Tweet[]> => {
 			screen_name: screenName,
 			count: 4,
 		};
-		client.get('statuses/user_timeline', options, (error, tweets:Tweet[]) => {
-			if (error) { 
-				reject(error); 
+		client.get('statuses/user_timeline', options, (error, tweets: Tweet[]) => {
+			if (error) {
+				reject(error);
 			}
 			response(tweets);
 		});

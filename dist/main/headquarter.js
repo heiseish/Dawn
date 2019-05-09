@@ -29,7 +29,7 @@ class Headquarter {
      */
     receive(platform, payload, cache) {
         return __awaiter(this, void 0, void 0, function* () {
-            logger_1.default.info('Transfering event to headquarter..');
+            logger_1.default.info('Transfering event to headquarter..', false, Headquarter.name);
             try {
                 const partialUniqueId = identifySource_1.default(platform, payload);
                 let user = yield getUser_1.default(partialUniqueId, platform, payload, cache);

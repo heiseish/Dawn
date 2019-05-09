@@ -1,11 +1,12 @@
-import dotenv from 'dotenv'
-if (process.env.NODE_ENV !== 'production') 
+import dotenv from 'dotenv';
+if (process.env.NODE_ENV !== 'production') {
 	dotenv.config();
+}
 import cryptoJSON from 'crypto-json';
 import {
 	CIPHER,
 	PASSKEY
-} from '../environment'
+} from '../environment';
 const encoding = 'hex';
 
 /**

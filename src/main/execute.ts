@@ -37,7 +37,7 @@ export default async (user: userType): Promise<userType> => {
  * @param {string} key
  * @return object with key equal to some values, null if there is no such object
  */
-const getAction = (arr: Dawn.Action[], attribute: string, key:string = 'name'): Dawn.Action | null => {
+const getAction = (arr: Dawn.Action[], attribute: string, key = 'name'): Dawn.Action | null => {
 	for (const object of arr) {
 		if (object[key] === attribute) {
 			return object;

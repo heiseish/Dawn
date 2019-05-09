@@ -7,10 +7,10 @@ import { getWeatherMessage } from '../externalApis/weather';
  */
 export default async (user: userType): Promise<userType> => {
 	try {
-		let {
+		const {
 			current,
-			summary, 
-			imageId
+			summary,
+			imageId,
 		} = await getWeatherMessage();
 		user.response = {
 			simpleText: current + summary,
@@ -18,7 +18,7 @@ export default async (user: userType): Promise<userType> => {
 			answerable: true,
 		};
 		return user;
-	} catch(e) {
+	} catch (e) {
 		return Promise.reject(e);
 	}
 };

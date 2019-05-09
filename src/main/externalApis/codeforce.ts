@@ -1,35 +1,26 @@
-import request from 'request';
 const CODEFORCE_API = 'http://codeforces.com/api/user.info?handles=';
 import {
-	WAIT_TIME_FOR_EXTERNAL_API
-} from '../environment';
+	externalAPIRequest
+} from '../utils/request';
 /**
  * Get user rating
  * @param {string} handle handle of codeforce user
- * @return {Promise<CFRanking>} promise containing the ranking
+ * @return {Promise<CodeforceRanking>} promise containing the ranking
  */
-const getUserRating = (handle: string): Promise<CodeforceRanking> => {
-	return new Promise((resolve, reject) => {
-		request({
+const getUserRating = async (handle: string): Promise<CodeforceRanking> => {
+	try {
+		let res = await externalAPIRequest({
 			uri: CODEFORCE_API + handle,
-			timeout: WAIT_TIME_FOR_EXTERNAL_API
-		}
-			, (error, res, body) => {
-			try {
-				const result = JSON.parse(body);
-				if (error) reject(error);
-				const user = result.result[0];
-				const res = {
-					rating: user.rating,
-					rank: user.rank,
-				};
-				resolve(res);
-			} catch (e) {
-				reject(e);
-			}
-
 		});
-	});
+		let result = JSON.parse(res).result[0];
+		return {
+			rating: result.rating,
+			rank: result.rank,
+		};
+		
+	}catch(e) {
+		return Promise.reject(e)
+	}	
 };
 
 export {

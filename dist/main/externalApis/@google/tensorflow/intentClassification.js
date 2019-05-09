@@ -22,8 +22,8 @@ let model = null;
 const MODEL_FILE_PATH = 'file://dist/main/externalApis/@google/tensorflow/model.json';
 /**
  * Predict the intent of a message
- * @param {string} s
- * @return {{intent: string, confidence: number}}
+ * @param {string} text to be classified
+ * @return {{intent: string, confidence: number}} object contains the intent and confidence of the prediction
  */
 const predict = (s) => __awaiter(this, void 0, void 0, function* () {
     try {

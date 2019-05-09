@@ -13,7 +13,7 @@ export default class Cache implements Dawn.Cache {
 		this.UserDB = UserDB;
 		this.cache.on('expired', (key, value) => {
 			try {
-				Logger.info('Account in cache expiring, saving to database..');
+				Logger.info('Account in cache expiring, saving to database', false, Cache.name);
 				this.UserDB.updateUser(key, value);
 			} catch (e) {
 				Logger.error(e);
@@ -25,7 +25,7 @@ export default class Cache implements Dawn.Cache {
 	* Flush all data
 	* @returns void
 	*/
-	public flush = (): void => {
+	flush = (): void => {
 		this.cache.flushAll();
 	}
 
@@ -33,8 +33,8 @@ export default class Cache implements Dawn.Cache {
 	* Close the cache
 	* @returns void
 	*/
-	public close = (): void => {
-		Logger.warn('Closing cache...');
+	close = (): void => {
+		Logger.warn('Closing cache', Cache.name);
 		this.cache.close();
 	}
 
@@ -43,11 +43,11 @@ export default class Cache implements Dawn.Cache {
 	* @param id id of user
 	* @return promise that contains the user
 	*/
-	public getUser = async (id: string): Promise<userType> => {
+	getUser = async (id: string): Promise<userType> => {
 		try {
 			const account = await this.get(id);
-			if (account !== undefined) { 
-				return account; 
+			if (account !== undefined) {
+				return account;
 			} else {
 				const user = await this.UserDB.findUser(id);
 				return user;
@@ -62,7 +62,7 @@ export default class Cache implements Dawn.Cache {
 	* @param user user object
 	* @return promise that contains the response YES if succeeded. NO otherwise.
 	*/
-	public  saveUser = async (id: string, user: any): Promise<string> => {
+	public saveUser = async (id: string, user: any): Promise<string> => {
 		try {
 			return await this.save(id, user);
 		} catch (e) {

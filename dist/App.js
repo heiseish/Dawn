@@ -38,6 +38,48 @@ class App {
         this.headquarter = new headquarter_1.default();
     }
     /**
+    * Configure setting for express
+    * @param {string | number} port port that express should be listening to
+    */
+    configureExpress(port) {
+        if (typeof port === 'string') {
+            port = parseInt(port);
+        }
+        this.express.listen(port);
+        this.express.use(body_parser_1.default.json());
+        this.express.use(body_parser_1.default.urlencoded({ extended: true }));
+    }
+    /**
+    * Fire up endpoint listener
+    * @returns void
+    * @throws error if express is appropriately set up beforehand.
+    */
+    startServer() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.express) {
+                logger_1.default.error('Express is not set up when firing endpoint listener', App.name);
+            }
+            this.loadFacebookEndpoint();
+            this.loadPingEndpoints();
+            this.loadTelegramEndpoint();
+            this.loadStreamingEndpoint(yield this.firebase.getStreamingAudience());
+        });
+    }
+    /**
+    * Establish connection to database
+    * @returns void
+    */
+    setUpDatabase() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.firebase = new firebase_1.default();
+            this.mongodb = new mongoDB_1.default();
+            this.cache = new cache_1.default(this.mongodb.users);
+            this.sweeper.add(this.cache.close);
+            this.sweeper.add(this.mongodb.terminateConnection);
+            this.sweeper.add(this.firebase.terminateConnection);
+        });
+    }
+    /**
     * Endpoint for ping related service
     * returns void
     */
@@ -95,48 +137,6 @@ class App {
             for (const st of this.streams)
                 this.sweeper.add(st.stopStreaming);
         }
-    }
-    /**
-    * Configure setting for express
-    * @param {string | number} port port that express should be listening to
-    */
-    configureExpress(port) {
-        if (typeof port === 'string') {
-            port = parseInt(port);
-        }
-        this.express.listen(port);
-        this.express.use(body_parser_1.default.json());
-        this.express.use(body_parser_1.default.urlencoded({ extended: true }));
-    }
-    /**
-    * Fire up endpoint listener
-    * @returns void
-    * @throws error if express is appropriately set up beforehand.
-    */
-    startServer() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.express) {
-                throw new Error('Express is not set up when firing endpoint listener');
-            }
-            this.loadFacebookEndpoint();
-            this.loadPingEndpoints();
-            this.loadTelegramEndpoint();
-            this.loadStreamingEndpoint(yield this.firebase.getStreamingAudience());
-        });
-    }
-    /**
-    * Establish connection to database
-    * @returns void
-    */
-    setUpDatabase() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.firebase = new firebase_1.default();
-            this.mongodb = new mongoDB_1.default();
-            this.cache = new cache_1.default(this.mongodb.users);
-            this.sweeper.add(this.cache.close);
-            this.sweeper.add(this.mongodb.terminateConnection);
-            this.sweeper.add(this.firebase.terminateConnection);
-        });
     }
 }
 exports.default = App;

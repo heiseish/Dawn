@@ -4,7 +4,17 @@ import { NASA_API_RESPONSE_TIME } from '../data/api'
 
 const useInTest = (): void => {
 	before(async function getNASANews() {
-		this.nasa = await getDailyNasaNews()
+		try {
+			this.nasa = await getDailyNasaNews()
+		} catch(e) { /* NASA server down */
+			this.nasa = {
+				url: '',
+				media_type: 'image',
+				explanation: 'None',
+				title: 'Nice'
+			}
+		}
+		
 	})
 }
 

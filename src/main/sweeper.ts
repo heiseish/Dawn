@@ -9,9 +9,9 @@ export default class Sweeper {
 	}
 	/**
 	 * @param {Function} fn Add a function to sweeper list
-	 * @returns {void} 
+	 * @returns {void}
 	 */
-	public add(fn: Function): void {
+	add(fn: Function): void {
 		this.list.push(fn);
 	}
 	/**

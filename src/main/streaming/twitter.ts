@@ -68,7 +68,7 @@ export default class TwitterStreaming implements Dawn.Streamer {
 	 * Start listenning to twitter streaming api
 	 * @param {string[]} people list of people to send message to
 	 */
-	public startStreaming(people: string[]): void {
+	startStreaming(people: string[]): void {
 		Logger.info('Starting twitter stream');
 		this.twitterStreaming = this.streaming.subscribe({
 			next: (x: OberservableTweet) => {
@@ -85,7 +85,7 @@ export default class TwitterStreaming implements Dawn.Streamer {
 	/**
 	 * Terminate the stream
 	 */
-	public stopStreaming = (): void => {
+	stopStreaming = (): void => {
 		Logger.warn('Stopping Twitter stream');
 		this.twitterStreaming.unsubscribe();
 	}

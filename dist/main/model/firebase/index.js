@@ -25,54 +25,74 @@ const account_json_1 = __importDefault(require("./account.json"));
 class Firebase {
     constructor() {
         /**
-         * Terminate connection to firebase database
-         */
+        * Terminate connection to firebase database
+        */
         this.terminateConnection = () => {
-            logger_1.default.warn('Closing connection to firebase db...');
+            logger_1.default.warn('Closing connection to firebase db', Firebase.name);
             this.db.app().delete();
         };
-        logger_1.default.info('Establishing connection to firebase...');
+        logger_1.default.info('Establishing connection to firebase', false, Firebase.name);
         this.db = admin;
-        this.db.initializeApp({
-            credential: admin.credential.cert(encrypt_1.decrypt(account_json_1.default)),
-            databaseURL: 'https://mvpapp-1ba71.firebaseio.com',
-        });
+        try {
+            this.db.initializeApp({
+                credential: admin.credential.cert(encrypt_1.decrypt(account_json_1.default)),
+                databaseURL: 'https://mvpapp-1ba71.firebaseio.com',
+            });
+        }
+        catch (e) {
+            logger_1.default.error(e, Firebase.name);
+        }
     }
     /**
-     * Get a list of streaming audience
-     * @returns {Promise<string[]>} list of streaming audience
-     */
+    * Get a list of streaming audience
+    * @returns {Promise<string[]>} list of streaming audience
+    */
     getStreamingAudience() {
         return __awaiter(this, void 0, void 0, function* () {
-            const snap = yield this.db.database().ref('restricted_access/streaming/').once('value');
-            const result = snap.val();
-            let audience = [];
-            if (Array.isArray(result))
-                audience = result;
-            else if (typeof result === 'object')
-                audience = Object.values(result);
-            return audience;
+            try {
+                const snap = yield this.db.database().ref('restricted_access/streaming/').once('value');
+                const result = snap.val();
+                let audience = [];
+                if (Array.isArray(result))
+                    audience = result;
+                else if (typeof result === 'object')
+                    audience = Object.values(result);
+                return audience;
+            }
+            catch (e) {
+                logger_1.default.error(e, Firebase.name);
+            }
         });
     }
     /**
-     * Get codeforce handle
-     * @returns {Promise<string>} handle
-     */
+    * Get codeforce handle
+    * @returns {Promise<string>} handle
+    */
     getCodeforceHandle() {
         return __awaiter(this, void 0, void 0, function* () {
-            const snap = yield this.db.database().ref('restricted_access/codeforce/').once('value');
-            const users = snap.val();
-            return users;
+            try {
+                const snap = yield this.db.database().ref('restricted_access/codeforce/').once('value');
+                const users = snap.val();
+                return users;
+            }
+            catch (e) {
+                logger_1.default.error(e, Firebase.name);
+            }
         });
     }
     /**
-     * Get current codeforce standing
-     * @param {string} handle
-     * @param {CodeforceRanking} ranking ranking
-     */
+    * Get current codeforce standing
+    * @param {string} handle
+    * @param {CodeforceRanking} ranking ranking
+    */
     setCurrentCodeforceStanding(handle, ranking) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.db.database().ref(`restricted_access/codeforce/${handle}/standing/`).set(ranking);
+            try {
+                yield this.db.database().ref(`restricted_access/codeforce/${handle}/standing/`).set(ranking);
+            }
+            catch (e) {
+                logger_1.default.error(e, Firebase.name);
+            }
         });
     }
 }

@@ -1,34 +1,34 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const request_1 = __importDefault(require("request"));
 const CODEFORCE_API = 'http://codeforces.com/api/user.info?handles=';
+const request_1 = require("../utils/request");
 /**
  * Get user rating
  * @param {string} handle handle of codeforce user
- * @return {Promise<CFRanking>} promise containing the ranking
+ * @return {Promise<CodeforceRanking>} promise containing the ranking
  */
-const getUserRating = (handle) => {
-    return new Promise((resolve, reject) => {
-        request_1.default(CODEFORCE_API + handle, (error, res, body) => {
-            try {
-                const result = JSON.parse(body);
-                if (error)
-                    reject(error);
-                const user = result.result[0];
-                const res = {
-                    rating: user.rating,
-                    rank: user.rank,
-                };
-                resolve(res);
-            }
-            catch (e) {
-                reject(e);
-            }
+const getUserRating = (handle) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        let res = yield request_1.externalAPIRequest({
+            uri: CODEFORCE_API + handle,
         });
-    });
-};
+        let result = JSON.parse(res).result[0];
+        return {
+            rating: result.rating,
+            rank: result.rank,
+        };
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
+});
 exports.getUserRating = getUserRating;
 //# sourceMappingURL=codeforce.js.map

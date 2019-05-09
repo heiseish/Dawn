@@ -51,8 +51,9 @@ class Logger {
 	 * @param {string | Error} text error text
 	 */
 	error(text: string | Error, component: string | null = null) {
-		if (text instanceof Error) 
+		if (text instanceof Error) {
 			text = text.toString();
+		}
 		this.log(text, 'error', component);
 	}
 	/**
@@ -95,7 +96,7 @@ class Logger {
 			color = chalk.white;
 		}
 		console.log(this.generateDateTimePrefix()
-		+ color(`[${level}]: `) + (component ? `[${component}]` : ``)+ chalk.cyan(text));
+		+ color(`[${level}]`) + (component ? chalk.blue(`[${component}]: `) : `: `) + chalk.cyan(text));
 	}
 }
 

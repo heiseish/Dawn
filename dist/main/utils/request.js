@@ -12,27 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const request_promise_1 = __importDefault(require("request-promise"));
-const environment_1 = require("../../../environment");
-const generateDataPackage = (sentence) => ({
-    method: 'POST',
-    uri: environment_1.CONVERSE_SERVER,
-    form: {
-        sentence,
-    },
-});
+const environment_1 = require("../environment");
 /**
- * conversation if intent classified is unclear
- * @param {string} sentence sentence to be replied back to
- * @return {string} reply to the sentence
+ * Request API with fixed timeout. Prevent hanging request query
+ * @param options Requestion options
  */
-const converse = (sentence) => __awaiter(this, void 0, void 0, function* () {
+const externalAPIRequest = (options) => __awaiter(this, void 0, void 0, function* () {
+    options.timeout = environment_1.WAIT_TIME_FOR_EXTERNAL_API;
+    options.headers = {
+        'User-Agent': 'Request-Promise',
+    };
+    options.json = true; // Automatically parses the JSON string in the response,
     try {
-        const ans = yield request_promise_1.default(generateDataPackage(sentence));
-        return ans;
+        let res = yield request_promise_1.default(options);
+        return res;
     }
     catch (e) {
         return Promise.reject(e);
     }
 });
-exports.default = converse;
-//# sourceMappingURL=converse.js.map
+exports.externalAPIRequest = externalAPIRequest;
+//# sourceMappingURL=request.js.map

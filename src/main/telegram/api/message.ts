@@ -1,9 +1,9 @@
 import {
-	telegramEndpoint,
-	moduleBot
+	moduleBot,
+	telegramEndpoint
 } from '../';
-export default async (chatId: string | number, text: string, reply?: boolean, 
-	messageId?: number): Promise<moduleBot.Message> => {
+export default async (chatId: string | number, text: string, reply?: boolean,
+	                     messageId?: number): Promise<moduleBot.Message> => {
 	try {
 		if (reply) {
 			return await telegramEndpoint.sendMessage(chatId, text, {reply_to_message_id: messageId});

@@ -13,7 +13,7 @@ const sendDocument_1 = __importDefault(require("./sendDocument"));
 const thanks_1 = __importDefault(require("./thanks"));
 const weather_1 = __importDefault(require("./weather"));
 const worldCup_1 = __importDefault(require("./worldCup"));
-let actions = [
+const actions = [
     {
         name: 'greetings',
         execute: greet_1.default,

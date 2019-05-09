@@ -16,7 +16,7 @@ export default class Headquarter {
 	 * @throws Error if any errors with child processes
 	 */
 	async receive(platform: supportedPlatform, payload: any, cache: Dawn.Cache): Promise<void> {
-		Logger.info('Transfering event to headquarter..');
+		Logger.info('Transfering event to headquarter..', false, Headquarter.name);
 		try {
 			const partialUniqueId: string = identifySource(platform, payload);
 			let user: userType = await getUser(partialUniqueId, platform, payload,  cache);

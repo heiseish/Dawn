@@ -33,7 +33,7 @@ const generateHelpManual = async (actions: any[]): Promise<string> => {
 				},
 			},
 		};
-		const result:string = await createGist(opts);
+		const result: string = await createGist(opts);
 		return result;
 	} catch (e) {
 		return Promise.reject(e);
@@ -55,7 +55,7 @@ const updateHelpManual = async (actions: any[]): Promise<string> => {
 				},
 			},
 		};
-		const result:string = await editGist(opts);
+		const result: string = await editGist(opts);
 		return result;
 	} catch (e) {
 		return Promise.reject(e);

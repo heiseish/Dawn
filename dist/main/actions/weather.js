@@ -16,7 +16,7 @@ const weather_1 = require("../externalApis/weather");
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
     try {
-        let { current, summary, imageId } = yield weather_1.getWeatherMessage();
+        const { current, summary, imageId, } = yield weather_1.getWeatherMessage();
         user.response = {
             simpleText: current + summary,
             image: imageId,

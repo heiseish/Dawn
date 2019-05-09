@@ -25,13 +25,13 @@ class MongoDB {
          * Terminate connection to mongoose database
          */
         this.terminateConnection = () => {
-            logger_1.default.warn('Closing connection to Mongo DB...');
+            logger_1.default.warn('Closing connection to Mongo DB', MongoDB.name);
             this.db.connection.close();
         };
         this.db = mongoose_1.default;
-        this.db.connect(environment_1.MONGO_DB_URI, this.options).then(() => logger_1.default.info('Established connection to mongoDB'), (err) => {
-            logger_1.default.error('Failed to establish connection to mongoDB: ');
-            logger_1.default.error(err);
+        this.db.connect(environment_1.MONGO_DB_URI, this.options).then(() => logger_1.default.info('Established connection to mongoDB', false, MongoDB.name), (err) => {
+            logger_1.default.error('Failed to establish connection to mongoDB:', MongoDB.name);
+            logger_1.default.error(err, MongoDB.name);
         });
         this.db.set('useCreateIndex', true);
         this.users = new user_1.default(this.db);

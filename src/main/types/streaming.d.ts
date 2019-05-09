@@ -1,6 +1,6 @@
 namespace Dawn {
 	declare interface Streamer {
-		startStreaming: Function,
-		stopStreaming: Function
-	} 
+		startStreaming: Function;
+		stopStreaming: Function;
+	}
 }
