@@ -1,5 +1,5 @@
-const allASCIIletters:string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,;'";
-const numLetters:number = allASCIIletters.length;
+const allASCIIletters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,;'";
+const numLetters: number = allASCIIletters.length;
 /**
  * Convert intent number to string
  * @param {number} n Number to intent

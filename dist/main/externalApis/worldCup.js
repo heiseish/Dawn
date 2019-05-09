@@ -13,26 +13,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __importDefault(require("lodash/core"));
 const moji_translate_1 = __importDefault(require("moji-translate"));
-const request_promise_1 = __importDefault(require("request-promise"));
+const request_1 = require("../utils/request");
+const WORLD_CUP_URI = 'http://worldcup.sfg.io/matches';
 const string_1 = require("../utils/string");
 const MAX_COUNTRY_LENGTH = 10;
 const MAX_GOALS_LENGTH = 2;
-const options = {
-    uri: 'http://worldcup.sfg.io/matches',
-    headers: {
-        'User-Agent': 'Request-Promise',
-    },
-    json: true,
-};
+/**
+ * Pad right of the text
+ * @param value value to pad right
+ * @param char character to be padded
+ * @param length length of the padding
+ * @returns padded string
+ */
 const rpad = (value, char, length) => {
-    if (typeof value === 'undefined') {
-        return undefined;
-    }
     return (value + char.repeat(length)).substring(0, length);
 };
+/**
+ * Check if a match is completed or in progress
+ * @param match match that need to check
+ * @returns true if the match is completed or in progress, false otherwise
+ */
 const isCompletedOrInProgress = (match) => {
     return match.status === 'completed' || match.status === 'in progress';
 };
+/**
+ * Check if a match is happening today
+ * @param match match that needs to be checked
+ * @returns true if the match is happening today, false otherwise
+ */
 const matchHappeningToday = (match) => {
     const date = new Date(match.datetime);
     const today = new Date();
@@ -43,9 +51,19 @@ const matchHappeningToday = (match) => {
             && date.getHours() === 2))
         && (date.getDate() + date.getHours().toString() !== today.getDate() + '2');
 };
+/**
+ * Get country flag with moji module
+ * @param value country name
+ * @return country flag code
+ */
 const getCountryFlag = (value) => {
     return moji_translate_1.default.translate(value.replace(/ /g, '_'), true);
 };
+/**
+ * Get nicely formatted message about the happening match
+ * @param match Match
+ * @returns nicely formatted string
+ */
 const toConsoleOutput = (match) => {
     let homeFlag = getCountryFlag(match.home_team.country);
     if (!homeFlag) {
@@ -62,9 +80,13 @@ const toConsoleOutput = (match) => {
         : (hours - 12).toString() + 'pm';
     return `${homeFlag} ${home} ${homeGoals} -  ${awayGoals} ${away} ${awayFlag} ${presentableHours}`;
 };
+/**
+ * Get the matches
+ * @return {Promise<Match[]>} World cup matches
+ */
 const getMatches = () => __awaiter(this, void 0, void 0, function* () {
     try {
-        const matches = yield request_promise_1.default(options);
+        const matches = yield request_1.externalAPIRequest({ uri: WORLD_CUP_URI });
         return matches;
     }
     catch (e) {
@@ -73,8 +95,8 @@ const getMatches = () => __awaiter(this, void 0, void 0, function* () {
 });
 /**
 * Get the last n matches of specific synchronous filter
-* @param {any} matches
-* @param {any} filter
+* @param {Match[]} matches
+* @param {Function} filter
 * @param {number} n
 */
 const synchFilter = (matches, filter, n) => {
@@ -89,6 +111,10 @@ const synchFilter = (matches, filter, n) => {
         resolve(result.slice(Math.max(result.length - n, 1)));
     });
 };
+/**
+ * Get nicely formatted message on currently ongoing WC games
+ * @returns formatted string
+ */
 const getWCSchedule = () => __awaiter(this, void 0, void 0, function* () {
     try {
         const NO_MATCH_TODAY = "There isn't any match today!";

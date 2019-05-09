@@ -32,8 +32,8 @@ const possibleGreetLines = [
 */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
     try {
-        let PREFIX = yield string_1.randomGreetingPrefix(user.name.first);
-        let SUFFIX = yield array_1.randomIndex(possibleGreetLines)();
+        const PREFIX = yield string_1.randomGreetingPrefix(user.name.first);
+        const SUFFIX = yield array_1.randomIndex(possibleGreetLines)();
         if (SUFFIX !== null && typeof SUFFIX === 'object') {
             user.response = SUFFIX;
         }

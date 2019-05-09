@@ -34,7 +34,7 @@ const forecast = new forecast_1.default({
 });
 /**
  * Return weather object based on coordinate
- * @param {Coordinate} coordinate
+ * @param {number[]} coordinate
  */
 const getWeather = (coordinate) => {
     return new Promise((response, reject) => {
@@ -51,10 +51,17 @@ const getWeather = (coordinate) => {
     });
 };
 exports.getWeather = getWeather;
+/**
+ * Get weather message for the bot
+ * @param {number[]} params list of coordinates of the position. Expected length 2
+ * @returns {WeatherResponse} formatted response about the weather
+ */
 const getWeatherMessage = (...params) => {
     return new Promise((response, reject) => {
         if (!environment_1.DARKSKY_KEY)
             reject('missing DARKSKY_KEY');
+        if (params.length !== 2)
+            reject('Expect 2 params for getWeatherMessage()');
         const coordinate = params.length === 2 ? [params[0], params[1]] : [WHITE_HAVEN_LAT, WHITE_HAVEN_LONG];
         getWeather(coordinate)
             .then((weather) => {

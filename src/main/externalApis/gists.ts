@@ -1,7 +1,7 @@
 import Gists from 'gists';
 import { GIT_ID, GIT_PW } from '../environment';
 
-const gists:Gists = new Gists({
+const gists: Gists = new Gists({
 	username: GIT_ID,
 	password: GIT_PW,
 });
@@ -13,10 +13,10 @@ const gists:Gists = new Gists({
 const editGist = (opts: {}): Promise<string> => {
 	return new Promise((resolve, reject) => {
 		gists.edit(opts, (err, res) =>  {
-			if (err) { 
-				reject(err); 
-			} else { 
-				resolve(res); 
+			if (err) {
+				reject(err);
+			} else {
+				resolve(res);
 			}
 		});
 	});
@@ -29,10 +29,10 @@ const editGist = (opts: {}): Promise<string> => {
 const createGist = (opts: {}): Promise<string> => {
 	return new Promise((resolve, reject) => {
 		gists.create(opts, (err, res) =>  {
-			if (err) { 
-				reject(err); 
-			} else { 
-				resolve(res); 
+			if (err) {
+				reject(err);
+			} else {
+				resolve(res);
 			}
 		});
 	});

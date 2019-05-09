@@ -82,9 +82,9 @@ declare interface cascadeTextButton {
 
 declare namespace Dawn {
 	declare interface Cache {
-		flush: () => void,
-		close: () => void,
-		getUser: (id: string) => Promise<userType>,
-		saveUser: (id: string, user: any) => Promise<string>
+		flush: () => void;
+		close: () => void;
+		getUser: (id: string) => Promise<userType>;
+		saveUser: (id: string, user: any) => Promise<string>;
 	}
 }

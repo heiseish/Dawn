@@ -29,7 +29,7 @@ class Cache {
         * @returns void
         */
         this.close = () => {
-            logger_1.default.warn('Closing cache...');
+            logger_1.default.warn('Closing cache', Cache.name);
             this.cache.close();
         };
         /**
@@ -111,7 +111,7 @@ class Cache {
         this.UserDB = UserDB;
         this.cache.on('expired', (key, value) => {
             try {
-                logger_1.default.info('Account in cache expiring, saving to database..');
+                logger_1.default.info('Account in cache expiring, saving to database', false, Cache.name);
                 this.UserDB.updateUser(key, value);
             }
             catch (e) {

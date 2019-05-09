@@ -3,7 +3,7 @@ import { getUserRating } from '../externalApis/codeforce';
 import Logger from '../logger';
 import stream from './';
 
-export default class CodeforceStream implements Dawn.Streamer{
+export default class CodeforceStream implements Dawn.Streamer {
 	private scheduler;
 	private firebase;
 	/**
@@ -17,7 +17,7 @@ export default class CodeforceStream implements Dawn.Streamer{
 	 * @param list list of person to send message to
 	 * @returns void
 	 */
-	public startStreaming(list: string[]): void {
+	startStreaming(list: string[]): void {
 		this.scheduler = schedule.scheduleJob('*/20 * * * *', async () => {
 			const users: CodeforceUser[] = await this.firebase.getCodeforceHandle();
 			for (const user of Object.values(users)) {
@@ -37,7 +37,7 @@ export default class CodeforceStream implements Dawn.Streamer{
 	 * Terminal codeforce streaming job
 	 * @returns void
 	 */
-	public stopStreaming(): void {
+	stopStreaming(): void {
 		Logger.warn('Terminating codeforce streaming job');
 		this.scheduler.cancel();
 	}

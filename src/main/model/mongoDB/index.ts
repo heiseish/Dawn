@@ -7,9 +7,9 @@ import UserDB from './user';
 // import textSchema from './text'
 
 export default class MongoDB {
-	public users: UserDB;
-	private db;
-	private options = {
+	users: UserDB;
+	private db: mongoose.Mongoose;
+	private options: mongoose.ConnectionOptions = {
 		autoReconnect: true,
 		reconnectTries: 100, // Never stop trying to reconnect
 		reconnectInterval: 500, // Reconnect every 500ms
@@ -23,10 +23,10 @@ export default class MongoDB {
 	constructor() {
 		this.db = mongoose;
 		this.db.connect(MONGO_DB_URI, this.options).then(
-			() => Logger.info('Established connection to mongoDB'),
+			() => Logger.info('Established connection to mongoDB', false, MongoDB.name),
 			(err) => {
-				Logger.error('Failed to establish connection to mongoDB: ');
-				Logger.error(err);
+				Logger.error('Failed to establish connection to mongoDB:', MongoDB.name);
+				Logger.error(err, MongoDB.name);
 			}
 		);
 		this.db.set('useCreateIndex', true);
@@ -37,8 +37,8 @@ export default class MongoDB {
 	/**
 	 * Terminate connection to mongoose database
 	 */
-	public terminateConnection = (): void => {
-		Logger.warn('Closing connection to Mongo DB...');
+	terminateConnection = (): void => {
+		Logger.warn('Closing connection to Mongo DB', MongoDB.name);
 		this.db.connection.close();
 	}
 

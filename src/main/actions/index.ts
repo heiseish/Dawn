@@ -9,7 +9,7 @@ import thanks from './thanks';
 import weather from './weather';
 import worldCup from './worldCup';
 
-let actions:Dawn.Action[] =  [
+const actions: Dawn.Action[] =  [
 	{
 		name: 'greetings',
 		execute: greet,

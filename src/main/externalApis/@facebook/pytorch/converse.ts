@@ -1,5 +1,5 @@
-import {CONVERSE_SERVER} from '../../../environment';
 import rp from 'request-promise';
+import {CONVERSE_SERVER} from '../../../environment';
 
 const generateDataPackage = (sentence: string) => ({
 	method: 'POST',

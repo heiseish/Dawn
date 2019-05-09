@@ -1,33 +1,22 @@
-import request from 'request';
-const catFactUrl = 'https://catfact.ninja/fact';
+const CAT_FACT_URI = 'https://catfact.ninja/fact';
 import {
-	WAIT_TIME_FOR_EXTERNAL_API
-} from '../environment';
+	externalAPIRequest
+} from '../utils/request';
 /**
  * Retrieve a random cat from cat fact API
  * @returns {Promise<string>} promise with cat fact string
  */
-export default (): Promise<string> => {
-	return new Promise((response, reject) => {
-		request({
-			uri: catFactUrl,
-			timeout: WAIT_TIME_FOR_EXTERNAL_API
-		}, (error, res, body) => {
-			try {
-				const result = JSON.parse(body);
-				if (error) {
-					reject(error);
-				} else if (result.fact.length >= 320) {
-					response('Cat is an animal😺');
-				} else {
-					let fact: string = result.fact[0].toLowerCase() + result.fact.substring(1);
-					fact = fact.substring(0, fact.length - 1);
-					response(`Do you know that ${fact}?`);
-				}
-			} catch (e) {
-				return reject(e)
-			}
-
-		});
-	});
+export default async (): Promise<string> => {
+	try {
+		let result = await externalAPIRequest({ uri : CAT_FACT_URI});
+		if (result.fact.length >= 320) {
+			return 'Cat is an animal😺';
+		} else {
+			let fact: string = result.fact[0].toLowerCase() + result.fact.substring(1);
+			fact = fact.substring(0, fact.length - 1);
+			return `Do you know that ${fact}?`;
+		}
+	} catch(e) {
+		return Promise.reject(e);
+	}
 };

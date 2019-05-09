@@ -23,7 +23,7 @@ export default class UserDB {
 			response: responseSchema(mongoose),
 			locale: String,
 		}, { strict: false });
-		this.model = <mongoose.Model<userMongooseType>>mongoose.model('User', this.schema);
+		this.model = mongoose.model('User', this.schema) as mongoose.Model<userMongooseType>;
 	}
 
 	/**
@@ -32,7 +32,7 @@ export default class UserDB {
 	 * @param {userType} user updated information of the user
 	 * @returns updated user
 	 */
-	public updateUser = (id: string, user: userType): Promise<userType | null> => {
+	updateUser = (id: string, user: userType): Promise<userType | null> => {
 		return new Promise((resolve, reject) => {
 			this.model.findOneAndUpdate({id: new RegExp(id, 'i')}, user).lean().exec((err, newUser) => {
 				if (err) reject(err);
@@ -42,7 +42,7 @@ export default class UserDB {
 					return user;
 				}
 			});
-		})
+		});
 	}
 
 	/**
@@ -50,7 +50,7 @@ export default class UserDB {
 	 * @param id string
 	 * @returns User if user if found, null otherwise
 	 */
-	public findUser = (id: string): Promise<null | userType>=> {
+	findUser = (id: string): Promise<null | userType> => {
 		return new Promise((resolve, reject) => {
 			this.model.findOne({id: new RegExp(id, 'i')}).lean().exec((err, user) => {
 				if (err) reject(err);
@@ -65,7 +65,7 @@ export default class UserDB {
 	 * @param user user to be add
 	 * @returns {Promise<'OK'>} OK string if there is no error
 	 */
-	public addUser = (user: userType): Promise<'OK'> => {
+	addUser = (user: userType): Promise<'OK'> => {
 		return new Promise((resolve, reject) => {
 			this.model.create(user, (err, res) => {
 				if (err) reject(err);

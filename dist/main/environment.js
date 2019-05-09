@@ -54,4 +54,6 @@ const PASSKEY = process.env.PASSKEY;
 exports.PASSKEY = PASSKEY;
 const CONVERSE_SERVER = process.env.CONVERSE_SERVER;
 exports.CONVERSE_SERVER = CONVERSE_SERVER;
+const WAIT_TIME_FOR_EXTERNAL_API = 10000;
+exports.WAIT_TIME_FOR_EXTERNAL_API = WAIT_TIME_FOR_EXTERNAL_API;
 //# sourceMappingURL=environment.js.map

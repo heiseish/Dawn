@@ -3,7 +3,7 @@ import getDailyNasaNews from '../externalApis/@nasa';
 import Logger from '../logger';
 import stream from './';
 
-export default class MorningNasa implements Dawn.Streamer{
+export default class MorningNasa implements Dawn.Streamer {
 	private scheduler;
 
 	/**

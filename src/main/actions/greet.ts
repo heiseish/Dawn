@@ -22,8 +22,8 @@ const possibleGreetLines = [
 */
 export default async (user: userType): Promise<userType> => {
 	try {
-		let PREFIX = await randomGreetingPrefix(user.name.first);
-		let SUFFIX = await randomIndex(possibleGreetLines)();
+		const PREFIX = await randomGreetingPrefix(user.name.first);
+		const SUFFIX = await randomIndex(possibleGreetLines)();
 		if (SUFFIX !== null && typeof SUFFIX === 'object') {
 			user.response = SUFFIX;
 		} else if (SUFFIX === "Here's a photo you might like: ") {
@@ -31,18 +31,18 @@ export default async (user: userType): Promise<userType> => {
 				simpleText: `${PREFIX} ${SUFFIX}`,
 				image: RANDOM_IMAGE_URL,
 				answerable: true,
-				
+
 			};
 		} else {
 			user.response =  {
 				simpleText: `${PREFIX} ${SUFFIX}`,
 				answerable: true,
-				
+
 			};
 		}
 		return user;
 	} catch (e) {
 		return Promise.reject(e);
 	}
-	
+
 };

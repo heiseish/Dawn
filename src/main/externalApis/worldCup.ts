@@ -1,34 +1,54 @@
 import _ from 'lodash/core';
 import mojiTranslate from 'moji-translate';
 import rp from 'request-promise';
-import { padLeft, padRight } from '../utils/string';
 import {
-	WAIT_TIME_FOR_EXTERNAL_API
-} from '../environment';
+	externalAPIRequest
+} from '../utils/request';
+const WORLD_CUP_URI = 'http://worldcup.sfg.io/matches';
+import { padLeft, padRight } from '../utils/string';
 const MAX_COUNTRY_LENGTH = 10;
 const MAX_GOALS_LENGTH = 2;
 
-const options:rp.OptionsWithUri = {
-	uri: 'http://worldcup.sfg.io/matches',
-	headers: {
-		'User-Agent': 'Request-Promise',
-	},
-	json: true, // Automatically parses the JSON string in the response,
-	timeout: WAIT_TIME_FOR_EXTERNAL_API
-};
 
-const rpad = ( value, char, length ): string | void => {
-	if ( typeof value === 'undefined' ) {
-		return undefined;
-	}
+/**
+ * Pad right of the text
+ * @param value value to pad right
+ * @param char character to be padded
+ * @param length length of the padding
+ * @returns padded string
+ */
+const rpad = ( value: string, char: string, length: number ): string => {
 	return ( value + char.repeat( length ) ).substring(0, length);
 };
 
-const isCompletedOrInProgress = (match): boolean => {
+interface Match {
+	status: 'completed' | 'in progress'| 'ongoing',
+	datetime: string,
+	home_team: {
+		country: string,
+		goals: string 
+	},
+	away_team: {
+		country: string,
+		goals: string 
+	}
+}
+/**
+ * Check if a match is completed or in progress
+ * @param match match that need to check
+ * @returns true if the match is completed or in progress, false otherwise
+ */
+const isCompletedOrInProgress = (match: Match): boolean => {
 	return match.status === 'completed' || match.status === 'in progress';
 };
 
-const matchHappeningToday = (match: any) => {
+
+/**
+ * Check if a match is happening today
+ * @param match match that needs to be checked
+ * @returns true if the match is happening today, false otherwise
+ */
+const matchHappeningToday = (match: Match): boolean => {
 	const date = new Date(match.datetime);
 	const today = new Date();
 	return ((date.getDate() === today.getDate()
@@ -39,11 +59,23 @@ const matchHappeningToday = (match: any) => {
 	&& (date.getDate() + date.getHours().toString() !== today.getDate() + '2');
 };
 
-const getCountryFlag = ( value ): string => {
+
+/**
+ * Get country flag with moji module
+ * @param value country name
+ * @return country flag code
+ */
+const getCountryFlag = ( value: string ): string => {
 	return mojiTranslate.translate( value.replace(/ /g, '_'), true );
 };
 
-const toConsoleOutput = (match): string => {
+
+/**
+ * Get nicely formatted message about the happening match
+ * @param match Match
+ * @returns nicely formatted string
+ */
+const toConsoleOutput = (match: Match): string => {
 	let homeFlag = getCountryFlag( match.home_team.country );
 	if ( ! homeFlag ) {
 		homeFlag = '  ';
@@ -62,9 +94,13 @@ const toConsoleOutput = (match): string => {
 	return `${homeFlag} ${home} ${homeGoals} -  ${awayGoals} ${away} ${awayFlag} ${presentableHours}`;
 };
 
-const getMatches = async (): Promise<any> => {
+/**
+ * Get the matches
+ * @return {Promise<Match[]>} World cup matches
+ */
+const getMatches = async (): Promise<Match[]> => {
 	try {
-		const matches = await rp(options);
+		const matches = await externalAPIRequest({ uri: WORLD_CUP_URI});
 		return matches;
 	} catch (e) {
 		return Promise.reject(e);
@@ -73,11 +109,11 @@ const getMatches = async (): Promise<any> => {
 
 /**
 * Get the last n matches of specific synchronous filter
-* @param {any} matches
-* @param {any} filter
+* @param {Match[]} matches
+* @param {Function} filter
 * @param {number} n
 */
-const synchFilter = (matches: any, filter: (match: any) => boolean, n?: number): Promise<any> => {
+const synchFilter = (matches: Match[], filter: (match: Match) => boolean, n?: number): Promise<Match[]> => {
 	return new Promise((resolve) => {
 		n = n ? n : 3;
 		const temp = matches;
@@ -90,6 +126,10 @@ const synchFilter = (matches: any, filter: (match: any) => boolean, n?: number):
 	});
 };
 
+/**
+ * Get nicely formatted message on currently ongoing WC games
+ * @returns formatted string
+ */
 const getWCSchedule = async (): Promise<string> => {
 	try {
 		const NO_MATCH_TODAY = "There isn't any match today!";
@@ -99,11 +139,15 @@ const getWCSchedule = async (): Promise<string> => {
 
 		let message = 'Last 3 matches: \n';
 		if (!_.isEmpty(past)) {
-			for (const match of past) { message += match + '\n'; }
+			for (const match of past) { 
+				message += match + '\n'; 
+			}
 		}
 		message += 'Today matches: \n';
 		if (!_.isEmpty(present)) {
-			for (const match of present) { message += match + '\n'; }
+			for (const match of present) { 
+				message += match + '\n'; 
+			}
 		}
 
 		if (!_.isEmpty(past) || !_.isEmpty(present)) {

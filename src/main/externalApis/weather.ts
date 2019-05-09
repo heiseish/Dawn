@@ -4,7 +4,7 @@ import { DARKSKY_KEY } from '../environment';
 const WHITE_HAVEN_LAT = 1.28891123;
 const WHITE_HAVEN_LONG = 103.7768478;
 // clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night
-const MAP_ICON_TO_PICTURE = {
+const MAP_ICON_TO_PICTURE: {[x: string]: string} = {
 	'clear-day': '1018927418276670',
 	'clear-night': '1018928791609866',
 	'rain': '1018929591609786',
@@ -18,7 +18,7 @@ const MAP_ICON_TO_PICTURE = {
 };
 
 // Initialize
-const forecast = new Forecast({
+const forecast: Forecast = new Forecast({
 	service: 'darksky',
 	key: DARKSKY_KEY,
 	units: 'celcius',
@@ -32,25 +32,37 @@ const forecast = new Forecast({
 
 /**
  * Return weather object based on coordinate
- * @param {Coordinate} coordinate
+ * @param {number[]} coordinate
  */
 const getWeather = (coordinate: number[]): Promise<any> => {
 	return new Promise((response, reject) => {
 		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY');
 		forecast.get(coordinate, (err, weather) => {
-			if (err) { reject(err); } else { response(weather); }
+			if (err) {
+				reject(err);
+			} else {
+				response(weather);
+			}
 		});
 	});
 };
 
 interface WeatherResponse {
-	current: string,
-	summary: string,
-	imageId: string
+	current: string;
+	summary: string;
+	imageId: string;
 }
+
+/**
+ * Get weather message for the bot
+ * @param {number[]} params list of coordinates of the position. Expected length 2
+ * @returns {WeatherResponse} formatted response about the weather
+ */
 const getWeatherMessage = (...params: number[]): Promise<WeatherResponse> => {
 	return new Promise((response, reject) => {
 		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY');
+		if (params.length !== 2) reject('Expect 2 params for getWeatherMessage()');
+
 		const coordinate: number[] =
 		params.length === 2  ? [params[0], params[1]] : [WHITE_HAVEN_LAT, WHITE_HAVEN_LONG];
 		getWeather(coordinate)

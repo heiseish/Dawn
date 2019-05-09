@@ -27,7 +27,7 @@ export default (): Promise<string> => {
 			giphy.tag +
 			'&rating=' +
 			giphy.rating,
-			timeout: WAIT_TIME_FOR_EXTERNAL_API
+			timeout: WAIT_TIME_FOR_EXTERNAL_API,
 		}, (error, res, body) => {
 			const result = JSON.parse(body);
 			if (error) {
