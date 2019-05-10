@@ -19,7 +19,8 @@ const sleepSync = (ms: number): void =>  {
 	while (new Date().getTime() < expire) { }
 	return;
 };
-const THRESH_HOLD = 0.55;
+const THRESH_HOLD:number = 0.55;
+const TRY_ATTEMP:number = 100;
 describe('Benchmark Module Test', function() {
 	describe('bindTrailingArgumentFromNIndex()', function() {
 		it('Should return correct result regardless of order of arguments [2 arguments]', function() {
@@ -28,9 +29,9 @@ describe('Benchmark Module Test', function() {
 			const res: number = partiallyBoundFn(3);
 			expect(res)
 			.to.be.equal(5);
-
+			
 		});
-
+		
 		it('Should return correct result when passing in function that takes in array like parameter', function() {
 			const add = (...args: number[]): number => args.reduce((a: number, b: number) => a + b);
 			const partiallyBoundFn = bindTrailingArgumentFromNIndex(add, 2, 1, 2, 3, 2, 1, 2);
@@ -38,7 +39,7 @@ describe('Benchmark Module Test', function() {
 			expect(res)
 			.to.be.equal(14);
 		});
-
+		
 		it('Should return correct result when order of arguments matters', function() {
 			const divide = (a: number, b: number): number => a / b;
 			const partiallyBoundFn = bindTrailingArgumentFromNIndex(divide, 2, 5);
@@ -46,7 +47,7 @@ describe('Benchmark Module Test', function() {
 			expect(res)
 			.to.be.equal(2);
 		});
-
+		
 		it('Should return correct result when arguments of different types', function() {
 			const merge = (a: {}, b: number): {} => ({ ...a, id: b});
 			const partiallyBoundFn = bindTrailingArgumentFromNIndex(merge, 2, 69);
@@ -59,7 +60,7 @@ describe('Benchmark Module Test', function() {
 			});
 		});
 	});
-
+	
 	describe('measureExecutionTimeAsync()', function() {
 		
 		it('Should return a promise', async function() {
@@ -67,7 +68,7 @@ describe('Benchmark Module Test', function() {
 			const res = measureExecutionTimeAsync(add.bind(null, 2, 3, 4, 5, 6, 9, 1, 2 , 3 , 4, 5, 1, 2 , 34, 1, 2));
 			expect(res).to.be.an('promise');
 		});
-
+		
 		it('Should return 2 numbers representing execution time of an async function', async function() {
 			const add = async (...args: number[]): Promise<number> => args.reduce((a: number, b: number) => a * b);
 			const res = await measureExecutionTimeAsync(add.bind(null, 2, 3, 4, 5, 6, 9, 1, 2 , 3 , 4, 5, 1, 2 , 34, 1, 2));
@@ -75,38 +76,43 @@ describe('Benchmark Module Test', function() {
 			.to.be.an('array')
 			.and.to.have.lengthOf(2);
 		});
-
+		
 		it(`Should return highly accurate execution number by process.hr ${THRESH_HOLD * 100}% within the \
 		correct execution time`, async function() {
 			const SLEEP_TIME = 10;
-			const res = await measureExecutionTimeAsync(sleep.bind(null, SLEEP_TIME));
-			expect(res)
-			.to.be.an('array')
-			.and.to.have.lengthOf(2);
-			expect(res[0])
-			.to.be.a('number')
-			.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
-
+			for (let i = 0; i < TRY_ATTEMP; ++i) {
+				const res = await measureExecutionTimeAsync(sleep.bind(null, SLEEP_TIME));
+				expect(res)
+				.to.be.an('array')
+				.and.to.have.lengthOf(2);
+				expect(res[0])
+				.to.be.a('number')
+				.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
+				
+			}
+			
 		});
-
+		
 		it(`Should return highly accurate execution number by performance.now ${THRESH_HOLD * 100}% within the \
 		correct execution time`, async function() {
 			const SLEEP_TIME = 10;
-			const res = await measureExecutionTimeAsync(sleep.bind(null, SLEEP_TIME));
-			expect(res)
-			.to.be.an('array')
-			.and.to.have.lengthOf(2);
-			expect(res[1])
-			.to.be.a('number')
-			.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
-
+			for (let i = 0; i < TRY_ATTEMP; ++i) {
+				const res = await measureExecutionTimeAsync(sleep.bind(null, SLEEP_TIME));
+				expect(res)
+				.to.be.an('array')
+				.and.to.have.lengthOf(2);
+				expect(res[1])
+				.to.be.a('number')
+				.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
+			}
+			
 		});
-
+		
 	});
-
+	
 	describe('measureExecutionTimeSync()', function() {
 		
-
+		
 		it('Should return 2 numbers representing execution time of an sync function', function() {
 			const add = (...args: number[]): number => args.reduce((a: number, b: number) => a * b);
 			const res =  measureExecutionTimeSync(add.bind(null, 2, 3, 4, 5, 6, 9, 1, 2 , 3 , 4, 5, 1, 2 , 34, 1, 2));
@@ -114,35 +120,39 @@ describe('Benchmark Module Test', function() {
 			.to.be.an('array')
 			.and.to.have.lengthOf(2);
 		});
-
+		
 		it(`Should return highly accurate execution number by process.hr ${THRESH_HOLD * 100}% within the \
 		correct execution time`,  function() {
 			const SLEEP_TIME = 10;
-			const res =  measureExecutionTimeSync(sleepSync.bind(null, SLEEP_TIME));
-			expect(res)
-			.to.be.an('array')
-			.and.to.have.lengthOf(2);
-			expect(res[0])
-			.to.be.a('number')
-			.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
-
+			for (let i = 0; i < TRY_ATTEMP; ++i) {
+				const res =  measureExecutionTimeSync(sleepSync.bind(null, SLEEP_TIME));
+				expect(res)
+				.to.be.an('array')
+				.and.to.have.lengthOf(2);
+				expect(res[0])
+				.to.be.a('number')
+				.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
+			}
+			
 		});
-
+		
 		it(`Should return highly accurate execution number by performance.now ${THRESH_HOLD * 100}% within the \
 		correct execution time`,  function() {
 			const SLEEP_TIME = 10;
-			const res =  measureExecutionTimeSync(sleepSync.bind(null, SLEEP_TIME));
-			expect(res)
-			.to.be.an('array')
-			.and.to.have.lengthOf(2);
-			expect(res[1])
-			.to.be.a('number')
-			.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
-
+			for (let i = 0; i < TRY_ATTEMP; ++i) {
+				const res =  measureExecutionTimeSync(sleepSync.bind(null, SLEEP_TIME));
+				expect(res)
+				.to.be.an('array')
+				.and.to.have.lengthOf(2);
+				expect(res[1])
+				.to.be.a('number')
+				.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
+			}
+			
 		});
-
+		
 	});
-
+	
 	describe('measureExecutionTimeCallback()', function() {
 		
 		it('Should return a promise', async function() {
@@ -156,7 +166,7 @@ describe('Benchmark Module Test', function() {
 			expect(res)
 			.to.be.an('promise');
 		});
-
+		
 		it('Should return 2 numbers representing execution time of an callback function', async function() {
 			const add = (cb: Function, ...args: number[]): number => {
 				const a: number = args.reduce((a: number, b: number) => a * b);
@@ -169,32 +179,36 @@ describe('Benchmark Module Test', function() {
 			.to.be.an('array')
 			.and.to.have.lengthOf(2);
 		});
-
+		
 		it(`Should return highly accurate execution number by process.hr ${THRESH_HOLD * 100}% within the \
 		correct execution time`, async function() {
 			const SLEEP_TIME = 10;
 			const partiallyBoundFn = bindTrailingArgumentFromNIndex(setTimeout, 2, SLEEP_TIME);
-			const res =  await measureExecutionTimeCallback(partiallyBoundFn);
-			expect(res)
-			.to.be.an('array')
-			.and.to.have.lengthOf(2);
-			expect(res[0])
-			.to.be.a('number')
-			.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
+			for (let i = 0; i < TRY_ATTEMP; ++i) {
+				const res =  await measureExecutionTimeCallback(partiallyBoundFn);
+				expect(res)
+				.to.be.an('array')
+				.and.to.have.lengthOf(2);
+				expect(res[0])
+				.to.be.a('number')
+				.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
+			}
 		});
-
+		
 		it(`Should return highly accurate execution number by performance.now ${THRESH_HOLD * 100}% within the \
 		correct execution time`,  async function() {
 			const SLEEP_TIME = 10;
 			const partiallyBoundFn = bindTrailingArgumentFromNIndex(setTimeout, 2, SLEEP_TIME);
-			const res =  await measureExecutionTimeCallback(partiallyBoundFn);
-			expect(res)
-			.to.be.an('array')
-			.and.to.have.lengthOf(2);
-			expect(res[1])
-			.to.be.a('number')
-			.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
+			for (let i = 0; i < TRY_ATTEMP; ++i) {
+				const res =  await measureExecutionTimeCallback(partiallyBoundFn);
+				expect(res)
+				.to.be.an('array')
+				.and.to.have.lengthOf(2);
+				expect(res[1])
+				.to.be.a('number')
+				.and.to.be.within(SLEEP_TIME - THRESH_HOLD * SLEEP_TIME, SLEEP_TIME + THRESH_HOLD * SLEEP_TIME);
+			}
 		});
-
+		
 	});
 });
