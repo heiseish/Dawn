@@ -19,9 +19,9 @@ const messengerPOSTRequest = (id: string, payload: any): any => {
 
 		],
 
-	}
-}
+	};
+};
 
 export {
 	messengerPOSTRequest,
-}
+};

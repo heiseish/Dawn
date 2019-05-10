@@ -62,7 +62,7 @@ export default class Cache implements Dawn.Cache {
 	* @param user user object
 	* @return promise that contains the response YES if succeeded. NO otherwise.
 	*/
-	public saveUser = async (id: string, user: any): Promise<string> => {
+	saveUser = async (id: string, user: any): Promise<string> => {
 		try {
 			return await this.save(id, user);
 		} catch (e) {

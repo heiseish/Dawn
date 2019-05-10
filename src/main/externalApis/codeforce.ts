@@ -9,18 +9,18 @@ import {
  */
 const getUserRating = async (handle: string): Promise<CodeforceRanking> => {
 	try {
-		let res = await externalAPIRequest({
+		const res = await externalAPIRequest({
 			uri: CODEFORCE_API + handle,
 		});
-		let result = JSON.parse(res).result[0];
+		const result = JSON.parse(res).result[0];
 		return {
 			rating: result.rating,
 			rank: result.rank,
 		};
-		
-	}catch(e) {
-		return Promise.reject(e)
-	}	
+
+	} catch (e) {
+		return Promise.reject(e);
+	}
 };
 
 export {
