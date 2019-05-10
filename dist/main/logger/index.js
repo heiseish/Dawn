@@ -79,6 +79,8 @@ class Logger {
      * @param color color of primary text
      */
     log(text, level, component) {
+        if (process.env.NODE_ENV === 'test')
+            return; /* Prevent logging during test */
         let color;
         switch (level) {
             case 'info':
@@ -94,7 +96,7 @@ class Logger {
                 color = chalk_1.default.white;
         }
         console.log(this.generateDateTimePrefix()
-            + color(`[${level}]`) + (component ? chalk_1.default.blue(`[${component}]: `) : `: `) + chalk_1.default.cyan(text));
+            + color(`[${level}]`) + (component ? chalk_1.default.blue(`[${component}]: `) : ': ') + chalk_1.default.cyan(text));
     }
 }
 exports.default = new Logger();

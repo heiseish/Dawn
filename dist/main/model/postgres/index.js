@@ -6,21 +6,18 @@
 // const POSTGRES_DATABASE_URI =  'postgres://yfbsqmlbjcgesh:1813d162aac4b69e75865\
 // a2b19b98e16af1f29410d24b962cc7061c053b3651a@ec2-54-197-232-203.compute-1.\
 // amazonaws.com:5432/d6o7o6jtb86chc';
-
 // declare type cascadeTextType = Array<{
 // 	title: string,
 // 	image: string,
 // 	image_url: string,
 // 	buttons: cascadeTextButton[],
 // }>;
-
 // declare interface cascadeTextButton {
 // 	title: string;
 // 	type: 'web_url';
 // 	url: string;
 // 	webview_height_ratio: 'tall' | 'short';
 // }
-
 // interface EventPostgresModel extends Model {
 // 	readonly id: string | number;
 // 	name?: {
@@ -53,10 +50,8 @@
 // 	};
 // 	locale: string;
 // }
-
 // // Need to declare the static model so `findOne` etc. use correct types.
 // type EventModelStatic = typeof Model & (new (values?: object, options?: BuildOptions) => EventPostgresModel);
-
 // export default class PostgresDatabase {
 // 	private seq: Sequelize;
 // 	private readonly Event: EventModelStatic;
@@ -75,11 +70,9 @@
 // 			},
 // 		}) as EventModelStatic;
 // 	}
-
 // 	createEvent = (): void => {
 // 		this.Event.create({
-
 // 		});
 // 	}
-
 // }
+//# sourceMappingURL=index.js.map

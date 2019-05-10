@@ -9,12 +9,12 @@ import chalk from 'chalk';
 * @return {string} the progress bas strings
 */
 const MAX_TILES = 70; /* Number of tiles for the progress bar */
-const _render = (n: number, total: number, elapsed: number):string => {
-	let cent:number = n / total * 100;
-	const est:number = Math.max((100 - (cent+0.000001))/(cent+0.0000001) * elapsed, 0);
-	const ips:number = n / ((elapsed + 0.000001) / 1000);
+const _render = (n: number, total: number, elapsed: number): string => {
+	let cent: number = n / total * 100;
+	const est: number = Math.max((100 - (cent + 0.000001)) / (cent + 0.0000001) * elapsed, 0);
+	const ips: number = n / ((elapsed + 0.000001) / 1000);
 	cent = Math.floor(cent);
-	let out:string = chalk.blue('|');
+	let out: string = chalk.blue('|');
 	for (let i = 0; i < MAX_TILES; i++) {
 		if (i >= Math.round(cent / (100 / MAX_TILES))) {
 			out += chalk.blue('-');
@@ -85,11 +85,11 @@ function* tqdm<T>(iter: Iterable<T>, par?: tdqm.options): IterableIterator<any> 
 	}
 	const start: number = Date.now();
 	const now: number = start;
-	let n:number = 0;
-	let lastn:number = 0;
+	let n = 0;
+	let lastn = 0;
 	let elapsed: number;
-	let lastElapsed:number = 0;
-	
+	let lastElapsed = 0;
+
 	if (!('total' in params)) {
 		for (const i of iter) {
 			n++;
@@ -97,7 +97,7 @@ function* tqdm<T>(iter: Iterable<T>, par?: tdqm.options): IterableIterator<any> 
 		params.total = n;
 		n = 0;
 	}
-	const PADDING:string = '       ';
+	const PADDING = '       ';
 	console.log( PADDING + chalk.bgCyan(PADDING + chalk.black(chalk.bold(params.desc)) + PADDING));
 	// put an initial bar out
 	process.stdout.write(_render(0, params.total, 0));
@@ -116,7 +116,7 @@ function* tqdm<T>(iter: Iterable<T>, par?: tdqm.options): IterableIterator<any> 
 		}
 		if (n > params.total) {
 			break;
-		}	
+		}
 	}
 }
 export {
