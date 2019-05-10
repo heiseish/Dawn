@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MANUAL_LINK = 'https://gist.github.com/MadaraUCH/522028088e49110b4511d4cabea361f9';
 /**
  * Retrieve the help manual for user
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return updated user
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {

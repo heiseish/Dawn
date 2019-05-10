@@ -8,7 +8,7 @@ import { getUserName } from './messenger/api/graphApi';
 * @return promise contains the updated user
 */
 export default async (partialUniqueId: string, platform: supportedPlatform,
-                      payload: any, cache: any): Promise<userType> => {
+                      payload: any, cache: any): Promise<Dawn.userType> => {
 	try {
 		const user = await cache.getUser(partialUniqueId);
 		if (user) return user;
@@ -29,16 +29,17 @@ export default async (partialUniqueId: string, platform: supportedPlatform,
  * @return user object
  */
 const createNewUser = async (partialUniqueId: string, platform: supportedPlatform,
-                             payload: any): Promise<userType> => {
+                             payload: any): Promise<Dawn.userType> => {
 	const log = Logger.info('Creating new user...', true);
 	try {
 
-		const user: userType = {
+		const user: Dawn.userType = {
 			id: partialUniqueId,
 			locale: 'eng',
 			entity: {
 				lastIntent: null,
 			},
+			platform: platform
 		};
 		let name;
 		switch (platform) {

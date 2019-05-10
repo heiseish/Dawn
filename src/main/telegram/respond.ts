@@ -9,7 +9,7 @@ import {
 * @param {any} payload
 * @param {userType} user
 */
-export default async (payload: any, user: userType): Promise<void | Error> => {
+export default async (payload: any, user: Dawn.userType): Promise<void | Error> => {
 	try {
 		const chat = payload.chat.id;
 		const msgId = payload.message_id;

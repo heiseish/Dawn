@@ -18,7 +18,7 @@ const utils_1 = require("./utils");
 const NO_ARTICLE_FOUND = 'Sorry no article found :<';
 /**
  * Send news to user
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @returns updated user
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {

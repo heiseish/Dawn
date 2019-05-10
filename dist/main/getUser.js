@@ -48,6 +48,7 @@ const createNewUser = (partialUniqueId, platform, payload) => __awaiter(this, vo
             entity: {
                 lastIntent: null,
             },
+            platform: platform
         };
         let name;
         switch (platform) {

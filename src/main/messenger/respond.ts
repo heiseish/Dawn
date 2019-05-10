@@ -9,9 +9,9 @@ const TIME_WAITED_BEFORE_CONFIRMING = 3000;
 
 /**
 * Respond in facebook messenger
-* @param {userType} user
+* @param {Dawn.userType} user
 */
-export default async (user: userType): Promise<void> => {
+export default async (user: Dawn.userType): Promise<void> => {
 	try {
 		const fbId = user.id.replace('mes', '');
 		const response = user.response;

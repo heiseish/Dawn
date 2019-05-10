@@ -6,7 +6,7 @@ import nameSchema from './name';
 import responseSchema from './response';
 import textSchema from './text';
 
-type userMongooseType = userType & mongoose.Document;
+type userMongooseType = Dawn.userType & mongoose.Document;
 
 export default class UserDB {
 	private schema: mongoose.Schema;
@@ -29,10 +29,10 @@ export default class UserDB {
 	/**
 	 * Update the user in database
 	 * @param {string} id id of the user to be updated
-	 * @param {userType} user updated information of the user
+	 * @param {Dawn.userType} user updated information of the user
 	 * @returns updated user
 	 */
-	updateUser = (id: string, user: userType): Promise<userType | null> => {
+	updateUser = (id: string, user: Dawn.userType): Promise<Dawn.userType | null> => {
 		return new Promise((resolve, reject) => {
 			this.model.findOneAndUpdate({id: new RegExp(id, 'i')}, user).lean().exec((err, newUser) => {
 				if (err) reject(err);
@@ -50,7 +50,7 @@ export default class UserDB {
 	 * @param id string
 	 * @returns User if user if found, null otherwise
 	 */
-	findUser = (id: string): Promise<null | userType> => {
+	findUser = (id: string): Promise<null | Dawn.userType> => {
 		return new Promise((resolve, reject) => {
 			this.model.findOne({id: new RegExp(id, 'i')}).lean().exec((err, user) => {
 				if (err) reject(err);
@@ -65,7 +65,7 @@ export default class UserDB {
 	 * @param user user to be add
 	 * @returns {Promise<'OK'>} OK string if there is no error
 	 */
-	addUser = (user: userType): Promise<'OK'> => {
+	addUser = (user: Dawn.userType): Promise<'OK'> => {
 		return new Promise((resolve, reject) => {
 			this.model.create(user, (err, res) => {
 				if (err) reject(err);

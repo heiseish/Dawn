@@ -19,7 +19,7 @@ const respond_2 = __importDefault(require("./telegram/respond"));
 * Respond to original message
 * @param {supportedPlatform} platform
 * @param {any} payload
-* @param {userType} user
+* @param {Dawn.userType} user
 */
 exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, function* () {
     try {
@@ -43,8 +43,8 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
 });
 /**
 * Sync the language of the response with the locale of the convo
-* @param {userType} user
-* @returns {userType} updated user
+* @param {Dawn.userType} user
+* @returns {Dawn.userType} updated user
 */
 const prepareResponseForSending = (user) => __awaiter(this, void 0, void 0, function* () {
     try {

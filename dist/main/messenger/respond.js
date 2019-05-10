@@ -20,7 +20,7 @@ const quickReply_1 = __importDefault(require("./api/quickReply"));
 const TIME_WAITED_BEFORE_CONFIRMING = 3000;
 /**
 * Respond in facebook messenger
-* @param {userType} user
+* @param {Dawn.userType} user
 */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
     try {

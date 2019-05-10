@@ -10,7 +10,7 @@ import _ from 'lodash/core';
 * @param {userType} user
 * @return updated user
 */
-export default async (platform: supportedPlatform, payload: any, user: userType): Promise<userType> => {
+export default async (platform: supportedPlatform, payload: any, user: Dawn.userType): Promise<Dawn.userType> => {
 	const log = Logger.info('Analyzing...', true);
 	try {
 		const {
@@ -18,6 +18,7 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 			document,
 			sentiment,
 		} = getInformationFromMessage(platform, payload);
+		user.platform = platform;
 		if (!_.isEmpty(document)) {
 			user.entity.lastIntent = 'sendDocument';
 			user.lastDoc = document;

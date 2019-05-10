@@ -2,39 +2,38 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Check duplicate of a sorted array.
- * @param {any[]} a
+ * @param {T[]} a
  * @return true if there are duplicated. False otherwise
  */
 const checkDuplicates = (a) => {
     for (let i = 0; i < a.length - 1; i++) {
-        if (a[i] === a[i + 1]) {
+        if (a[i] === a[i + 1])
             return true;
-        }
     }
     return false;
 };
 exports.checkDuplicates = checkDuplicates;
 /**
  * Check if two arrays has any mutual member
- * @param {any[]} array1
- * @param {any[]} array2
+ * @param {T[]} array1
+ * @param {T[]} array2
  * @return True if two arrays have mutual elements. False otherwise.
  */
 const checkIfArrayMutual = (array1, array2) => {
-    return array1.filter((value) => -1 !== array2.indexOf(value)).length > 0;
+    return array1.filter(val => array2.includes(val)).length > 0;
 };
 exports.checkIfArrayMutual = checkIfArrayMutual;
 /**
  * Get the list of common members from 2 arrays
- * @param {any[]} a
- * @param {any[]} b
+ * @param {T[]} a
+ * @param {T[]} b
  * @return array containing all the mutual elements
  */
-const getCommonMembersFromTwoArrays = (a, b) => a.filter((n) => b.indexOf(n) !== -1);
+const getCommonMembersFromTwoArrays = (a, b) => a.filter((n) => b.includes(n));
 exports.getCommonMembersFromTwoArrays = getCommonMembersFromTwoArrays;
 /**
  * shuffle an array based on Fisher-Yates (aka Knuth) Shuffle algorithm
- * @param {any[]} array
+ * @param {T[]} array
  * @return array shuffled
  */
 const shuffle = (array) => {
@@ -54,15 +53,15 @@ const shuffle = (array) => {
 exports.shuffle = shuffle;
 /**
  * Return a random member of an array
- * @param {any[]} array
+ * @param {T[]} array
  * @return an element inside the array
  */
 const randomIndex = (array) => array[Math.floor(Math.random() * array.length)];
 exports.randomIndex = randomIndex;
 /**
  * Remove an element from array
- * @param {any[]}array Array to be process
- * @param {any} member elemen to be removed
+ * @param {T[]}array Array to be process
+ * @param {T} member elemen to be removed
  * @return a new array that doesn't have the old element
  */
 const removeFromArray = (array, member) => {

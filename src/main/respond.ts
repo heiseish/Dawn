@@ -6,9 +6,9 @@ import respondTelegram from './telegram/respond';
 * Respond to original message
 * @param {supportedPlatform} platform
 * @param {any} payload
-* @param {userType} user
+* @param {Dawn.userType} user
 */
-export default async (platform: supportedPlatform, payload: any, user: userType): Promise<void> => {
+export default async (platform: supportedPlatform, payload: any, user: Dawn.userType): Promise<void> => {
 	try {
 		const log = Logger.info('Responding...', true);
 		user = await prepareResponseForSending(user);
@@ -33,10 +33,10 @@ export default async (platform: supportedPlatform, payload: any, user: userType)
 
 /**
 * Sync the language of the response with the locale of the convo
-* @param {userType} user
-* @returns {userType} updated user
+* @param {Dawn.userType} user
+* @returns {Dawn.userType} updated user
 */
-const prepareResponseForSending = async (user: userType): Promise<userType> => {
+const prepareResponseForSending = async (user: Dawn.userType): Promise<Dawn.userType> => {
 	try {
 		const response = user.response;
 		if (response.simpleText) {

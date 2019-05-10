@@ -7,7 +7,7 @@ import Logger from '../logger';
  * @param items articles
  * @return parsed article
  */
-const parseArticles = (items: any[]): cascadeTextType  => {
+const parseArticles = (items: news.article[]): Dawn.cascadeTextType  => {
 	let elements = [], i = 0;
 	if (items.length > 4) { Logger.error('Trying to send list template message with more than 4 particles'); }
 	for (const item of items) {

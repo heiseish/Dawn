@@ -20,7 +20,7 @@ const possibleGreetLines = [
 * @return promise containing the updated user
 * @throws error if API fails
 */
-export default async (user: userType): Promise<userType> => {
+export default async (user: Dawn.userType): Promise<Dawn.userType> => {
 	try {
 		const PREFIX = await randomGreetingPrefix(user.name.first);
 		const SUFFIX = await randomIndex(possibleGreetLines)();

@@ -6,10 +6,10 @@ interface Tweet {
 }
 /**
  * Get pokemon go tweets for user
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return promise containing the updated response or error
  */
-export default async (user: userType): Promise<userType> => {
+export default async (user: Dawn.userType): Promise<Dawn.userType> => {
 	try {
 		const conf = `Here's the news from ${POKEMONGO_SCREEN_NAME}`;
 		const tweets: Tweet[] = await getTwitterStatus(POKEMONGO_SCREEN_NAME);

@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -19,105 +27,102 @@ const MAP_TOPIC_TO_CATEGORY = {
     scienc: 'science',
 };
 /**
- * Get top headlines
- * @param {any} user
- */
-const getAllHeadlines = (user) => {
+* Get top headlines
+* @param {Dawn.userType} user
+* @return {news.article} articles
+*/
+const getAllHeadlines = (user) => __awaiter(this, void 0, void 0, function* () {
     if (!environment_1.NEWSAPI_KEY)
         return Promise.reject('missing NEWSAPI_KEY');
     let text = user.lastText;
-    if (text.indexOf('"') !== -1) {
+    if (text.includes('"')) {
         text = string_1.replaceAllSubstring(text, '"', '“', '”', 'SHOW', 'NEWS', 'WITH', 'ABOUT', 'ON');
-        return new Promise((resolve) => getHeadlinesWithQuery(text).then((articles) => resolve(articles)));
+        return yield getHeadlinesWithQuery(text);
     }
-    else {
-        const common = array_1.getCommonMembersFromTwoArrays(Object.keys(MAP_TOPIC_TO_CATEGORY), user.text[user.text.length - 1].tokenizedText);
-        const category = MAP_TOPIC_TO_CATEGORY[common[0]] || null;
-        if (category) {
-            return new Promise((resolve) => getHeadlinesWithCategory(category)
-                .then((articles) => resolve(articles)));
-        }
-        else {
-            return new Promise((resolve) => getRandomTop5Headlines()
-                .then((articles) => resolve(articles)));
-        }
+    const common = yield array_1.getCommonMembersFromTwoArrays(Object.keys(MAP_TOPIC_TO_CATEGORY), text[text.length - 1].split(' '));
+    const category = MAP_TOPIC_TO_CATEGORY[common[0]] || null;
+    if (category) {
+        return yield getHeadlinesWithCategory(category);
     }
-};
+    return yield getRandomTop5Headlines();
+});
 exports.getAllHeadlines = getAllHeadlines;
 /**
- * Get a random headline and return the title along with the message
- */
-const getRandomHeadlines = () => {
+* Get a random headline and return the title along with the message
+*/
+const getRandomHeadlines = () => __awaiter(this, void 0, void 0, function* () {
     if (!environment_1.NEWSAPI_KEY)
-        return Promise.reject('missing NEWSAPI_KEY');
-    return new Promise((resolve) => {
-        newsapi.v2
+        throw new Error('missing NEWSAPI_KEY');
+    try {
+        let res = yield newsapi.v2
             .topHeadlines({
             sources: 'techcrunch',
             language: 'en',
-        })
-            .then((response) => {
-            const article = response.articles[Math.floor(Math.random() * response.articles.length)];
-            resolve({
-                answerable: true,
-                simpleText: `Random news: ${article.title}`,
-                image: article.urlToImage,
-                url: article.url,
-            });
         });
-    });
-};
+        const article = res.articles[Math.floor(Math.random() * res.articles.length)];
+        return `Random news: ${article.title}`;
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
+});
 exports.getRandomHeadlines = getRandomHeadlines;
 /**
- * Search for articles containing key words
- * @param {string} keyword
- */
-const getHeadlinesWithQuery = (keyword) => {
+* Search for articles containing key words
+* @param {string} keyword
+*/
+const getHeadlinesWithQuery = (keyword) => __awaiter(this, void 0, void 0, function* () {
     if (!environment_1.NEWSAPI_KEY)
-        return Promise.reject('missing NEWSAPI_KEY');
-    return new Promise((res) => {
-        newsapi.v2
-            .topHeadlines({
+        throw new Error('missing NEWSAPI_KEY');
+    try {
+        let res = yield newsapi.v2.topHeadlines({
             sources: GOOD_SOURCES,
             q: keyword,
             language: 'en',
-        })
-            .then((response) => res(response.articles));
-    });
-};
+        });
+        return res.articles;
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
+});
 exports.getHeadlinesWithQuery = getHeadlinesWithQuery;
 /**
- * Search for articles in this category
- * @param {string | null} category
- */
-const getHeadlinesWithCategory = (category) => {
+* Search for articles in this category
+* @param {string | null} category
+*/
+const getHeadlinesWithCategory = (category) => __awaiter(this, void 0, void 0, function* () {
     if (!environment_1.NEWSAPI_KEY)
-        return Promise.reject('missing NEWSAPI_KEY');
-    return new Promise((res) => {
-        newsapi.v2
-            .topHeadlines({
+        throw new Error('missing NEWSAPI_KEY');
+    try {
+        let res = yield newsapi.v2.topHeadlines({
             category,
             language: 'en',
             country: 'us',
-        })
-            .then((response) => res(response.articles));
-    });
-};
+        });
+        return res.articles;
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
+});
 exports.getHeadlinesWithCategory = getHeadlinesWithCategory;
 /**
- * Get random top headlines articles
- */
-const getRandomTop5Headlines = () => {
+* Get random top headlines articles
+*/
+const getRandomTop5Headlines = () => __awaiter(this, void 0, void 0, function* () {
     if (!environment_1.NEWSAPI_KEY)
-        return Promise.reject('missing NEWSAPI_KEY');
-    return new Promise((res) => {
-        newsapi.v2
-            .topHeadlines({
+        throw new Error('missing NEWSAPI_KEY');
+    try {
+        let res = yield newsapi.v2.topHeadlines({
             sources: GOOD_SOURCES,
             language: 'en',
-        })
-            .then((response) => res(response.articles));
-    });
-};
+        });
+        return res.articles;
+    }
+    catch (e) {
+        return Promise.reject(e);
+    }
+});
 exports.getRandomTop5Headlines = getRandomTop5Headlines;
 //# sourceMappingURL=news.js.map

@@ -43,7 +43,7 @@ export default class Cache implements Dawn.Cache {
 	* @param id id of user
 	* @return promise that contains the user
 	*/
-	getUser = async (id: string): Promise<userType> => {
+	getUser = async (id: string): Promise<Dawn.userType> => {
 		try {
 			const account = await this.get(id);
 			if (account !== undefined) {

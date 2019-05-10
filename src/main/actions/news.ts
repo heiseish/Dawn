@@ -6,12 +6,12 @@ const NO_ARTICLE_FOUND = 'Sorry no article found :<';
 
 /**
  * Send news to user
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @returns updated user
  */
-export default async (user: userType): Promise<userType> => {
+export default async (user: Dawn.userType): Promise<Dawn.userType> => {
 	try {
-		const articles = shuffle(await getAllHeadlines(user)).slice(0, 4);
+		const articles:news.article[] = shuffle<news.article>(await getAllHeadlines(user)).slice(0, 4);
 		if (!_.isEmpty(articles)) {
 			const parsedArticles = parseArticles(articles);
 			user.response = {

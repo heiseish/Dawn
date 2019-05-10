@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const string_1 = require("../lib/string");
 /**
  * Reply to people thanking
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return parsed User
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {

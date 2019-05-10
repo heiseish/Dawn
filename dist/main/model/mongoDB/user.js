@@ -13,7 +13,7 @@ class UserDB {
         /**
          * Update the user in database
          * @param {string} id id of the user to be updated
-         * @param {userType} user updated information of the user
+         * @param {Dawn.userType} user updated information of the user
          * @returns updated user
          */
         this.updateUser = (id, user) => {

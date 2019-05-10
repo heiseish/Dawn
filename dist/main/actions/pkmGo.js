@@ -12,7 +12,7 @@ const _twitter_1 = require("../externalApis/@twitter");
 const POKEMONGO_SCREEN_NAME = '@PokemonGoApp';
 /**
  * Get pokemon go tweets for user
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return promise containing the updated response or error
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
