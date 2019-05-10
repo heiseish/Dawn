@@ -19,7 +19,7 @@ export default class Headquarter {
 		Logger.info('Transfering event to headquarter..', false, Headquarter.name);
 		try {
 			const partialUniqueId: string = identifySource(platform, payload);
-			let user: userType = await getUser(partialUniqueId, platform, payload,  cache);
+			let user: Dawn.userType = await getUser(partialUniqueId, platform, payload,  cache);
 			user = await analyze(platform, payload, user);
 			user = await execute(user);
 			await respond(platform, payload, user);

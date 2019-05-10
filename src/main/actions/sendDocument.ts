@@ -6,11 +6,11 @@ import { randomIndex } from '../utils/array';
 
 /**
  * Handle document from messenger
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return updated user
  * @throws if gif api or geocoder api fails
  */
-export default async (user: userType): Promise<userType> => {
+export default async (user: Dawn.userType): Promise<Dawn.userType> => {
 	try {
 		switch (user.lastDoc.type) {
 		case 'image':

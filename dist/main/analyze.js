@@ -27,6 +27,7 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
     const log = logger_1.default.info('Analyzing...', true);
     try {
         const { text, document, sentiment, } = getInformationFromMessage(platform, payload);
+        user.platform = platform;
         if (!core_1.default.isEmpty(document)) {
             user.entity.lastIntent = 'sendDocument';
             user.lastDoc = document;

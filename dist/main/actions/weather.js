@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const weather_1 = require("../externalApis/weather");
 /**
  * Inform user of the current weather
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return PRomise containing updated user
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
@@ -19,9 +19,10 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
         const { current, summary, imageId, } = yield weather_1.getWeatherMessage();
         user.response = {
             simpleText: current + summary,
-            image: imageId,
             answerable: true,
         };
+        if (user.platform == 'messenger')
+            user.response.image = imageId;
         return user;
     }
     catch (e) {

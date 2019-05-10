@@ -7,6 +7,7 @@ const forecast_1 = __importDefault(require("forecast"));
 const environment_1 = require("../environment");
 const WHITE_HAVEN_LAT = 1.28891123;
 const WHITE_HAVEN_LONG = 103.7768478;
+const MY_WEATHER = [WHITE_HAVEN_LAT, WHITE_HAVEN_LONG];
 // clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night
 const MAP_ICON_TO_PICTURE = {
     'clear-day': '1018927418276670',
@@ -56,7 +57,7 @@ exports.getWeather = getWeather;
  * @param {number[]} params list of coordinates of the position. Expected length 2
  * @returns {WeatherResponse} formatted response about the weather
  */
-const getWeatherMessage = (...params) => {
+const getWeatherMessage = (params = MY_WEATHER) => {
     return new Promise((response, reject) => {
         if (!environment_1.DARKSKY_KEY)
             reject('missing DARKSKY_KEY');

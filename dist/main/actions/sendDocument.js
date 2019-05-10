@@ -18,7 +18,7 @@ const string_1 = require("../lib/string");
 const array_1 = require("../utils/array");
 /**
  * Handle document from messenger
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return updated user
  * @throws if gif api or geocoder api fails
  */

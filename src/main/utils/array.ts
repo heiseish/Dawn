@@ -1,38 +1,38 @@
 /**
  * Check duplicate of a sorted array.
- * @param {any[]} a
+ * @param {T[]} a
  * @return true if there are duplicated. False otherwise
  */
-const checkDuplicates = (a: any[]): boolean => {
+const checkDuplicates = <T>(a: T[]): boolean => {
 	for (let i = 0; i < a.length - 1; i++) {
-		if (a[i] === a[i + 1]) { return true; }
+		if (a[i] === a[i + 1]) return true;
 	}
 	return false;
 };
 /**
  * Check if two arrays has any mutual member
- * @param {any[]} array1
- * @param {any[]} array2
+ * @param {T[]} array1
+ * @param {T[]} array2
  * @return True if two arrays have mutual elements. False otherwise.
  */
-const checkIfArrayMutual = (array1: any[], array2: any[]) => {
-	return array1.filter((value) => -1 !== array2.indexOf(value)).length > 0;
+const checkIfArrayMutual = <T>(array1: T[], array2: T[]):boolean => {
+	return array1.filter(val => array2.includes(val)).length > 0;
 };
 
 /**
  * Get the list of common members from 2 arrays
- * @param {any[]} a
- * @param {any[]} b
+ * @param {T[]} a
+ * @param {T[]} b
  * @return array containing all the mutual elements
  */
-const getCommonMembersFromTwoArrays = (a: any[], b: any[]): any[] => a.filter((n) => b.indexOf(n) !== -1 );
+const getCommonMembersFromTwoArrays = <T>(a: T[], b: T[]): T[] => a.filter((n: T) => b.includes(n) );
 
 /**
  * shuffle an array based on Fisher-Yates (aka Knuth) Shuffle algorithm
- * @param {any[]} array
+ * @param {T[]} array
  * @return array shuffled
  */
-const shuffle = (array: any[]): any[] => {
+const shuffle = <T>(array: T[]): T[] => {
 	let currentIndex = array.length, temporaryValue, randomIndex;
 	// While there remain elements to shuffle...
 	while (0 !== currentIndex) {
@@ -49,20 +49,22 @@ const shuffle = (array: any[]): any[] => {
 
 /**
  * Return a random member of an array
- * @param {any[]} array
+ * @param {T[]} array
  * @return an element inside the array
  */
 const randomIndex = <T extends {}>(array: T[]) => array[Math.floor(Math.random() * array.length)];
 
 /**
  * Remove an element from array
- * @param {any[]}array Array to be process
- * @param {any} member elemen to be removed
+ * @param {T[]}array Array to be process
+ * @param {T} member elemen to be removed
  * @return a new array that doesn't have the old element
  */
-const removeFromArray  = <T extends {}>(array: T[], member: T) => {
+const removeFromArray  = <T extends {}>(array: T[], member: T):T[] => {
 	const index = array.indexOf(member);
-	if (index > -1) { array.splice(index, 1); }
+	if (index > -1) { 
+		array.splice(index, 1); 
+	}
 	return array;
 };
 export {

@@ -8,7 +8,7 @@ import Logger from './logger';
 * @param {any} payload
 * @return updated user
 */
-export default async (user: userType): Promise<userType> => {
+export default async (user: Dawn.userType): Promise<Dawn.userType> => {
 	const log = Logger.info('Executing', true);
 	try {
 		const action: Dawn.Action = getAction(actions, user.entity.lastIntent);

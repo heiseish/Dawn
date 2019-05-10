@@ -2,10 +2,10 @@ import { getWeatherMessage } from '../externalApis/weather';
 
 /**
  * Inform user of the current weather
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return PRomise containing updated user
  */
-export default async (user: userType): Promise<userType> => {
+export default async (user: Dawn.userType): Promise<Dawn.userType> => {
 	try {
 		const {
 			current,
@@ -14,9 +14,10 @@ export default async (user: userType): Promise<userType> => {
 		} = await getWeatherMessage();
 		user.response = {
 			simpleText: current + summary,
-			image: imageId,
 			answerable: true,
 		};
+		if (user.platform == 'messenger')
+			user.response.image = imageId;
 		return user;
 	} catch (e) {
 		return Promise.reject(e);

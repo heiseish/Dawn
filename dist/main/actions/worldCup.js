@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const worldCup_1 = __importDefault(require("../externalApis/worldCup"));
 /**
  * Return today world cup schedule
- * @param {userType} user
+ * @param {Dawn.userType} user
  * @return Promise containing updated response
  */
 exports.default = (user) => __awaiter(this, void 0, void 0, function* () {

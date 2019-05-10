@@ -3,6 +3,7 @@ import { DARKSKY_KEY } from '../environment';
 
 const WHITE_HAVEN_LAT = 1.28891123;
 const WHITE_HAVEN_LONG = 103.7768478;
+const MY_WEATHER:number[] = [WHITE_HAVEN_LAT, WHITE_HAVEN_LONG];
 // clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night
 const MAP_ICON_TO_PICTURE: {[x: string]: string} = {
 	'clear-day': '1018927418276670',
@@ -58,7 +59,7 @@ interface WeatherResponse {
  * @param {number[]} params list of coordinates of the position. Expected length 2
  * @returns {WeatherResponse} formatted response about the weather
  */
-const getWeatherMessage = (...params: number[]): Promise<WeatherResponse> => {
+const getWeatherMessage = (params: number[] = MY_WEATHER): Promise<WeatherResponse> => {
 	return new Promise((response, reject) => {
 		if (!DARKSKY_KEY) reject('missing DARKSKY_KEY');
 		if (params.length !== 2) reject('Expect 2 params for getWeatherMessage()');

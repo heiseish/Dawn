@@ -15,96 +15,95 @@ const MAP_TOPIC_TO_CATEGORY = {
 };
 
 /**
- * Get top headlines
- * @param {any} user
- */
-const getAllHeadlines = (user: any): Promise<any[]> => {
+* Get top headlines
+* @param {Dawn.userType} user
+* @return {news.article} articles
+*/
+const getAllHeadlines = async (user: Dawn.userType): Promise<news.article[]> => {
 	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY');
-	let text = user.lastText;
-	if (text.indexOf('"') !== -1) {
+	let text:string = user.lastText;
+	if (text.includes('"')) {
 		text = replaceAllSubstring(text, '"', '“', '”', 'SHOW', 'NEWS', 'WITH', 'ABOUT', 'ON');
-		return new Promise((resolve) => getHeadlinesWithQuery(text).then((articles) => resolve(articles)));
-	} else {
-		const common: string[] = getCommonMembersFromTwoArrays(Object.keys(MAP_TOPIC_TO_CATEGORY), user.text[user.text.length - 1].tokenizedText);
-		const category: (string | null) = MAP_TOPIC_TO_CATEGORY[common[0]] || null;
-		if (category) { return new Promise((resolve) => getHeadlinesWithCategory(category)
-			.then((articles) => resolve(articles)));
-		} else { return new Promise((resolve) => getRandomTop5Headlines()
-			.then((articles) => resolve(articles)));
-		}
+		return await getHeadlinesWithQuery(text);
+	} 
+	const common: string[] = await getCommonMembersFromTwoArrays<string>(Object.keys(MAP_TOPIC_TO_CATEGORY), 
+	text[text.length - 1].split(' '));
+	const category: (string | null) = MAP_TOPIC_TO_CATEGORY[common[0]] || null;
+	if (category) { 
+		return await getHeadlinesWithCategory(category);
+	} 
+	return await getRandomTop5Headlines();
+};
+
+/**
+* Get a random headline and return the title along with the message
+*/
+const getRandomHeadlines = async (): Promise<string> => {
+	if (!NEWSAPI_KEY) throw new Error('missing NEWSAPI_KEY');
+	try {
+		let res:news.responseObject = await newsapi.v2
+		.topHeadlines({
+			sources: 'techcrunch',
+			language: 'en',
+		})
+		const article:news.article = res.articles[Math.floor(Math.random() * res.articles.length)];
+		return `Random news: ${article.title}`
+	} catch(e) {
+		return Promise.reject(e);
 	}
 };
 
 /**
- * Get a random headline and return the title along with the message
- */
-const getRandomHeadlines = (): Promise<any> => {
-	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY');
-	return new Promise((resolve) => {
-		newsapi.v2
-			.topHeadlines({
-				sources: 'techcrunch',
-				language: 'en',
-			})
-			.then((response) => {
-				const article = response.articles[Math.floor(Math.random() * response.articles.length)];
-				resolve({
-					answerable: true,
-					simpleText: `Random news: ${article.title}`,
-					image: article.urlToImage,
-					url: article.url,
-				});
-			});
-	});
+* Search for articles containing key words
+* @param {string} keyword
+*/
+const getHeadlinesWithQuery = async (keyword: string): Promise<news.article[]> => {
+	if (!NEWSAPI_KEY) throw new Error('missing NEWSAPI_KEY');
+	try {
+		let res:news.responseObject = await newsapi.v2.topHeadlines({
+			sources: GOOD_SOURCES,
+			q: keyword,
+			language: 'en',
+		});
+		return res.articles;
+	} catch(e) {
+		return Promise.reject(e);
+	}
 };
 
 /**
- * Search for articles containing key words
- * @param {string} keyword
- */
-const getHeadlinesWithQuery = (keyword: string): Promise<any[]> => {
-	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY');
-	return new Promise((res) => {
-		newsapi.v2
-			.topHeadlines({
-				sources: GOOD_SOURCES,
-				q: keyword,
-				language: 'en',
-			})
-			.then((response) => res(response.articles));
-	});
+* Search for articles in this category
+* @param {string | null} category
+*/
+const getHeadlinesWithCategory = async (category: string | null): Promise<news.article[]> => {
+	if (!NEWSAPI_KEY) throw new Error('missing NEWSAPI_KEY');
+	try {
+		let res:news.responseObject = await newsapi.v2.topHeadlines({
+			category,
+			language: 'en',
+			country: 'us',
+		});
+		return res.articles;
+	} catch(e) {
+		return Promise.reject(e);
+	}
 };
 
 /**
- * Search for articles in this category
- * @param {string | null} category
- */
-const getHeadlinesWithCategory = (category: string | null): Promise<any[]> => {
-	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY');
-	return new Promise((res) => {
-		newsapi.v2
-			.topHeadlines({
-				category,
-				language: 'en',
-				country: 'us',
-			})
-			.then((response) => res(response.articles));
-	});
-};
-
-/**
- * Get random top headlines articles
- */
-const getRandomTop5Headlines = (): Promise<any[]> => {
-	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY');
-	return new Promise((res) => {
-		newsapi.v2
-			.topHeadlines({
-				sources: GOOD_SOURCES,
-				language: 'en',
-			})
-			.then((response) => res(response.articles));
-	});
+* Get random top headlines articles
+*/
+const getRandomTop5Headlines = async (): Promise<news.article[]> => {
+	if (!NEWSAPI_KEY) throw new Error('missing NEWSAPI_KEY');
+	try {
+		let res:news.responseObject = await newsapi.v2.topHeadlines({
+			sources: GOOD_SOURCES,
+			language: 'en',
+		});
+		return res.articles;
+	} catch(e) {
+		return Promise.reject(e);
+	}
+	
 };
 
 export {
