@@ -19,6 +19,7 @@ const sleepSync = (ms: number): void =>  {
 	while (new Date().getTime() < expire) { }
 	return;
 };
+const THRESH_HOLD = 0.55;
 describe('Benchmark Module Test', function() {
 	describe('bindTrailingArgumentFromNIndex()', function() {
 		it('Should return correct result regardless of order of arguments [2 arguments]', function() {
@@ -60,7 +61,7 @@ describe('Benchmark Module Test', function() {
 	});
 
 	describe('measureExecutionTimeAsync()', function() {
-		const THRESH_HOLD = 0.4;
+		
 		it('Should return a promise', async function() {
 			const add = async (...args: number[]): Promise<number> => args.reduce((a: number, b: number) => a * b);
 			const res = measureExecutionTimeAsync(add.bind(null, 2, 3, 4, 5, 6, 9, 1, 2 , 3 , 4, 5, 1, 2 , 34, 1, 2));
@@ -104,7 +105,7 @@ describe('Benchmark Module Test', function() {
 	});
 
 	describe('measureExecutionTimeSync()', function() {
-		const THRESH_HOLD = 0.4;
+		
 
 		it('Should return 2 numbers representing execution time of an sync function', function() {
 			const add = (...args: number[]): number => args.reduce((a: number, b: number) => a * b);
@@ -143,7 +144,7 @@ describe('Benchmark Module Test', function() {
 	});
 
 	describe('measureExecutionTimeCallback()', function() {
-		const THRESH_HOLD = 0.4;
+		
 		it('Should return a promise', async function() {
 			const add = (cb: Function, ...args: number[]): number => {
 				const a: number = args.reduce((a: number, b: number) => a * b);
