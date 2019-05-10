@@ -1,20 +1,20 @@
-import { expect } from 'chai'
+import { expect } from 'chai';
 import {
 	waitToDo,
-} from '../../src/main/utils/timer'
+} from '../../src/main/utils/timer';
 
 describe('Timer Utils', function() {
 	describe('waitToDo()', function() {
 		it('Should execute a function after the timer', function() {
-			let arr = [1, 'nice']
+			const arr = [1, 'nice'];
 			waitToDo(1000, () => {
-				arr[0] = 2
-			})
+				arr[0] = 2;
+			});
 			setTimeout(() => {
 				expect(arr)
 					.to.be.an('array')
-					.and.to.be.deep.equal([2, 'nice'])
-			}, 1000)
-		})
-	})
-})
+					.and.to.be.deep.equal([2, 'nice']);
+			}, 1000);
+		});
+	});
+});

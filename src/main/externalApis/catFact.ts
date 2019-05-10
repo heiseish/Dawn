@@ -8,7 +8,7 @@ import {
  */
 export default async (): Promise<string> => {
 	try {
-		let result = await externalAPIRequest({ uri : CAT_FACT_URI});
+		const result = await externalAPIRequest({ uri : CAT_FACT_URI});
 		if (result.fact.length >= 320) {
 			return 'Cat is an animal😺';
 		} else {
@@ -16,7 +16,7 @@ export default async (): Promise<string> => {
 			fact = fact.substring(0, fact.length - 1);
 			return `Do you know that ${fact}?`;
 		}
-	} catch(e) {
+	} catch (e) {
 		return Promise.reject(e);
 	}
 };

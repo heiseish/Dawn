@@ -9,7 +9,6 @@ import { padLeft, padRight } from '../utils/string';
 const MAX_COUNTRY_LENGTH = 10;
 const MAX_GOALS_LENGTH = 2;
 
-
 /**
  * Pad right of the text
  * @param value value to pad right
@@ -22,16 +21,16 @@ const rpad = ( value: string, char: string, length: number ): string => {
 };
 
 interface Match {
-	status: 'completed' | 'in progress'| 'ongoing',
-	datetime: string,
+	status: 'completed' | 'in progress'| 'ongoing';
+	datetime: string;
 	home_team: {
 		country: string,
-		goals: string 
-	},
+		goals: string
+	};
 	away_team: {
 		country: string,
-		goals: string 
-	}
+		goals: string
+	};
 }
 /**
  * Check if a match is completed or in progress
@@ -41,7 +40,6 @@ interface Match {
 const isCompletedOrInProgress = (match: Match): boolean => {
 	return match.status === 'completed' || match.status === 'in progress';
 };
-
 
 /**
  * Check if a match is happening today
@@ -59,7 +57,6 @@ const matchHappeningToday = (match: Match): boolean => {
 	&& (date.getDate() + date.getHours().toString() !== today.getDate() + '2');
 };
 
-
 /**
  * Get country flag with moji module
  * @param value country name
@@ -68,7 +65,6 @@ const matchHappeningToday = (match: Match): boolean => {
 const getCountryFlag = ( value: string ): string => {
 	return mojiTranslate.translate( value.replace(/ /g, '_'), true );
 };
-
 
 /**
  * Get nicely formatted message about the happening match
@@ -139,14 +135,14 @@ const getWCSchedule = async (): Promise<string> => {
 
 		let message = 'Last 3 matches: \n';
 		if (!_.isEmpty(past)) {
-			for (const match of past) { 
-				message += match + '\n'; 
+			for (const match of past) {
+				message += match + '\n';
 			}
 		}
 		message += 'Today matches: \n';
 		if (!_.isEmpty(present)) {
-			for (const match of present) { 
-				message += match + '\n'; 
+			for (const match of present) {
+				message += match + '\n';
 			}
 		}
 

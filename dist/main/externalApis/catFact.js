@@ -16,7 +16,7 @@ const request_1 = require("../utils/request");
  */
 exports.default = () => __awaiter(this, void 0, void 0, function* () {
     try {
-        let result = yield request_1.externalAPIRequest({ uri: CAT_FACT_URI });
+        const result = yield request_1.externalAPIRequest({ uri: CAT_FACT_URI });
         if (result.fact.length >= 320) {
             return 'Cat is an animal😺';
         }

@@ -14,13 +14,13 @@ const externalAPIRequest = async (options: rp.OptionsWithUri): Promise<any> => {
 	};
 	options.json =  true; // Automatically parses the JSON string in the response,
 	try {
-		let res = await rp(options);
+		const res = await rp(options);
 		return res;
-	} catch(e) {
+	} catch (e) {
 		return Promise.reject(e);
 	}
-}
+};
 
 export {
 	externalAPIRequest
-}
+};

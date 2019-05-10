@@ -24,7 +24,7 @@ const externalAPIRequest = (options) => __awaiter(this, void 0, void 0, function
     };
     options.json = true; // Automatically parses the JSON string in the response,
     try {
-        let res = yield request_promise_1.default(options);
+        const res = yield request_promise_1.default(options);
         return res;
     }
     catch (e) {

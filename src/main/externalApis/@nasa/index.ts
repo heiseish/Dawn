@@ -24,7 +24,7 @@ interface nasaApiObject {
 const getDailyNasaNews = async (): Promise<nasaApiObject> => {
 	try {
 		return await externalAPIRequest({ uri: NASA_API_URL});
-	} catch(e) {
+	} catch (e) {
 		return Promise.reject(e);
 	}
 };

@@ -17,10 +17,10 @@ const request_1 = require("../utils/request");
  */
 const getUserRating = (handle) => __awaiter(this, void 0, void 0, function* () {
     try {
-        let res = yield request_1.externalAPIRequest({
+        const res = yield request_1.externalAPIRequest({
             uri: CODEFORCE_API + handle,
         });
-        let result = JSON.parse(res).result[0];
+        const result = JSON.parse(res).result[0];
         return {
             rating: result.rating,
             rank: result.rank,

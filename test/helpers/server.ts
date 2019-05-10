@@ -1,13 +1,13 @@
-import axios from 'axios'
-const { spawn } = require('child_process')
-import getPort from 'get-port'
-import * as mockEnv from '../../src/main/environment'
-import { POTT_REST_API_ENDPOINT_RESPONSE_TIME } from '../data/api'
+import axios from 'axios';
+const { spawn } = require('child_process');
+import getPort from 'get-port';
+import * as mockEnv from '../../src/main/environment';
+import { POTT_REST_API_ENDPOINT_RESPONSE_TIME } from '../data/api';
 const TEST_ENV = {
 	PORT: undefined, // Assigned at runtime
 	MONGODB_URI: 'mongodb://localhost:27017',
 	MONGODB_DB: 'potts-db-test',
-}
+};
 
 /**
  * spawnServer is a utility function that starts a test server with a given set
@@ -15,22 +15,22 @@ const TEST_ENV = {
  * ChildProcess of the server once it is reachable at its base URL
  * @param {any} env
  */
-const spawnServer = (env): Promise<void> => {
+const spawnServer = (env: any): Promise<void> => {
 	return new Promise((resolve, reject) => {
-		const server = spawn('ts-node', ['--files', 'src/index'], { env })
+		const server = spawn('ts-node', ['--files', 'src/index'], { env });
 
 		// Pipe the test server's stdout and stderr to our main process so that we
 		// can see console.logs and errors of our server when running our tests
-		server.stdout.pipe(process.stdout)
-		server.stderr.pipe(process.stderr)
+		server.stdout.pipe(process.stdout);
+		server.stderr.pipe(process.stderr);
 
-		server.on('error', reject)
+		server.on('error', reject);
 		// Wait for the server to be reachable
 		waitForURLReachable(`http://localhost:${env.PORT}/`)
 			.then(() => resolve(server))
-			.catch(reject)
-	})
-}
+			.catch(reject);
+	});
+};
 
 /**
  * waitForURLReachable is a utility function that tries to GET a URL until it
@@ -40,20 +40,20 @@ const spawnServer = (env): Promise<void> => {
  * @param {any} param1
  */
 const  waitForURLReachable = async (url, { timeout = POTT_REST_API_ENDPOINT_RESPONSE_TIME } = {}): Promise<void>  => {
-	const timeoutThreshold = Date.now() + timeout
+	const timeoutThreshold = Date.now() + timeout;
 	while (true) { // eslint-disable-line no-constant-condition
 		try {
-			await axios.get(url)
-			return
+			await axios.get(url);
+			return;
 		} catch (err) {
 			if (Date.now() > timeoutThreshold) {
-				throw new Error(`URL ${url} not reachable after ${timeout}ms`)
+				throw new Error(`URL ${url} not reachable after ${timeout}ms`);
 			}
 
-			await new Promise((resolve) => setTimeout(resolve, 100))
+			await new Promise((resolve) => setTimeout(resolve, 100));
 		}
 	}
-}
+};
 
 const useInTest = (): void => {
 	before(async function startTestServer() {
@@ -65,28 +65,29 @@ const useInTest = (): void => {
 			...mockEnv,
 			PATH: process.env.PATH,
 			PORT: await getPort(),
-		})
+			NODE_ENV: 'test',
+		});
 		// Use our utility function that we created above to spawn the test server
-		const testServer = await spawnServer(env)
+		const testServer = await spawnServer(env);
 		// Create an axios instance that is configured to use the test server as its
 		// base URL and expose it as `this.api`. This allows us to easily make
 		// requests like `this.api.get('/todos')` from within our test files
-		const api = axios.create({ baseURL: `http://localhost:${env.PORT}` })
+		const api = axios.create({ baseURL: `http://localhost:${env.PORT}` });
 
-		this.testServer = testServer
-		this.api = api
-	})
+		this.testServer = testServer;
+		this.api = api;
+	});
 
 	after(function stopTestServer() {
 		// After all tests, stop the test server...
 		if (this.testServer) {
-			this.testServer.kill('SIGINT')
+			this.testServer.kill('SIGINT');
 
 			// ...and wait for it clearto shut down
-			return new Promise((resolve) => this.testServer.on('close', () => resolve()))
-		} else { return Promise.resolve() }
-	})
-}
+			return new Promise((resolve) => this.testServer.on('close', () => resolve()));
+		} else { return Promise.resolve(); }
+	});
+};
 
 const useInTestWithoutEnvParams = (...envParams: string[]): void => {
 	before(async function startTestServer() {
@@ -98,32 +99,32 @@ const useInTestWithoutEnvParams = (...envParams: string[]): void => {
 			...mockEnv,
 			PATH: process.env.PATH,
 			PORT: await getPort(),
-		})
-		for (const param of envParams) { delete env[param] }
+		});
+		for (const param of envParams) { delete env[param]; }
 		// Use our utility function that we created above to spawn the test server
-		const testServer = await spawnServer(env)
+		const testServer = await spawnServer(env);
 		// Create an axios instance that is configured to use the test server as its
 		// base URL and expose it as `this.api`. This allows us to easily make
 		// requests like `this.api.get('/todos')` from within our test files
-		const api = axios.create({ baseURL: `http://localhost:${env.PORT}` })
+		const api = axios.create({ baseURL: `http://localhost:${env.PORT}` });
 
-		this.testServer = testServer
-		this.api = api
-	})
+		this.testServer = testServer;
+		this.api = api;
+	});
 
 	after(function stopTestServer() {
 		// After all tests, stop the test server...
 		if (this.testServer) {
-			this.testServer.kill('SIGINT')
+			this.testServer.kill('SIGINT');
 
 			// ...and wait for it clearto shut down
-			return new Promise((resolve) => this.testServer.on('close', () => resolve()))
-		} else { return Promise.resolve() }
-	})
-}
+			return new Promise((resolve) => this.testServer.on('close', () => resolve()));
+		} else { return Promise.resolve(); }
+	});
+};
 
 export {
 	POTT_REST_API_ENDPOINT_RESPONSE_TIME,
 	useInTest,
 	useInTestWithoutEnvParams,
-}
+};
