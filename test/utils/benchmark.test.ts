@@ -19,9 +19,12 @@ const sleepSync = (ms: number): void =>  {
 	while (new Date().getTime() < expire) { }
 	return;
 };
-const THRESH_HOLD:number = 0.55;
-const TRY_ATTEMP:number = 100;
+const SLEEP_TIME:number = 100;
+const THRESH_HOLD:number = process.env.NODE_ENV == 'travis' ? 2 : 1;
+const TRY_ATTEMP:number = 50;
 describe('Benchmark Module Test', function() {
+	this.timeout(10000);
+
 	describe('bindTrailingArgumentFromNIndex()', function() {
 		it('Should return correct result regardless of order of arguments [2 arguments]', function() {
 			const add = (a: number, b: number): number => a + b;
@@ -79,7 +82,7 @@ describe('Benchmark Module Test', function() {
 		
 		it(`Should return highly accurate execution number by process.hr ${THRESH_HOLD * 100}% within the \
 		correct execution time`, async function() {
-			const SLEEP_TIME = 10;
+			
 			for (let i = 0; i < TRY_ATTEMP; ++i) {
 				const res = await measureExecutionTimeAsync(sleep.bind(null, SLEEP_TIME));
 				expect(res)
@@ -95,7 +98,7 @@ describe('Benchmark Module Test', function() {
 		
 		it(`Should return highly accurate execution number by performance.now ${THRESH_HOLD * 100}% within the \
 		correct execution time`, async function() {
-			const SLEEP_TIME = 10;
+			
 			for (let i = 0; i < TRY_ATTEMP; ++i) {
 				const res = await measureExecutionTimeAsync(sleep.bind(null, SLEEP_TIME));
 				expect(res)
@@ -123,7 +126,7 @@ describe('Benchmark Module Test', function() {
 		
 		it(`Should return highly accurate execution number by process.hr ${THRESH_HOLD * 100}% within the \
 		correct execution time`,  function() {
-			const SLEEP_TIME = 10;
+			
 			for (let i = 0; i < TRY_ATTEMP; ++i) {
 				const res =  measureExecutionTimeSync(sleepSync.bind(null, SLEEP_TIME));
 				expect(res)
@@ -138,7 +141,7 @@ describe('Benchmark Module Test', function() {
 		
 		it(`Should return highly accurate execution number by performance.now ${THRESH_HOLD * 100}% within the \
 		correct execution time`,  function() {
-			const SLEEP_TIME = 10;
+			
 			for (let i = 0; i < TRY_ATTEMP; ++i) {
 				const res =  measureExecutionTimeSync(sleepSync.bind(null, SLEEP_TIME));
 				expect(res)
@@ -182,7 +185,7 @@ describe('Benchmark Module Test', function() {
 		
 		it(`Should return highly accurate execution number by process.hr ${THRESH_HOLD * 100}% within the \
 		correct execution time`, async function() {
-			const SLEEP_TIME = 10;
+			
 			const partiallyBoundFn = bindTrailingArgumentFromNIndex(setTimeout, 2, SLEEP_TIME);
 			for (let i = 0; i < TRY_ATTEMP; ++i) {
 				const res =  await measureExecutionTimeCallback(partiallyBoundFn);
@@ -197,7 +200,7 @@ describe('Benchmark Module Test', function() {
 		
 		it(`Should return highly accurate execution number by performance.now ${THRESH_HOLD * 100}% within the \
 		correct execution time`,  async function() {
-			const SLEEP_TIME = 10;
+			
 			const partiallyBoundFn = bindTrailingArgumentFromNIndex(setTimeout, 2, SLEEP_TIME);
 			for (let i = 0; i < TRY_ATTEMP; ++i) {
 				const res =  await measureExecutionTimeCallback(partiallyBoundFn);

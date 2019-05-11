@@ -8,7 +8,8 @@
   "scripts": {
     "setup": "yarn install",
     "build-only": "npx tsc",
-    "test": "NODE_ENV=test npx ts-node --files test/index.ts",
+	"test": "NODE_ENV=test npx ts-node --files test/index.ts",
+	"test:travis": "NODE_ENV=travis npx ts-node --files test/index.ts",
     "start": "node dist/index.js",
 	"testrun": "npx tsc && yarn start",
 	"benchmark": "npx ts-node --files benchmark/index.ts",

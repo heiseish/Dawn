@@ -78,7 +78,8 @@ class Logger {
 	 * @param color color of primary text
 	 */
 	private log(text: string, level: 'info' | 'error' | 'warn', component: string | null) {
-		if (process.env.NODE_ENV === 'test') return; /* Prevent logging during test */
+		if (process.env.NODE_ENV === 'test' || 
+			process.env.NODE_ENV === 'travis') return; /* Prevent logging during test */
 		let color;
 		switch (level) {
 			case 'info':

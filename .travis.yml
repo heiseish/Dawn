@@ -3,11 +3,11 @@ node_js:
   - "12"
 
 before_script:
-  - yarn  setup
+  - yarn setup
   - yarn build-only
 
 script:
-  - yarn test
+  - yarn test:travis
 
 after_success:
   - yarn typedoc
