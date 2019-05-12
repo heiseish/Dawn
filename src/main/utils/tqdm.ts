@@ -8,7 +8,7 @@ import chalk from 'chalk';
 * @param {number} elapsed - time taken so fa in ms
 * @return {string} the progress bas strings
 */
-const MAX_TILES = 70; /* Number of tiles for the progress bar */
+const MAX_TILES = process.stdout.columns / 2; /* Number of tiles for the progress bar */
 const _render = (n: number, total: number, elapsed: number): string => {
 	let cent: number = n / total * 100;
 	const est: number = Math.max((100 - (cent + 0.000001)) / (cent + 0.0000001) * elapsed, 0);
