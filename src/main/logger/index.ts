@@ -61,7 +61,7 @@ class Logger {
 	* Logging separator symbols
 	* @param text separator symbols
 	*/
-	separator(text = '====================================================================================') {
+	separator(text = '='.repeat(process.stdout.columns)) {
 		console.log(chalk.yellow(text));
 	}
 	/**

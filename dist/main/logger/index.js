@@ -61,7 +61,7 @@ class Logger {
     * Logging separator symbols
     * @param text separator symbols
     */
-    separator(text = '====================================================================================') {
+    separator(text = '='.repeat(process.stdout.columns)) {
         console.log(chalk_1.default.yellow(text));
     }
     /**
@@ -79,7 +79,7 @@ class Logger {
      * @param color color of primary text
      */
     log(text, level, component) {
-        if (process.env.NODE_ENV === 'test')
+        if (Logger.ENV_TO_EXCLUDE.includes(process.env.NODE_ENV))
             return; /* Prevent logging during test */
         let color;
         switch (level) {
@@ -99,5 +99,6 @@ class Logger {
             + color(`[${level}]`) + (component ? chalk_1.default.blue(`[${component}]: `) : ': ') + chalk_1.default.cyan(text));
     }
 }
+Logger.ENV_TO_EXCLUDE = ['test', 'travis'];
 exports.default = new Logger();
 //# sourceMappingURL=index.js.map
