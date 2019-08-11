@@ -13,8 +13,6 @@ export default async (ctx: dawn.Context, cache: dawn.Cache): Promise<dawn.Contex
 	} catch (e) {
 		return Promise.reject(e);
 	} finally {
-        if (timer != null) {
-            timer.stop('Retrieved user');
-        }
+        timer.stop('Retrieved user');
     }
 };

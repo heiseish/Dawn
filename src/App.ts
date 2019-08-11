@@ -140,9 +140,9 @@ export default class App implements dawn.App {
 
 	/**
 	* Loading streaming service
-	* @param {string[]} people list of people to send to
+	* @param {dawn.StreamPerson[]} people list of people to send to
 	*/
-	private loadStreamingEndpoint(people: string[]): void {
+	private loadStreamingEndpoint(people: dawn.StreamPerson[]): void {
         if (NODE_ENV != 'local') {
             this.streams = [];
             this.streams.push(new TwitterStreaming());

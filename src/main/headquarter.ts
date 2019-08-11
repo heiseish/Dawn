@@ -1,8 +1,8 @@
-import analyze from './analyze';
-import execute from './execute';
-import getUser from './getUser';
+import Analyze from './analyze';
+import Execute from './execute';
+import GetUser from './getUser';
 import Logger from './logger';
-import respond from './respond';
+import Respond from './respond';
 import Cache from './model/cache';
 import Sweeper from './sweeper';
 
@@ -22,10 +22,10 @@ export default class Headquarter {
     async receive(ctx: dawn.Context): Promise<void> {
 		Logger.info('Transfering event to headquarter..', false, Headquarter.name);
 		try {
-			let user = await getUser(ctx, this.cache);
-			user = await analyze(ctx);
-			user = await execute(ctx);
-			await respond(ctx);
+			let user = await GetUser(ctx, this.cache);
+			user = await Analyze(ctx);
+			user = await Execute(ctx);
+			await Respond(ctx);
 			this.cache.saveUser(user.id, user);
 		} catch (err) {
 			Logger.error(err);

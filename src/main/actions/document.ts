@@ -3,7 +3,7 @@ import idx from 'idx';
 import getRandomGif from '../3rdparty/giphy';
 
 export default class Document implements dawn.Action {
-    public name = 'sendDocument';
+    public name = 'document';
     /**
      * Handle document from messenger
      * @param {dawn.Context} user
@@ -16,7 +16,7 @@ export default class Document implements dawn.Action {
             case 'image':
                 const res = await getRandomGif();
                 user.response = {
-                    image:  [res],
+                    image: [res],
                     url: [res]
                 };
                 break;

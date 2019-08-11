@@ -133,10 +133,10 @@ class App {
     }
     /**
     * Loading streaming service
-    * @param {string[]} people list of people to send to
+    * @param {dawn.StreamPerson[]} people list of people to send to
     */
     loadStreamingEndpoint(people) {
-        if (environment_1.MODE != 'local') {
+        if (environment_1.NODE_ENV != 'local') {
             this.streams = [];
             this.streams.push(new twitter_1.default());
             this.streams.push(new morningNasa_1.default());

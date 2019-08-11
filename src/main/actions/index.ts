@@ -5,7 +5,7 @@ import Greet from './greet';
 import Help from './help';
 import News from './news';
 import PokemonGo from './pkmGo';
-import Document from './sendDocument';
+import Document from './document';
 import Unknown from './unknown';
 import Weather from './weather';
 import WorldCup from './worldCup';

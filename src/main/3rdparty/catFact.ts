@@ -1,7 +1,7 @@
-const CAT_FACT_URI = 'https://catfact.ninja/fact';
 import {
 	externalAPIRequest
 } from '../utils/request';
+const CAT_FACT_URI = 'https://catfact.ninja/fact';
 /**
  * Retrieve a random cat from cat fact API
  * @returns {Promise<string>} promise with cat fact string

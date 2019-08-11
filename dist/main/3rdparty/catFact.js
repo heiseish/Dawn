@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const CAT_FACT_URI = 'https://catfact.ninja/fact';
 const request_1 = require("../utils/request");
+const CAT_FACT_URI = 'https://catfact.ninja/fact';
 /**
  * Retrieve a random cat from cat fact API
  * @returns {Promise<string>} promise with cat fact string

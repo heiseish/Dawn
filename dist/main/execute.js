@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chalk_1 = __importDefault(require("chalk"));
 const index_1 = __importDefault(require("./actions/index"));
 const logger_1 = __importDefault(require("./logger"));
-let executer = new index_1.default();
+const executer = new index_1.default();
 /**
 * Execute action
 * @param {dawn.Context} payload

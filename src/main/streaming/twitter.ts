@@ -68,7 +68,7 @@ export default class TwitterStreaming implements dawn.Streamer {
 	 * Start listenning to twitter streaming api
 	 * @param {string[]} people list of people to send message to
 	 */
-	startStreaming(people: string[]): void {
+	startStreaming(people: dawn.StreamPerson[]): void {
 		Logger.info('Starting twitter stream');
 		this.twitterStreaming = this.streaming.subscribe({
 			next: (x: OberservableTweet) => {

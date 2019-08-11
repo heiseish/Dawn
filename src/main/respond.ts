@@ -2,6 +2,13 @@ import { translate } from './3rdparty/@google/translate';
 import Logger from './logger';
 import respondMessenger from './messenger/respond';
 import respondTelegram from './telegram/respond';
+
+
+const respondOptions: dawn.RespondProcess = {
+    'telegram': respondTelegram,
+    'messenger': respondMessenger
+}
+const respond = (sp: dawn.SupportedPlatform) => respondOptions[sp];
 /**
 * Respond to original message
 * @param {dawn.Context} user
@@ -10,18 +17,7 @@ export default async (ctx: dawn.Context): Promise<void> => {
 	try {
 		const log = Logger.info('Responding...', true);
 		ctx = await prepareResponseForSending(ctx);
-		switch (ctx.platform) {
-			case 'telegram':
-			await respondTelegram(ctx);
-			break;
-
-			case 'messenger':
-			await respondMessenger(ctx);
-			break;
-
-			default:
-
-		}
+		respond(ctx.platform)(ctx);
 		ctx.response = {/* Sanitize reponse object */};
 		log.stop('Responded.');
 	} catch (e) {

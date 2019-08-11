@@ -18,7 +18,16 @@ describe('Firebase', function() {
 	describe('#getStreamingAudience()', function() {
 		it('Should be able to get audience from firebase', async function() {
 			const audience = await this.db.getStreamingAudience();
-			const RESULT = ['mes1200016940105472', 'tlg176561917'];
+			const RESULT  = [
+                {
+                    id: '1200016940105472',
+                    platform: 'messenger'
+                }, 
+                {
+                    id : '176561917',
+                    platform: 'telegram'
+                }
+            ];
 			expect(audience)
 				.to.be.an('array')
 				.and.to.be.deep.equal(RESULT);

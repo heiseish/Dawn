@@ -17,7 +17,7 @@ export default class CodeforceStream implements dawn.Streamer {
 	 * @param list list of person to send message to
 	 * @returns void
 	 */
-	startStreaming(list: string[]): void {
+	startStreaming(list: dawn.StreamPerson[]): void {
 		this.scheduler = schedule.scheduleJob('*/20 * * * *', async () => {
 			const users: CodeforceUser[] = await this.firebase.getCodeforceHandle();
 			for (const user of Object.values(users)) {

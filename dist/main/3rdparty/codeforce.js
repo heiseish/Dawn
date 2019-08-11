@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const CODEFORCE_API = 'http://codeforces.com/api/user.info?handles=';
 const request_1 = require("../utils/request");
+const CODEFORCE_API = 'http://codeforces.com/api/user.info?handles=';
 /**
  * Get user rating
  * @param {string} handle handle of codeforce user

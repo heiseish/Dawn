@@ -27,9 +27,7 @@ exports.default = (ctx, cache) => __awaiter(this, void 0, void 0, function* () {
         return Promise.reject(e);
     }
     finally {
-        if (timer != null) {
-            timer.stop('Retrieved user');
-        }
+        timer.stop('Retrieved user');
     }
 });
 //# sourceMappingURL=getUser.js.map

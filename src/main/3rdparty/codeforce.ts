@@ -1,7 +1,7 @@
-const CODEFORCE_API = 'http://codeforces.com/api/user.info?handles=';
 import {
 	externalAPIRequest
 } from '../utils/request';
+const CODEFORCE_API = 'http://codeforces.com/api/user.info?handles=';
 /**
  * Get user rating
  * @param {string} handle handle of codeforce user

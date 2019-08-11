@@ -17,7 +17,7 @@ const greet_1 = __importDefault(require("./greet"));
 const help_1 = __importDefault(require("./help"));
 const news_1 = __importDefault(require("./news"));
 const pkmGo_1 = __importDefault(require("./pkmGo"));
-const sendDocument_1 = __importDefault(require("./sendDocument"));
+const document_1 = __importDefault(require("./document"));
 const unknown_1 = __importDefault(require("./unknown"));
 const weather_1 = __importDefault(require("./weather"));
 const worldCup_1 = __importDefault(require("./worldCup"));
@@ -31,7 +31,7 @@ class ActionInterface {
         this.lst.push(new help_1.default());
         this.lst.push(new news_1.default());
         this.lst.push(new pkmGo_1.default());
-        this.lst.push(new sendDocument_1.default());
+        this.lst.push(new document_1.default());
         this.lst.push(new unknown_1.default());
         this.lst.push(new worldCup_1.default());
         this.lst.push(new weather_1.default());

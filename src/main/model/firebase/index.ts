@@ -1,4 +1,3 @@
-import { temporalPadding } from '@tensorflow/tfjs-layers/dist/layers/padding';
 import * as admin from 'firebase-admin';
 import { decrypt } from '../../lib/encrypt';
 import Logger from '../../logger';
@@ -30,15 +29,18 @@ export default class Firebase {
 
 	/**
 	* Get a list of streaming audience
-	* @returns {Promise<string[]>} list of streaming audience
+	* @returns {Promise<dawn.StreamPerson[]>} list of streaming audience
 	*/
-	async getStreamingAudience(): Promise<string[]> {
+	async getStreamingAudience(): Promise<dawn.StreamPerson[]> {
 		try {
 			const snap = await this.db.database().ref('restricted_access/streaming/').once('value');
 			const result = snap.val();
-			let audience = [] as string[];
-			if (Array.isArray(result)) audience = result;
-			else if (typeof result === 'object') audience = Object.values(result);
+			let audience = [] as dawn.StreamPerson[];
+			if (Array.isArray(result)) {
+                audience = result;
+            } else if (typeof result === 'object') {
+                audience = Object.values(result);
+            }
 			return audience;
 		} catch (e) {
 			Logger.error(e, Firebase.name);

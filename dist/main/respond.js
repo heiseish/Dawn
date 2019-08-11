@@ -15,6 +15,11 @@ const translate_1 = require("./3rdparty/@google/translate");
 const logger_1 = __importDefault(require("./logger"));
 const respond_1 = __importDefault(require("./messenger/respond"));
 const respond_2 = __importDefault(require("./telegram/respond"));
+const respondOptions = {
+    'telegram': respond_2.default,
+    'messenger': respond_1.default
+};
+const respond = (sp) => respondOptions[sp];
 /**
 * Respond to original message
 * @param {dawn.Context} user
@@ -23,15 +28,7 @@ exports.default = (ctx) => __awaiter(this, void 0, void 0, function* () {
     try {
         const log = logger_1.default.info('Responding...', true);
         ctx = yield prepareResponseForSending(ctx);
-        switch (ctx.platform) {
-            case 'telegram':
-                yield respond_2.default(ctx);
-                break;
-            case 'messenger':
-                yield respond_1.default(ctx);
-                break;
-            default:
-        }
+        respond(ctx.platform)(ctx);
         ctx.response = { /* Sanitize reponse object */};
         log.stop('Responded.');
     }
