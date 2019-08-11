@@ -1,4 +1,4 @@
-import { getNingOfTheDay } from '../externalApis/moment';
+import { getNingOfTheDay } from '../3rdparty/moment';
 import { randomIndex } from '../utils/array';
 
 /**

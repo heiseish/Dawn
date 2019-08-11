@@ -1,6 +1,6 @@
 import idx from  'idx';
 import { Observable } from 'rxjs';
-import { client } from '../externalApis/@twitter';
+import { client } from '../3rdparty/@twitter';
 import Logger from '../logger';
 import stream from './';
 
@@ -35,7 +35,7 @@ interface OberservableTweet {
 /**
  * Class for twitter streaming
  */
-export default class TwitterStreaming implements Dawn.Streamer {
+export default class TwitterStreaming implements dawn.Streamer {
 	private streaming;
 	private twitterStreaming;
 

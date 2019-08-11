@@ -1,47 +1,24 @@
 import chalk from 'chalk';
-import actions from './actions';
-import { converse } from './externalApis/@facebook/pytorch/';
+import ActionInterface from './actions/index';
+import { converse } from './3rdparty/@facebook/pytorch';
 import Logger from './logger';
+
+let executer = new ActionInterface();
 /**
-* Return a partial unique userId from incoming event to identify user
-* @param {supportedPlatform} platform supported platform currently
-* @param {any} payload
+* Execute action
+* @param {dawn.Context} payload
 * @return updated user
 */
-export default async (user: Dawn.userType): Promise<Dawn.userType> => {
+export default async (ctx: dawn.Context): Promise<dawn.Context> => {
 	const log = Logger.info('Executing', true);
 	try {
-		const action: Dawn.Action = getAction(actions, user.entity.lastIntent);
-		if (action) {
-			user = await action.execute(user);
-			log.stop('Executed with intent: ' + chalk.blue(user.entity.lastIntent) + '.');
-		} else {
-			user.response = {
-				simpleText: await converse(user.lastText),
-				answerable: true,
-			};
-			log.stop('Executed with normal conversing');
-		}
-		return user;
+		ctx = await executer.execute(ctx.entity, ctx);
+		log.stop('Executed with intent: ' + chalk.blue(ctx.entity) + '.');
+		return ctx;
 	} catch (e) {
-		log.stop('Error');
 		return Promise.reject(e);
-	}
+	} finally {
+        log.stop('Executed');
+    }
 
-};
-
-/**
- * Check if an  array of objects hay any object that contains a key with a specific attribute value.
- * @param {Dawn.Action[]}} arr
- * @param {string} attribute
- * @param {string} key
- * @return object with key equal to some values, null if there is no such object
- */
-const getAction = (arr: Dawn.Action[], attribute: string, key = 'name'): Dawn.Action | null => {
-	for (const object of arr) {
-		if (object[key] === attribute) {
-			return object;
-		}
-	}
-	return null;
 };

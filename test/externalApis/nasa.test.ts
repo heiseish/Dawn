@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import getDailyNasaNews  from '../../src/main/externalApis/@nasa';
+import getDailyNasaNews  from '../../src/main/3rdparty/@nasa';
 import { NASA_API_RESPONSE_TIME } from '../data/api';
 
 const useInTest = (): void => {

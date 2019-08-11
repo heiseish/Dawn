@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const idx_1 = __importDefault(require("idx"));
-const moment_1 = require("../../externalApis/moment");
+const moment_1 = require("../../3rdparty/moment");
 const logger_1 = __importDefault(require("../../logger"));
 /**
  * Parse News API articles to display on facebook messenger list template.

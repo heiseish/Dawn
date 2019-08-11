@@ -11,23 +11,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const worldCup_1 = __importDefault(require("../externalApis/worldCup"));
-/**
- * Return today world cup schedule
- * @param {Dawn.userType} user
- * @return Promise containing updated response
- */
-exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
-    try {
-        const message = yield worldCup_1.default();
-        user.response = {
-            answerable: true,
-            simpleText: message,
-        };
-        return user;
+const worldCup_1 = __importDefault(require("../3rdparty/worldCup"));
+class WorldCup {
+    constructor() {
+        this.name = 'worldCup';
+        /**
+         * Return today world cup schedule
+         * @param {dawn.Context} user
+         * @return Promise containing updated response
+         */
+        this.execute = (user) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const message = yield worldCup_1.default();
+                user.response = {
+                    text: [message],
+                };
+                return user;
+            }
+            catch (e) {
+                return Promise.reject(e);
+            }
+        });
     }
-    catch (e) {
-        return Promise.reject(e);
-    }
-});
+}
+exports.default = WorldCup;
 //# sourceMappingURL=worldCup.js.map

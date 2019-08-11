@@ -9,16 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const string_1 = require("../lib/string");
-/**
- * Reply to good bye message
- * @param {Dawn.userType} user
- * @return updated user
- */
-exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
-    user.response = {
-        simpleText: string_1.randomByeMessage(user.name.first),
-        answerable: true,
-    };
-    return user;
-});
+class Bye {
+    constructor() {
+        this.name = 'bye';
+        /**
+         * Reply to good bye message
+         * @param {dawn.Context} user
+         * @return updated user
+         */
+        this.execute = (user) => __awaiter(this, void 0, void 0, function* () {
+            user.response = {
+                text: [string_1.randomByeMessage(user.name.first)],
+            };
+            return user;
+        });
+    }
+}
+exports.default = Bye;
 //# sourceMappingURL=bye.js.map

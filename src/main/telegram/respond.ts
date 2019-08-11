@@ -1,39 +1,39 @@
 import { randomConfusedMessage } from '../lib/string';
 import {
-	tlgDocument,
-	tlgImage,
-	tlgMessage,
+	tlgDocument as document,
+	tlgImage as image,
+	tlgMessage as message,
 } from './api';
 /**
 * Respond in telegram
-* @param {any} payload
-* @param {userType} user
+* @param {dawn.Context} user
 */
-export default async (payload: any, user: Dawn.userType): Promise<void | Error> => {
+export default async (ctx: dawn.Context): Promise<void> => {
 	try {
-		const chat = payload.chat.id;
-		const msgId = payload.message_id;
-		const response = user.response;
-
-		if (!response.answerable) {
-			await tlgMessage(chat, randomConfusedMessage(user.name.first), true, msgId);
-			return;
-		}
-		if (response.simpleText) {
-			await tlgMessage(chat, response.simpleText, true, msgId);
-			if (response.image) {
-				await tlgImage(chat, response.image);
-			}
-		} else if (response.image) {
-			await tlgDocument(chat, response.image);
-		} else if (response.cascadeText) {
-			for (const i of response.cascadeText) {
-				await tlgMessage(chat, i.title + '\n' + i.buttons[0].url);
-				await tlgImage(chat, i.image_url);
-			}
-		} else if (response.multipleText) {
-			for (const text of response.multipleText) { await tlgMessage(chat, text); }
-		}
+		const {
+            chat_id,
+            message_id,
+        } = ctx.chat;
+        const response = ctx.response;
+		if (response.text && response.image && response.text.length == response.image.length) {
+            for (let i = 0; i < response.text.length; ++i) {
+                await message(chat_id, response.text[i]);
+                await image(chat_id, response.image[i]);
+            }
+            return;
+        } 
+        if (response.text) {
+            for (let txt of response.text) {
+                await message(chat_id, txt, true, message_id);
+            }
+            return;
+        }
+        if (response.image) {
+            for (let img of response.image) {
+                await document(chat_id, img);
+            }
+            return;
+		} 
 	} catch (e) {
 		return Promise.reject(e);
 	}

@@ -3,7 +3,7 @@ import { NEWSAPI_KEY } from '../environment';
 const newsapi = new NewsAPI(NEWSAPI_KEY);
 import { getCommonMembersFromTwoArrays } from '../utils/array';
 import { replaceAllSubstring } from '../utils/string';
-const GOOD_SOURCES = 'bbc-news,the-verge,bbc-sport,bloomberg,business-insider,business-insider-uk,cnn,espn,google-news,mtv-news,the-economist,the-new-york-times,the-washington-post';
+const GOOD_SOURCES = 'bbc-news,the-verge,bbc-sport,bloomberg,business-insider,business-insider-uk,cnn,espn,google-news,mtv-news,the-new-york-times,the-washington-post';
 const MAP_TOPIC_TO_CATEGORY = {
 	sport: 'sports',
 	health: 'health',
@@ -16,12 +16,12 @@ const MAP_TOPIC_TO_CATEGORY = {
 
 /**
 * Get top headlines
-* @param {Dawn.userType} user
+* @param {dawn.Context} user
 * @return {news.article} articles
 */
-const getAllHeadlines = async (user: Dawn.userType): Promise<news.article[]> => {
+const getAllHeadlines = async (user: dawn.Context): Promise<news.article[]> => {
 	if (!NEWSAPI_KEY) return Promise.reject('missing NEWSAPI_KEY');
-	let text:string = user.lastText;
+	let text:string = user.text;
 	if (text.includes('"')) {
 		text = replaceAllSubstring(text, '"', '“', '”', 'SHOW', 'NEWS', 'WITH', 'ABOUT', 'ON');
 		return await getHeadlinesWithQuery(text);

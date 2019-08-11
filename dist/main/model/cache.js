@@ -37,16 +37,13 @@ class Cache {
         * @param id id of user
         * @return promise that contains the user
         */
-        this.getUser = (id) => __awaiter(this, void 0, void 0, function* () {
+        this.getUser = (ctx) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const account = yield this.get(id);
+                const account = yield this.get(ctx.id);
                 if (account !== undefined) {
                     return account;
                 }
-                else {
-                    const user = yield this.UserDB.findUser(id);
-                    return user;
-                }
+                return yield this.UserDB.findOrCreateUser(ctx);
             }
             catch (e) {
                 return Promise.reject(e);
@@ -56,7 +53,7 @@ class Cache {
         * Save user to cache
         * @param id id of user
         * @param user user object
-        * @return promise that contains the response YES if succeeded. NO otherwise.
+        * @return
         */
         this.saveUser = (id, user) => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -69,7 +66,7 @@ class Cache {
         /**
         * Save data to cache. Successful if returned 'OK'
         * @param {string} key
-        * @param {any} data
+        * @param {dawn.Context} data
         */
         this.save = (key, data) => {
             return new Promise((resolve, reject) => {
@@ -82,7 +79,7 @@ class Cache {
                         if (err)
                             reject(err);
                         else if (!err && success)
-                            resolve('OK');
+                            resolve();
                     });
                 }
             });

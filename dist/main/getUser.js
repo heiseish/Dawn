@@ -12,70 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const logger_1 = __importDefault(require("./logger"));
-const graphApi_1 = require("./messenger/api/graphApi");
 /**
-* Return a partial unique userId from incoming event to identify user
-* @param {supportedPlatform} platform supported platform currently
-* @param {any} payload
+* (create) and obtain the user from database
+* @param {dawn.Context} ctx
 * @return promise contains the updated user
 */
-exports.default = (partialUniqueId, platform, payload, cache) => __awaiter(this, void 0, void 0, function* () {
+exports.default = (ctx, cache) => __awaiter(this, void 0, void 0, function* () {
+    let timer = logger_1.default.info('Retrieving user', true, 'Cache');
     try {
-        const user = yield cache.getUser(partialUniqueId);
-        if (user)
-            return user;
-        const newUser = yield createNewUser(partialUniqueId, platform, payload);
-        cache.saveUser(partialUniqueId, newUser);
-        return newUser;
-    }
-    catch (e) {
-        return Promise.reject(e);
-    }
-});
-/**
- * Create new user based on the payload
- * @param {string} partialUniqueId
- * @param {supportedPlatform} platform
- * @param {any} payload
- * @return user object
- */
-const createNewUser = (partialUniqueId, platform, payload) => __awaiter(this, void 0, void 0, function* () {
-    const log = logger_1.default.info('Creating new user...', true);
-    try {
-        const user = {
-            id: partialUniqueId,
-            locale: 'eng',
-            entity: {
-                lastIntent: null,
-            },
-            platform: platform
-        };
-        let name;
-        switch (platform) {
-            case 'telegram':
-                user.name = {
-                    first: payload.from.first_name,
-                };
-                break;
-            case 'messenger':
-                name = yield graphApi_1.getUserName(user.id.replace('mes', ''));
-                if (name) {
-                    const { firstName, lastName } = name;
-                    user.name = {
-                        first: firstName,
-                        last: lastName,
-                        full: `${firstName} ${lastName}`,
-                    };
-                }
-                break;
-            default:
-        }
-        log.stop('Created new user.');
+        const user = yield cache.getUser(ctx);
         return user;
     }
     catch (e) {
-        log.stop('');
         return Promise.reject(e);
+    }
+    finally {
+        if (timer != null) {
+            timer.stop('Retrieved user');
+        }
     }
 });
 //# sourceMappingURL=getUser.js.map

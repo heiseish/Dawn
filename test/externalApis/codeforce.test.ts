@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getUserRating }  from '../../src/main/externalApis/codeforce';
+import { getUserRating }  from '../../src/main/3rdparty/codeforce';
 import { CODEFORCE_API_RESPONSE_TIME } from '../data/api';
 const MOCK_HANLE1 = 'BetterThanNobita';
 const MOCK_HANDLE2 = 'giangdao';

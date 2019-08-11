@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13,7 +21,7 @@ class UserDB {
         /**
          * Update the user in database
          * @param {string} id id of the user to be updated
-         * @param {Dawn.userType} user updated information of the user
+         * @param {dawn.Context} user updated information of the user
          * @returns updated user
          */
         this.updateUser = (id, user) => {
@@ -30,6 +38,18 @@ class UserDB {
                 });
             });
         };
+        this.findOrCreateUser = (ctx) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                let user = yield this.findUser(ctx.id);
+                if (user != null) {
+                    return user;
+                }
+                return yield this.addUser(ctx);
+            }
+            catch (e) {
+                return Promise.reject(e);
+            }
+        });
         /**
          * Find user in the database
          * @param id string
@@ -50,7 +70,7 @@ class UserDB {
         /**
          * Add user to database
          * @param user user to be add
-         * @returns {Promise<'OK'>} OK string if there is no error
+         * @returns {Promise<void>} OK string if there is no error
          */
         this.addUser = (user) => {
             return new Promise((resolve, reject) => {
@@ -58,7 +78,7 @@ class UserDB {
                     if (err)
                         reject(err);
                     else
-                        resolve('OK');
+                        resolve(res);
                 });
             });
         };

@@ -7,40 +7,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __importDefault(require("lodash/core"));
-const news_1 = require("../externalApis/news");
+const news_1 = require("../3rdparty/news");
 const array_1 = require("../utils/array");
-const utils_1 = require("./utils");
-const NO_ARTICLE_FOUND = 'Sorry no article found :<';
-/**
- * Send news to user
- * @param {Dawn.userType} user
- * @returns updated user
- */
-exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
-    try {
-        const articles = array_1.shuffle(yield news_1.getAllHeadlines(user)).slice(0, 4);
-        if (!core_1.default.isEmpty(articles)) {
-            const parsedArticles = utils_1.parseArticles(articles);
-            user.response = {
-                cascadeText: parsedArticles,
-                answerable: true,
-            };
-        }
-        else {
-            user.response = {
-                answerable: true,
-                simpleText: NO_ARTICLE_FOUND,
-            };
-        }
-        return user;
+class News {
+    constructor() {
+        this.name = 'news';
+        /**
+         * Reply to good bye message
+         * @param {dawn.Context} user
+         * @return updated user
+         */
+        this.execute = (user) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const articles = array_1.shuffle(yield news_1.getAllHeadlines(user)).slice(0, 4);
+                user.response = {
+                    text: [],
+                    image: [],
+                    url: []
+                };
+                for (let art of articles) {
+                    if (art.title)
+                        user.response.text.push(art.title);
+                    if (art.urlToImage)
+                        user.response.image.push(art.urlToImage);
+                    if (art.url)
+                        user.response.url.push(art.url);
+                }
+                return user;
+            }
+            catch (e) {
+                return Promise.reject(e);
+            }
+        });
     }
-    catch (e) {
-        return Promise.reject(e);
-    }
-});
+}
+exports.default = News;
 //# sourceMappingURL=news.js.map

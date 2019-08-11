@@ -1,7 +1,8 @@
 import bodyParser from 'body-parser';
 import express = require('express');
 import {
-	FB_VERIFY_TOKEN,
+    FB_VERIFY_TOKEN,
+    MODE
 } from './main/environment';
 import Logger from './main/logger';
 
@@ -9,27 +10,26 @@ import CodeforceStream from './main/streaming/codeforce';
 import MorningNasa from './main/streaming/morningNasa';
 import TwitterStreaming from  './main/streaming/twitter';
 
+import { markSeen, typingOff, typingOn } from './main/messenger/api/senderAction';
+
 import Headquarter from './main/headquarter';
-import Cache from './main/model/cache';
+
 import Firebase from './main/model/firebase';
 import MongoDB from './main/model/mongoDB';
-import {
-	messengerPreprocess,
-	telegramPreprocess,
-} from './main/preprocess';
+import preprocess from './main/preprocess';
 import Sweeper from './main/sweeper';
 import { telegramEndpoint } from './main/telegram';
 
 /**
 * REST API
 */
-export default class App implements Dawn.App {
+export default class App implements dawn.App {
 	private express: express.Application;
 	private headquarter: Headquarter;
-	private streams: Dawn.Streamer[];
+	private streams: dawn.Streamer[];
 	private firebase: Firebase;
 	private mongodb: MongoDB;
-	private cache: Cache;
+	
 	private sweeper: Sweeper;
 	/**
 	* Constructor for main REST API
@@ -45,10 +45,13 @@ export default class App implements Dawn.App {
 	* @param {string | number} port port that express should be listening to
 	*/
 	configureExpress(port: string | number): void {
+        let numericPort:number;
 		if (typeof port === 'string') {
-			port = parseInt(port);
-		}
-		this.express.listen(port);
+			numericPort = parseInt(port);
+		} else {
+            numericPort = port;
+        }
+		this.express.listen(numericPort);
 		this.express.use(bodyParser.json());
 		this.express.use(bodyParser.urlencoded({extended: true}));
 	}
@@ -74,9 +77,8 @@ export default class App implements Dawn.App {
 	*/
 	async setUpDatabase(): Promise<void> {
 		this.firebase = new Firebase();
-		this.mongodb = new MongoDB();
-		this.cache = new Cache(this.mongodb.users);
-		this.sweeper.add(this.cache.close);
+        this.mongodb = new MongoDB();
+        this.headquarter.setUserDB(this.mongodb.users);
 		this.sweeper.add(this.mongodb.terminateConnection);
 		this.sweeper.add(this.firebase.terminateConnection);
 
@@ -109,8 +111,15 @@ export default class App implements Dawn.App {
 			}
 		});
 		this.express.post('/fb', (req: express.Request, res: express.Response) => {
-			messengerPreprocess(req.body.entry[0].messaging,
-					(event) => this.headquarter.receive('messenger', event, this.cache));
+            let messagingEvents = req.body.entry[0].messaging;
+            for (let event of messagingEvents) {
+                const senderId = event.sender.id;
+                markSeen(senderId);
+                typingOn(senderId);
+                let result = preprocess('messenger')(event);
+                this.headquarter.receive(result);
+                typingOff(senderId);	
+            }
 			res.sendStatus(200);
 		});
 	}
@@ -121,10 +130,8 @@ export default class App implements Dawn.App {
 	*/
 	private loadTelegramEndpoint(): void {
 		telegramEndpoint.on('message', (msg) => {
-			const result = telegramPreprocess(msg);
-			if (result) {
-				this.headquarter.receive('telegram', msg,  this.cache);
-			}
+			let result = preprocess('telegram')(msg);
+			this.headquarter.receive(result);
 		});
 		telegramEndpoint.on('polling_error', (err) =>
 			Logger.error(err.toString())
@@ -132,19 +139,20 @@ export default class App implements Dawn.App {
 	}
 
 	/**
-	*
+	* Loading streaming service
 	* @param {string[]} people list of people to send to
 	*/
 	private loadStreamingEndpoint(people: string[]): void {
-		if (process.env.NODE_ENV === 'production') {
-			this.streams = [];
-			this.streams.push(new TwitterStreaming());
-			this.streams.push(new MorningNasa());
-			this.streams.push(new CodeforceStream(this.firebase));
+        if (MODE != 'local') {
+            this.streams = [];
+            this.streams.push(new TwitterStreaming());
+            this.streams.push(new MorningNasa());
+            this.streams.push(new CodeforceStream(this.firebase));
 
-			for (const st of this.streams) st.startStreaming(people);
-			for (const st of this.streams) this.sweeper.add(st.stopStreaming);
-		}
+            for (const st of this.streams) st.startStreaming(people);
+            for (const st of this.streams) this.sweeper.add(st.stopStreaming);
+        }
+		
 	}
 
 }

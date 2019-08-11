@@ -1,6 +1,3 @@
-import { randomConfusedMessage } from '../lib/string';
-import { waitToDo } from '../utils/timer';
-import sendListTemplate from './api/listTemplate';
 import sendMediaTemplate from './api/mediaTemplate';
 import message from './api/message';
 import sendQuickReply from './api/quickReply';
@@ -9,61 +6,44 @@ const TIME_WAITED_BEFORE_CONFIRMING = 3000;
 
 /**
 * Respond in facebook messenger
-* @param {Dawn.userType} user
+* @param {dawn.Context} ctx
 */
-export default async (user: Dawn.userType): Promise<void> => {
+export default async (ctx: dawn.Context): Promise<void> => {
 	try {
-		const fbId = user.id.replace('mes', '');
-		const response = user.response;
-		const imageId = response.image && !response.image.includes('http');
+		const id = ctx.id;
+		const response = ctx.response;
 		// Messenger SDK require exact object structure. Thus the need to convert mongoose object to js object
-		if (!response.answerable) {
-			await message(fbId, randomConfusedMessage(user.name.first));
-		} else if (response.simpleText && !response.image && !imageId) {
-			await message(fbId, response.simpleText);
-		} else if (response.simpleText && (response.image || imageId)) {
-			const media: MessengerTextMedia = {
-				type: 'image',
-				// url: response.image,
-				id: response.image,
-			};
-			/** Need more general cases here */
-			let button: MessengerTextButton = null;
-			if (response.url) {
-				button = {
-					title: 'View Article',
-					url: response.url,
-				};
-			}
-			await sendMediaTemplate(fbId, media, button);
-			await message(fbId, response.simpleText);
-
-		} else if (response.cascadeText) {
-			if (response.cascadeText.length == 1) {
-				const topArticle = response.cascadeText[0];
-
-				message(fbId, topArticle.title, () => {
-					const media: MessengerTextMedia = {
-						type: 'image',
-						url: topArticle.image_url,
-					};
-					let button: MessengerTextButton = null;
-
-					if (topArticle.buttons[0].url) {
-						button = {
-							title: 'View Article',
-							url: topArticle.buttons[0].url,
-						};
-					}
-					sendMediaTemplate(fbId, media, button);
-				});
-			} else {
-				await sendListTemplate(fbId, response.cascadeText);
-			}
-		} else if (response.multipleText) {
-			for (const text of response.multipleText) { await message(fbId, text); }
-		}
-		waitToDo(TIME_WAITED_BEFORE_CONFIRMING, sendResponseConfirmation.bind(null, fbId));
+		if (response.text && !response.image) {
+            for (let txt of response.text) {
+                await message(id, txt);
+            }
+            return;
+        } 
+        if (response.text && response.image && response.text.length == response.image.length) {
+            for (let i = 0; i < response.text.length; ++i) {
+                const media: Facebook.MessengerTextMedia = {
+                    type: 'image',
+                    id: response.image[i],
+                };
+                /** Need more general cases here */
+                let button: Facebook.MessengerTextButton = null;
+                if (response.url.length > i) {
+                    button = {
+                        title: 'View Article',
+                        url: response.url[i],
+                    };
+                    message(id, response.text[i], () => {
+                        sendMediaTemplate(id, media, button);
+                    });
+                } else {
+                    await sendMediaTemplate(id, media, button);
+                    await message(id, response.text[i]);
+                }
+            }
+			
+            return;
+        } 
+		// waitToDo(TIME_WAITED_BEFORE_CONFIRMING, sendResponseConfirmation.bind(null, id));
 	} catch (e) {
 		return Promise.reject(e);
 	}
@@ -72,10 +52,10 @@ export default async (user: Dawn.userType): Promise<void> => {
 
 /**
 * send a confirmation for the bot's response
-* @param {string} fbId
+* @param {string} id
 */
-const sendResponseConfirmation = (fbId: string) => {
-	sendQuickReply(fbId, "Is this what you's asking for?",
+const sendResponseConfirmation = (id: string) => {
+	sendQuickReply(id, "Is this what you's asking for?",
 	{
 		content_type: 'text',
 		title: 'Yup!',

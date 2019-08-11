@@ -7,8 +7,7 @@ describe('Node-cache', function() {
 	describe('#save()', function() {
 		it('Should save document to memory', async function() {
 			const cache = this.cache;
-			const res = await cache.save('first key', 'first value');
-			expect(res).to.be.equal('OK');
+			await cache.save('first key', 'first value');
 		});
 
 		it('Should throw error when saving document to memory without data', async function() {

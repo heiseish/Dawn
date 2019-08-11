@@ -58,18 +58,18 @@ describe('REST API GET Endpoints', function() {
 	});
 });
 
-describe('REST API POST Endpoints', function() {
-	this.timeout(testServer.POTT_REST_API_ENDPOINT_RESPONSE_TIME);
-	testServer.useInTest();
-	describe('POST /fb', function() {
-		it('responds with 200', async function() {
-			const mockReq = messengerPOSTRequest('mes1200016940105472', { text:  'Hello how are you'});
-			const api = this.api;
-			const response = await api.post('/fb', mockReq);
-			expect(response).to.have.property('status', 200);
-		});
-	});
-});
+// describe('REST API POST Endpoints', function() {
+// 	this.timeout(testServer.POTT_REST_API_ENDPOINT_RESPONSE_TIME);
+// 	testServer.useInTest();
+// 	describe('POST /fb', function() {
+// 		it('responds with 200', async function() {
+// 			const mockReq = messengerPOSTRequest('1200016940105472', { text:  'Hello how are you'});
+// 			const api = this.api;
+// 			const response = await api.post('/fb', mockReq);
+// 			expect(response).to.have.property('status', 200);
+// 		});
+// 	});
+// });
 
 // describe('GET /fb', () => {
 // 	testServer.useInTest();

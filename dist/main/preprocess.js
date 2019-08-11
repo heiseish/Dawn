@@ -4,7 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const preprocess_1 = __importDefault(require("./messenger/preprocess"));
-exports.messengerPreprocess = preprocess_1.default;
 const preprocess_2 = __importDefault(require("./telegram/preprocess"));
-exports.telegramPreprocess = preprocess_2.default;
+const preprocess = {
+    'telegram': preprocess_2.default,
+    'messenger': preprocess_1.default
+};
+exports.default = (platform) => preprocess[platform];
 //# sourceMappingURL=preprocess.js.map

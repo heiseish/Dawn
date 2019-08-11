@@ -1,65 +1,52 @@
-import bye from './bye';
-import compliment from './compliment';
-import greet from './greet';
-import help from './help';
-import news from './news';
-import pkmGo from './pkmGo';
-import sendDocument from './sendDocument';
-import thanks from './thanks';
-import weather from './weather';
-import worldCup from './worldCup';
+import fs from 'fs';
+import Bye from './bye';
+import Compliment from './compliment';
+import Greet from './greet';
+import Help from './help';
+import News from './news';
+import PokemonGo from './pkmGo';
+import Document from './sendDocument';
+import Unknown from './unknown';
+import Weather from './weather';
+import WorldCup from './worldCup';
 
-const actions: Dawn.Action[] =  [
-	{
-		name: 'greetings',
-		execute: greet,
-		description: 'Greet people.',
-	},
-	{
-		name: 'worldCup',
-		execute: worldCup,
-		description: 'Return World Cup schedule for today!',
-	},
-	{
-		name: 'news',
-		execute: news,
-		description: 'Show some top news headlines!',
-	},
-	{
-		name: 'compliment',
-		execute: compliment,
-		description: 'Reply to people paying compliment',
-	},
-	{
-		name: 'bye',
-		execute: bye,
-		description: 'Reply to people bidding good bye',
-	},
-	{
-		name: 'thanks',
-		execute: thanks,
-		description: 'Reply to people thanking',
-	},
-	{
-		name: 'sendDocument',
-		execute: sendDocument,
-		description: 'Reply to people sending files',
-	},
-	{
-		name: 'weather',
-		execute: weather,
-		description: 'Forecast weather',
-	},
-	{
-		name: 'pkmGO',
-		execute: pkmGo,
-		description: 'Show latest tweets by Pokemon Go on Twitter.',
-	},
-	{
-		name: 'help',
-		execute: help,
-		description: 'Return help manual for the bot.',
-	},
-];
+interface MiniHashTable {
+    [key: string]: Function;
+}
+export default class ActionInterface {
+    private map: MiniHashTable;
+    private lst: dawn.Action[];
+    constructor() {
+        this.map = {}
+        this.lst = []
+        this.lst.push(new Bye());
+        this.lst.push(new Compliment());
+        this.lst.push(new Greet());
+        this.lst.push(new Help());
+        this.lst.push(new News());
+        this.lst.push(new PokemonGo());
+        this.lst.push(new Document());
+        this.lst.push(new Unknown());
+        this.lst.push(new WorldCup());
+        this.lst.push(new Weather());
 
-export default actions;
+        for (let item of this.lst) {
+            this.map[item.name] = item.execute
+        }
+    }
+
+    public async execute(intent: string, user?: dawn.Context): Promise<dawn.Context> {
+        try {
+            console.log(intent);
+            let func = this.map[intent];
+            if (typeof func !== 'function') {
+                return Promise.reject('Fail to load action interface or unhandled intent'); 
+            } 
+            return await func(user);
+        } catch(e) {
+            return Promise.reject(e);
+        }
+         
+    }
+}
+

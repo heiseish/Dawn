@@ -18,11 +18,11 @@ const logger_1 = __importDefault(require("./main/logger"));
 const codeforce_1 = __importDefault(require("./main/streaming/codeforce"));
 const morningNasa_1 = __importDefault(require("./main/streaming/morningNasa"));
 const twitter_1 = __importDefault(require("./main/streaming/twitter"));
+const senderAction_1 = require("./main/messenger/api/senderAction");
 const headquarter_1 = __importDefault(require("./main/headquarter"));
-const cache_1 = __importDefault(require("./main/model/cache"));
 const firebase_1 = __importDefault(require("./main/model/firebase"));
 const mongoDB_1 = __importDefault(require("./main/model/mongoDB"));
-const preprocess_1 = require("./main/preprocess");
+const preprocess_1 = __importDefault(require("./main/preprocess"));
 const sweeper_1 = __importDefault(require("./main/sweeper"));
 const telegram_1 = require("./main/telegram");
 /**
@@ -42,10 +42,14 @@ class App {
     * @param {string | number} port port that express should be listening to
     */
     configureExpress(port) {
+        let numericPort;
         if (typeof port === 'string') {
-            port = parseInt(port);
+            numericPort = parseInt(port);
         }
-        this.express.listen(port);
+        else {
+            numericPort = port;
+        }
+        this.express.listen(numericPort);
         this.express.use(body_parser_1.default.json());
         this.express.use(body_parser_1.default.urlencoded({ extended: true }));
     }
@@ -73,8 +77,7 @@ class App {
         return __awaiter(this, void 0, void 0, function* () {
             this.firebase = new firebase_1.default();
             this.mongodb = new mongoDB_1.default();
-            this.cache = new cache_1.default(this.mongodb.users);
-            this.sweeper.add(this.cache.close);
+            this.headquarter.setUserDB(this.mongodb.users);
             this.sweeper.add(this.mongodb.terminateConnection);
             this.sweeper.add(this.firebase.terminateConnection);
         });
@@ -105,7 +108,15 @@ class App {
             }
         });
         this.express.post('/fb', (req, res) => {
-            preprocess_1.messengerPreprocess(req.body.entry[0].messaging, (event) => this.headquarter.receive('messenger', event, this.cache));
+            let messagingEvents = req.body.entry[0].messaging;
+            for (let event of messagingEvents) {
+                const senderId = event.sender.id;
+                senderAction_1.markSeen(senderId);
+                senderAction_1.typingOn(senderId);
+                let result = preprocess_1.default('messenger')(event);
+                this.headquarter.receive(result);
+                senderAction_1.typingOff(senderId);
+            }
             res.sendStatus(200);
         });
     }
@@ -115,19 +126,17 @@ class App {
     */
     loadTelegramEndpoint() {
         telegram_1.telegramEndpoint.on('message', (msg) => {
-            const result = preprocess_1.telegramPreprocess(msg);
-            if (result) {
-                this.headquarter.receive('telegram', msg, this.cache);
-            }
+            let result = preprocess_1.default('telegram')(msg);
+            this.headquarter.receive(result);
         });
         telegram_1.telegramEndpoint.on('polling_error', (err) => logger_1.default.error(err.toString()));
     }
     /**
-    *
+    * Loading streaming service
     * @param {string[]} people list of people to send to
     */
     loadStreamingEndpoint(people) {
-        if (process.env.NODE_ENV === 'production') {
+        if (environment_1.MODE != 'local') {
             this.streams = [];
             this.streams.push(new twitter_1.default());
             this.streams.push(new morningNasa_1.default());

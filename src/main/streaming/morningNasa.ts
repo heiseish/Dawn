@@ -1,9 +1,9 @@
 import schedule from 'node-schedule';
-import getDailyNasaNews from '../externalApis/@nasa';
+import getDailyNasaNews from '../3rdparty/@nasa';
 import Logger from '../logger';
 import stream from './';
 
-export default class MorningNasa implements Dawn.Streamer {
+export default class MorningNasa implements dawn.Streamer {
 	private scheduler;
 
 	/**
