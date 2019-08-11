@@ -38,7 +38,7 @@ exports.default = (ctx) => __awaiter(this, void 0, void 0, function* () {
                 };
                 /** Need more general cases here */
                 let button = null;
-                if (response.url.length > i) {
+                if (response.url && response.url.length > i) {
                     button = {
                         title: 'View Article',
                         url: response.url[i],
@@ -52,7 +52,6 @@ exports.default = (ctx) => __awaiter(this, void 0, void 0, function* () {
                     yield message_1.default(id, response.text[i]);
                 }
             }
-            return;
         }
         // waitToDo(TIME_WAITED_BEFORE_CONFIRMING, sendResponseConfirmation.bind(null, id));
     }

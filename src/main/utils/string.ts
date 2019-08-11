@@ -85,9 +85,10 @@ const generateRandomId = (length = 10): string => {
 * @param {string} replace
 * @return a string will all `find` replaced by `replace`
 */
-const replaceAll = (str, find, replace): string => {
+const replaceAll = (str: string, find:string, replace:string): string => {
 	return str.replace(new RegExp(find, 'g'), replace);
 };
+
 
 export {
 	padRight,

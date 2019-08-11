@@ -9,7 +9,8 @@ export default (msg: TelegramBot.Message): dawn.Context => {
     let context: dawn.Context = {
         platform: 'telegram',
         id: id.toString(),
-        locale: 'eng'
+        locale: 'eng',
+        name: {}
     };
     if (msg.message_id) {
         context.chat = {

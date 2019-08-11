@@ -29,6 +29,7 @@ class Document {
                         const res = yield giphy_1.default();
                         user.response = {
                             image: [res],
+                            url: [res]
                         };
                         break;
                     case 'video':

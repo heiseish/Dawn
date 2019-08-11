@@ -1,4 +1,3 @@
-import idx from 'idx';
 import { predict } from './3rdparty/@google/tensorflow/intentClassification';
 import Logger from './logger';
 const CLASSIFY_CONFIDENCE_THRESHOLD = 0.9;

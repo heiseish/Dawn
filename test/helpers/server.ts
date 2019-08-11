@@ -65,7 +65,8 @@ const useInTest = (): void => {
 			...mockEnv,
 			PATH: process.env.PATH,
 			PORT: await getPort(),
-			NODE_ENV: 'test',
+            NODE_ENV: 'test',
+            MODE: 'local'
 		});
 		// Use our utility function that we created above to spawn the test server
 		const testServer = await spawnServer(env);

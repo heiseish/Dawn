@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import express = require('express');
 import {
     FB_VERIFY_TOKEN,
-    MODE
+    NODE_ENV
 } from './main/environment';
 import Logger from './main/logger';
 
@@ -143,7 +143,7 @@ export default class App implements dawn.App {
 	* @param {string[]} people list of people to send to
 	*/
 	private loadStreamingEndpoint(people: string[]): void {
-        if (MODE != 'local') {
+        if (NODE_ENV != 'local') {
             this.streams = [];
             this.streams.push(new TwitterStreaming());
             this.streams.push(new MorningNasa());

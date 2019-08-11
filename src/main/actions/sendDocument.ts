@@ -17,6 +17,7 @@ export default class Document implements dawn.Action {
                 const res = await getRandomGif();
                 user.response = {
                     image:  [res],
+                    url: [res]
                 };
                 break;
     

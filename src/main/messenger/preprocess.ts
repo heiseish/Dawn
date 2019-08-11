@@ -1,5 +1,5 @@
 import { FB_PAGE_ID, FB_PAGE_TOKEN } from '../environment';
-
+import { getUserName } from './api/graphApi';
 if (!FB_PAGE_ID) throw new Error('missing FB_PAGE_ID');
 if (!FB_PAGE_TOKEN) throw new Error('missing FB_PAGE_TOKEN');
 
@@ -8,7 +8,8 @@ export default  (req: Facebook.Message): dawn.Context => {
     let context: dawn.Context = {
         platform: 'messenger',
         id: id,
-        locale: 'eng'
+        locale: 'eng',
+        name: {},
     };
     if (req.message.text) {
         context.text = req.message.text;
@@ -48,6 +49,9 @@ export default  (req: Facebook.Message): dawn.Context => {
             break;
         }
     }
+    getUserName(id).then(name => {
+        context.name = name;
+    });
     return context;
 }
 

@@ -27,7 +27,7 @@ export default async (ctx: dawn.Context): Promise<void> => {
                 };
                 /** Need more general cases here */
                 let button: Facebook.MessengerTextButton = null;
-                if (response.url.length > i) {
+                if (response.url && response.url.length > i) {
                     button = {
                         title: 'View Article',
                         url: response.url[i],
@@ -40,8 +40,6 @@ export default async (ctx: dawn.Context): Promise<void> => {
                     await message(id, response.text[i]);
                 }
             }
-			
-            return;
         } 
 		// waitToDo(TIME_WAITED_BEFORE_CONFIRMING, sendResponseConfirmation.bind(null, id));
 	} catch (e) {

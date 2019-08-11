@@ -9,7 +9,7 @@ declare interface Context {
         chat_id?:number,
     },
     platform: SupportedPlatform,
-    name?: {
+    name: {
         first?: string,
         last?: string,
     },

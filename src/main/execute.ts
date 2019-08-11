@@ -1,9 +1,8 @@
 import chalk from 'chalk';
 import ActionInterface from './actions/index';
-import { converse } from './3rdparty/@facebook/pytorch';
 import Logger from './logger';
 
-let executer = new ActionInterface();
+const executer = new ActionInterface();
 /**
 * Execute action
 * @param {dawn.Context} payload

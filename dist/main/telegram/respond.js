@@ -28,13 +28,16 @@ exports.default = (ctx) => __awaiter(this, void 0, void 0, function* () {
             for (let txt of response.text) {
                 yield api_1.tlgMessage(chat_id, txt, true, message_id);
             }
-            return;
         }
         if (response.image) {
             for (let img of response.image) {
-                yield api_1.tlgDocument(chat_id, img);
+                yield api_1.tlgImage(chat_id, img);
             }
-            return;
+        }
+        if (response.url) {
+            for (let link of response.url) {
+                yield api_1.tlgDocument(chat_id, link);
+            }
         }
     }
     catch (e) {

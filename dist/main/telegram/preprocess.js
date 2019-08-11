@@ -10,7 +10,8 @@ exports.default = (msg) => {
     let context = {
         platform: 'telegram',
         id: id.toString(),
-        locale: 'eng'
+        locale: 'eng',
+        name: {}
     };
     if (msg.message_id) {
         context.chat = {

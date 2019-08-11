@@ -9,13 +9,13 @@ graph.setVersion('2.6');
  * @param sender user id
  * @return promise contains the user name
  */
-const getUserName = (sender: string): Promise<{firstName: string, lastName: string} | null> => {
+const getUserName = (sender: string): Promise<{first: string, last: string} | null> => {
 	return new Promise((response) => {
 		graph.get(sender, (err, res) => {
 			if (err) { response(null); } else {
 				response({
-					firstName: res.first_name,
-					lastName: res.last_name,
+					first: res.first_name,
+					last: res.last_name,
 				});
 			}
 		});

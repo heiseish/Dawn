@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const environment_1 = require("../environment");
+const graphApi_1 = require("./api/graphApi");
 if (!environment_1.FB_PAGE_ID)
     throw new Error('missing FB_PAGE_ID');
 if (!environment_1.FB_PAGE_TOKEN)
@@ -10,7 +11,8 @@ exports.default = (req) => {
     let context = {
         platform: 'messenger',
         id: id,
-        locale: 'eng'
+        locale: 'eng',
+        name: {},
     };
     if (req.message.text) {
         context.text = req.message.text;
@@ -47,6 +49,9 @@ exports.default = (req) => {
                 break;
         }
     }
+    graphApi_1.getUserName(id).then(name => {
+        context.name = name;
+    });
     return context;
 };
 //# sourceMappingURL=preprocess.js.map

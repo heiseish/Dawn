@@ -26,13 +26,16 @@ export default async (ctx: dawn.Context): Promise<void> => {
             for (let txt of response.text) {
                 await message(chat_id, txt, true, message_id);
             }
-            return;
         }
         if (response.image) {
             for (let img of response.image) {
-                await document(chat_id, img);
+                await image(chat_id, img);
             }
-            return;
+        } 
+        if (response.url) {
+            for (let link of response.url) {
+                await document(chat_id, link);
+            }
 		} 
 	} catch (e) {
 		return Promise.reject(e);
