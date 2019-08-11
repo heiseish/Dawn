@@ -14,5 +14,5 @@ EXPOSE 8445
 
 
 COPY . /
-CMD [ "npm", "start:production" ]
+CMD [ "npm", "run", "start:production" ]
 
