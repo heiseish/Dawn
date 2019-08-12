@@ -1,5 +1,5 @@
-// package: ImageRecognitionServiceRPC
-// file: image_recognition_service.proto
+// package: ImageClassificationServiceRPC
+// file: image_classification_service.proto
 
 /* tslint:disable */
 

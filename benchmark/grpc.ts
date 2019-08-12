@@ -1,10 +1,10 @@
 import grpc from 'grpc';
 // import { GRPC_PORT } from '../../../environment';
 let GRPC_PORT = 8080;
-import { Seq2SeqServiceClient } from './main/protobuf/seq2seq_service_grpc_pb';
-import { ConversationInput } from './main/protobuf/seq2seq_service_pb';
-import { ImageClassificationServiceClient } from './main/protobuf/image_classification_service_grpc_pb';
-import { ImageRequest } from './main/protobuf/image_classification_service_pb';
+import { ConverseServiceClient } from './main/protobuf/converse_service_grpc_pb';
+import { ConversationInput } from './main/protobuf/converse_service_pb';
+import { ImageRecognitionServiceClient } from './main/protobuf/image_recognition_service_grpc_pb';
+import { ImageRequest } from './main/protobuf/image_recognition_service_pb';
 import fs from 'fs';
 import { measureExecutionTimeCallback } from '../src/main/utils/benchmark';
 // function to encode file data to base64 encoded string
@@ -24,19 +24,19 @@ const base64_decode = (base64str:string , file:string):void => {
     console.log('******** File created from base64 encoded string ********');
 }
 
-var client = new Seq2SeqServiceClient('127.0.0.1:' + GRPC_PORT, grpc.credentials.createInsecure());
+var client = new ConverseServiceClient('127.0.0.1:' + GRPC_PORT, grpc.credentials.createInsecure());
 let text = new ConversationInput();
 text.setTransId("12314512");
 text.setText("what shall I do");
 
 
-let imageClient = new ImageClassificationServiceClient('127.0.0.1:' + GRPC_PORT, grpc.credentials.createInsecure(), {
-    // "grpc.max_send_message_length": 1024 * 1024 * 100
+let imageClient = new ImageRecognitionServiceClient('127.0.0.1:' + GRPC_PORT, grpc.credentials.createInsecure(), {
+    "grpc.max_send_message_length": 1024 * 1024 * 100
 });
 let req = new ImageRequest();
 
 req.setTransId("12314512");
-req.setImage('https://cataas.com/cat/says/hello%20world!');
+req.setImage(base64_encode('src/image.jpg'));
 
 const test = async () => {
 	console.log(await measureExecutionTimeCallback((resolve) => {
@@ -55,12 +55,11 @@ const test = async () => {
 				console.log(err);
 				return;
 			}
-			console.log(resp.getText())
 			resolve(resp);
 		})
 		
 	}))
 
 } 
-setInterval(test, 1000)
+test()
 

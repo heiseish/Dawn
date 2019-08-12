@@ -1,5 +1,5 @@
-// package: ConverseServiceGRPC
-// file: converse_service.proto
+// package: Seq2SeqGRPC
+// file: seq2seq_service.proto
 
 /* tslint:disable */
 
