@@ -27,7 +27,7 @@ const testFiles: TestFile[] = [
 	},
 	{
 		desc: 'model files',
-		dir: './test/model/',
+		dir: './test/database/',
 	},
 ];
 for (const file of testFiles) {

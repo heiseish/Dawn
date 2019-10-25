@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import { decrypt } from '../../lib/encrypt';
+import { decrypt } from '../../utils/encrypt';
 import Logger from '../../logger';
 import encryptedServiceAccount from './account.json';
 

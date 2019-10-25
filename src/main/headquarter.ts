@@ -3,7 +3,7 @@ import Execute from './execute';
 import GetUser from './getUser';
 import Logger from './logger';
 import Respond from './respond';
-import Cache from './model/cache';
+import Cache from './database/cache';
 import Sweeper from './sweeper';
 
 export default class Headquarter {

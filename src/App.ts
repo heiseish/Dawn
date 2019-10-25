@@ -14,8 +14,8 @@ import { markSeen, typingOff, typingOn } from './main/messenger/api/senderAction
 
 import Headquarter from './main/headquarter';
 
-import Firebase from './main/model/firebase';
-import MongoDB from './main/model/mongoDB';
+import Firebase from './main/database/firebase';
+import MongoDB from './main/database/mongoDB';
 import preprocess from './main/preprocess';
 import Sweeper from './main/sweeper';
 import { telegramEndpoint } from './main/telegram';

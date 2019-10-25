@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import Firebase from '../../src/main/model/firebase';
+import Firebase from '../../src/main/database/firebase';
 
 const useInTest = (): void => {
 	before(function initializeConnectionToFirebase() {

@@ -16,7 +16,7 @@ const execute_1 = __importDefault(require("./execute"));
 const getUser_1 = __importDefault(require("./getUser"));
 const logger_1 = __importDefault(require("./logger"));
 const respond_1 = __importDefault(require("./respond"));
-const cache_1 = __importDefault(require("./model/cache"));
+const cache_1 = __importDefault(require("./database/cache"));
 const sweeper_1 = __importDefault(require("./sweeper"));
 class Headquarter {
     constructor() {

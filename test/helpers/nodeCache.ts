@@ -1,4 +1,4 @@
-import NodeCache from '../../src/main/model/cache';
+import NodeCache from '../../src/main/database/cache';
 
 const useInTest = (): void => {
 	before(function setUpCache() {
