@@ -11,74 +11,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const string_1 = require("../lib/string");
-const timer_1 = require("../utils/timer");
-const listTemplate_1 = __importDefault(require("./api/listTemplate"));
 const mediaTemplate_1 = __importDefault(require("./api/mediaTemplate"));
 const message_1 = __importDefault(require("./api/message"));
 const quickReply_1 = __importDefault(require("./api/quickReply"));
 const TIME_WAITED_BEFORE_CONFIRMING = 3000;
 /**
 * Respond in facebook messenger
-* @param {Dawn.userType} user
+* @param {dawn.Context} ctx
 */
-exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
+exports.default = (ctx) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const fbId = user.id.replace('mes', '');
-        const response = user.response;
-        const imageId = response.image && !response.image.includes('http');
+        const id = ctx.id;
+        const response = ctx.response;
         // Messenger SDK require exact object structure. Thus the need to convert mongoose object to js object
-        if (!response.answerable) {
-            yield message_1.default(fbId, string_1.randomConfusedMessage(user.name.first));
+        if (response.text && !response.image) {
+            for (let txt of response.text) {
+                yield message_1.default(id, txt);
+            }
+            return;
         }
-        else if (response.simpleText && !response.image && !imageId) {
-            yield message_1.default(fbId, response.simpleText);
-        }
-        else if (response.simpleText && (response.image || imageId)) {
-            const media = {
-                type: 'image',
-                // url: response.image,
-                id: response.image,
-            };
-            /** Need more general cases here */
-            let button = null;
-            if (response.url) {
-                button = {
-                    title: 'View Article',
-                    url: response.url,
+        if (response.text && response.image && response.text.length == response.image.length) {
+            for (let i = 0; i < response.text.length; ++i) {
+                const media = {
+                    type: 'image',
+                    id: response.image[i],
                 };
-            }
-            yield mediaTemplate_1.default(fbId, media, button);
-            yield message_1.default(fbId, response.simpleText);
-        }
-        else if (response.cascadeText) {
-            if (response.cascadeText.length == 1) {
-                const topArticle = response.cascadeText[0];
-                message_1.default(fbId, topArticle.title, () => {
-                    const media = {
-                        type: 'image',
-                        url: topArticle.image_url,
+                /** Need more general cases here */
+                let button = null;
+                if (response.url && response.url.length > i) {
+                    button = {
+                        title: 'View Article',
+                        url: response.url[i],
                     };
-                    let button = null;
-                    if (topArticle.buttons[0].url) {
-                        button = {
-                            title: 'View Article',
-                            url: topArticle.buttons[0].url,
-                        };
-                    }
-                    mediaTemplate_1.default(fbId, media, button);
-                });
-            }
-            else {
-                yield listTemplate_1.default(fbId, response.cascadeText);
+                    message_1.default(id, response.text[i], () => {
+                        mediaTemplate_1.default(id, media, button);
+                    });
+                }
+                else {
+                    yield mediaTemplate_1.default(id, media, button);
+                    yield message_1.default(id, response.text[i]);
+                }
             }
         }
-        else if (response.multipleText) {
-            for (const text of response.multipleText) {
-                yield message_1.default(fbId, text);
-            }
-        }
-        timer_1.waitToDo(TIME_WAITED_BEFORE_CONFIRMING, sendResponseConfirmation.bind(null, fbId));
+        // waitToDo(TIME_WAITED_BEFORE_CONFIRMING, sendResponseConfirmation.bind(null, id));
     }
     catch (e) {
         return Promise.reject(e);
@@ -86,10 +61,10 @@ exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
 });
 /**
 * send a confirmation for the bot's response
-* @param {string} fbId
+* @param {string} id
 */
-const sendResponseConfirmation = (fbId) => {
-    quickReply_1.default(fbId, "Is this what you's asking for?", {
+const sendResponseConfirmation = (id) => {
+    quickReply_1.default(id, "Is this what you's asking for?", {
         content_type: 'text',
         title: 'Yup!',
         payload: 'CORRECT_SERVICE',

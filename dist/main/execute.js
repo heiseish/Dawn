@@ -12,50 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const chalk_1 = __importDefault(require("chalk"));
-const actions_1 = __importDefault(require("./actions"));
-const pytorch_1 = require("./externalApis/@facebook/pytorch/");
+const index_1 = __importDefault(require("./actions/index"));
 const logger_1 = __importDefault(require("./logger"));
+const executer = new index_1.default();
 /**
-* Return a partial unique userId from incoming event to identify user
-* @param {supportedPlatform} platform supported platform currently
-* @param {any} payload
+* Execute action
+* @param {dawn.Context} payload
 * @return updated user
 */
-exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
+exports.default = (ctx) => __awaiter(this, void 0, void 0, function* () {
     const log = logger_1.default.info('Executing', true);
     try {
-        const action = getAction(actions_1.default, user.entity.lastIntent);
-        if (action) {
-            user = yield action.execute(user);
-            log.stop('Executed with intent: ' + chalk_1.default.blue(user.entity.lastIntent) + '.');
-        }
-        else {
-            user.response = {
-                simpleText: yield pytorch_1.converse(user.lastText),
-                answerable: true,
-            };
-            log.stop('Executed with normal conversing');
-        }
-        return user;
+        ctx = yield executer.execute(ctx.entity, ctx);
+        log.stop('Executed with intent: ' + chalk_1.default.blue(ctx.entity) + '.');
+        return ctx;
     }
     catch (e) {
-        log.stop('Error');
         return Promise.reject(e);
     }
-});
-/**
- * Check if an  array of objects hay any object that contains a key with a specific attribute value.
- * @param {Dawn.Action[]}} arr
- * @param {string} attribute
- * @param {string} key
- * @return object with key equal to some values, null if there is no such object
- */
-const getAction = (arr, attribute, key = 'name') => {
-    for (const object of arr) {
-        if (object[key] === attribute) {
-            return object;
-        }
+    finally {
+        log.stop('Executed');
     }
-    return null;
-};
+});
 //# sourceMappingURL=execute.js.map

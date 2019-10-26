@@ -8,25 +8,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const weather_1 = require("../externalApis/weather");
-/**
- * Inform user of the current weather
- * @param {Dawn.userType} user
- * @return PRomise containing updated user
- */
-exports.default = (user) => __awaiter(this, void 0, void 0, function* () {
-    try {
-        const { current, summary, imageId, } = yield weather_1.getWeatherMessage();
-        user.response = {
-            simpleText: current + summary,
-            answerable: true,
-        };
-        if (user.platform == 'messenger')
-            user.response.image = imageId;
-        return user;
+const weather_1 = require("../3rdparty/weather");
+class Weather {
+    constructor() {
+        this.name = 'weather';
+        /**
+         * Inform user of the current weather
+         * @param {dawn.Context} user
+         * @return PRomise containing updated user
+         */
+        this.execute = (user) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { current, summary, imageId, } = yield weather_1.getWeatherMessage();
+                user.response = {
+                    text: [current + summary],
+                };
+                if (user.platform == 'messenger') {
+                    user.response.image = [imageId];
+                }
+                return user;
+            }
+            catch (e) {
+                return Promise.reject(e);
+            }
+        });
     }
-    catch (e) {
-        return Promise.reject(e);
-    }
-});
+}
+exports.default = Weather;
 //# sourceMappingURL=weather.js.map

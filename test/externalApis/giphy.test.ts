@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import getRandomGif from '../../src/main/externalApis/giphy';
+import getRandomGif from '../../src/main/3rdparty/giphy';
 import { GIPHY_RESPONSE_TIME } from '../data/api';
 
 const useInTest = (): void => {

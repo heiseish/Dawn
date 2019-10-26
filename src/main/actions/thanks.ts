@@ -1,13 +1,18 @@
 import { randomResponseToThanksMessage } from '../lib/string';
-/**
- * Reply to people thanking
- * @param {Dawn.userType} user
- * @return parsed User
- */
-export default async (user: Dawn.userType): Promise<Dawn.userType> => {
-	user.response = await {
-		simpleText: randomResponseToThanksMessage(user.name.first),
-		answerable: true,
-	};
-	return user;
-};
+
+export default class Thanks implements dawn.Action {
+    public name = 'thanks';
+    /**
+     * Reply to people thanking
+     * @param {dawn.Context} user
+     * @return parsed User
+     */
+    public execute = async (user: dawn.Context): Promise<dawn.Context> => {
+        user.response = {
+            text: [await randomResponseToThanksMessage(user.name.first)],
+        };
+        return user;
+    };
+    description: 'Function to thanks user';
+}
+

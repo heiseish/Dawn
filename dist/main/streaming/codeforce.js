@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_schedule_1 = __importDefault(require("node-schedule"));
-const codeforce_1 = require("../externalApis/codeforce");
+const codeforce_1 = require("../3rdparty/codeforce");
 const logger_1 = __importDefault(require("../logger"));
 const _1 = __importDefault(require("./"));
 class CodeforceStream {

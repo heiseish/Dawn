@@ -1,7 +1,8 @@
 import messengerPreprocess  from './messenger/preprocess';
 import telegramPreprocess from './telegram/preprocess';
 
-export {
-	telegramPreprocess,
-	messengerPreprocess,
-};
+const preprocess: dawn.Preprocess = {
+    'telegram': telegramPreprocess,
+    'messenger': messengerPreprocess
+}
+export default (platform: dawn.SupportedPlatform) => preprocess[platform];

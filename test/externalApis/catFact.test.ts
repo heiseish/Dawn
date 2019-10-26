@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import getCatFact from '../../src/main/externalApis/catFact';
+import getCatFact from '../../src/main/3rdparty/catFact';
 import { CAT_FACT_RESPONSE_TIME } from '../data/api';
 
 const useInTest = (): void => {

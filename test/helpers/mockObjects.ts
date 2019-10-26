@@ -5,19 +5,22 @@
 */
 const messengerPOSTRequest = (id: string, payload: any): any => {
 	return {
-		entry: [
-			{
-				messaging: {
-					sender: {
-						id,
-					},
-					message: {
-						text: payload.text,
-					},
-				},
-			},
+        entry: [
+            {
+                messaging: [
+                        {
+                        sender: {
+                            id,
+                        },
+                        message: {
+                            text: payload.text,
+                        },
+                    }
+                ],
+            },
 
-		],
+        ],
+		
 
 	};
 };

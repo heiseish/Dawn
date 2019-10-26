@@ -9,7 +9,8 @@ import { uploadMedia } from './utility';
  * @param button Button to show under the media
  * @param cb callback function when opt is executed
  */
-export default async (senderId: string, media: MessengerTextMedia, button?: MessengerTextButton, cb?: (err: any, data: any) => any): Promise<void>  => {
+export default async (senderId: string, media: Facebook.MessengerTextMedia, button?: Facebook.MessengerTextButton, 
+    cb?: (err: any, data: any) => any): Promise<void>  => {
 	const opts = {
 		form: {
 			recipient: {

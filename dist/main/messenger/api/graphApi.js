@@ -20,8 +20,8 @@ const getUserName = (sender) => {
             }
             else {
                 response({
-                    firstName: res.first_name,
-                    lastName: res.last_name,
+                    first: res.first_name,
+                    last: res.last_name,
                 });
             }
         });

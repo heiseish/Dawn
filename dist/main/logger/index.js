@@ -36,8 +36,10 @@ class Logger {
             };
             return { stop };
         }
-        else
+        else {
             this.log(text, 'info', component);
+            return null;
+        }
     }
     /**
      * Logging the warning text

@@ -8,40 +8,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const string_1 = require("../lib/string");
 const api_1 = require("./api");
 /**
 * Respond in telegram
-* @param {any} payload
-* @param {userType} user
+* @param {dawn.Context} user
 */
-exports.default = (payload, user) => __awaiter(this, void 0, void 0, function* () {
+exports.default = (ctx) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const chat = payload.chat.id;
-        const msgId = payload.message_id;
-        const response = user.response;
-        if (!response.answerable) {
-            yield api_1.tlgMessage(chat, string_1.randomConfusedMessage(user.name.first), true, msgId);
+        const { chat_id, message_id, } = ctx.chat;
+        const response = ctx.response;
+        if (response.text && response.image && response.text.length == response.image.length) {
+            for (let i = 0; i < response.text.length; ++i) {
+                yield api_1.tlgMessage(chat_id, response.text[i]);
+                yield api_1.tlgImage(chat_id, response.image[i]);
+            }
             return;
         }
-        if (response.simpleText) {
-            yield api_1.tlgMessage(chat, response.simpleText, true, msgId);
-            if (response.image) {
-                yield api_1.tlgImage(chat, response.image);
+        if (response.text) {
+            for (let txt of response.text) {
+                yield api_1.tlgMessage(chat_id, txt, true, message_id);
             }
         }
-        else if (response.image) {
-            yield api_1.tlgDocument(chat, response.image);
-        }
-        else if (response.cascadeText) {
-            for (const i of response.cascadeText) {
-                yield api_1.tlgMessage(chat, i.title + '\n' + i.buttons[0].url);
-                yield api_1.tlgImage(chat, i.image_url);
+        if (response.image) {
+            for (let img of response.image) {
+                yield api_1.tlgImage(chat_id, img);
             }
         }
-        else if (response.multipleText) {
-            for (const text of response.multipleText) {
-                yield api_1.tlgMessage(chat, text);
+        if (response.url) {
+            for (let link of response.url) {
+                yield api_1.tlgDocument(chat_id, link);
             }
         }
     }

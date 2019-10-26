@@ -45,7 +45,7 @@ class Firebase {
     }
     /**
     * Get a list of streaming audience
-    * @returns {Promise<string[]>} list of streaming audience
+    * @returns {Promise<dawn.StreamPerson[]>} list of streaming audience
     */
     getStreamingAudience() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -53,10 +53,12 @@ class Firebase {
                 const snap = yield this.db.database().ref('restricted_access/streaming/').once('value');
                 const result = snap.val();
                 let audience = [];
-                if (Array.isArray(result))
+                if (Array.isArray(result)) {
                     audience = result;
-                else if (typeof result === 'object')
+                }
+                else if (typeof result === 'object') {
                     audience = Object.values(result);
+                }
                 return audience;
             }
             catch (e) {

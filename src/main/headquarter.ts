@@ -1,33 +1,36 @@
-import analyze from './analyze';
-import execute from './execute';
-import getUser from './getUser';
-import identifySource from './identifySource';
+import Analyze from './analyze';
+import Execute from './execute';
+import GetUser from './getUser';
 import Logger from './logger';
-import respond from './respond';
+import Respond from './respond';
+import Cache from './database/cache';
+import Sweeper from './sweeper';
 
 export default class Headquarter {
-	/**
-	 * Handle receving events
-	 * @param platform platforms currently supported
-	 * @param payload message payload from user
-	 * @param UserDb Mongoose DB User schema
-	 * @param cache Cache server
-	 * @return Promise<void>
-	 * @throws Error if any errors with child processes
-	 */
-	async receive(platform: supportedPlatform, payload: any, cache: Dawn.Cache): Promise<void> {
+    private sweeper: Sweeper;
+    private cache: Cache;
+    setUserDB = (user: Mongoose.UserDatabase):void => {
+        this.sweeper = new Sweeper();
+        this.cache = new Cache(user);
+        this.sweeper.add(this.cache.close);
+    }
+    /**
+     * Process request
+     * @param ctx 
+     * @param cache 
+     */
+    async receive(ctx: dawn.Context): Promise<void> {
 		Logger.info('Transfering event to headquarter..', false, Headquarter.name);
 		try {
-			const partialUniqueId: string = identifySource(platform, payload);
-			let user: Dawn.userType = await getUser(partialUniqueId, platform, payload,  cache);
-			user = await analyze(platform, payload, user);
-			user = await execute(user);
-			await respond(platform, payload, user);
-			cache.saveUser(user.id, user);
+			let user = await GetUser(ctx, this.cache);
+			user = await Analyze(ctx);
+			user = await Execute(ctx);
+			await Respond(ctx);
+			this.cache.saveUser(user.id, user);
 		} catch (err) {
 			Logger.error(err);
 		} finally {
 			Logger.separator();
 		}
-	}
+    }
 }

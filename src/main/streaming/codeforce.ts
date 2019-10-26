@@ -1,9 +1,9 @@
 import schedule from 'node-schedule';
-import { getUserRating } from '../externalApis/codeforce';
+import { getUserRating } from '../3rdparty/codeforce';
 import Logger from '../logger';
 import stream from './';
 
-export default class CodeforceStream implements Dawn.Streamer {
+export default class CodeforceStream implements dawn.Streamer {
 	private scheduler;
 	private firebase;
 	/**
@@ -17,7 +17,7 @@ export default class CodeforceStream implements Dawn.Streamer {
 	 * @param list list of person to send message to
 	 * @returns void
 	 */
-	startStreaming(list: string[]): void {
+	startStreaming(list: dawn.StreamPerson[]): void {
 		this.scheduler = schedule.scheduleJob('*/20 * * * *', async () => {
 			const users: CodeforceUser[] = await this.firebase.getCodeforceHandle();
 			for (const user of Object.values(users)) {

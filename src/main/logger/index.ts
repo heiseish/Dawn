@@ -1,6 +1,9 @@
 import chalk from 'chalk';
 import ora from 'ora';
 
+type OraTimer = {
+    stop: Function
+}
 class Logger {
 	private prefixColor;
 	private static ENV_TO_EXCLUDE:string[] = ['test', 'travis'];
@@ -13,7 +16,7 @@ class Logger {
 	* @param load whether the text animation is loading
 	* @returns object with method stop that takes in after-text as a string
 	*/
-	info(text: string, load?: boolean, component: string | null = null): void | any {
+	info(text: string, load?: boolean, component: string | null = null): OraTimer {
 		if (load) {
 			const spinner: ora.Ora = ora({
 				text: this.generateDateTimePrefix()
@@ -34,7 +37,10 @@ class Logger {
 				});
 			};
 			return { stop };
-		} else this.log(text, 'info', component);
+		} else {
+            this.log(text, 'info', component);
+            return null;
+        }
 
 	}
 

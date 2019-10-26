@@ -1,13 +1,18 @@
 import { randomResponseToComplimentMessage } from '../lib/string';
-/**
- * Reply to people's compliment
- * @param {Dawn.userType} user
- * @return updated user
- */
-export default async (user: Dawn.userType): Promise<Dawn.userType> => {
-	user.response = {
-		simpleText: randomResponseToComplimentMessage(user.name.first),
-		answerable: true,
-	};
-	return user;
-};
+
+export default class Compliment implements dawn.Action {
+    public name = 'compliment';
+    /**
+     * Reply to good bye message
+     * @param {dawn.Context} user
+     * @return updated user
+     */
+    public execute = async (user: dawn.Context): Promise<dawn.Context> => {
+        user.response = {
+            text: [randomResponseToComplimentMessage(user.name.first)]
+        };
+        return user;
+    };
+    description: 'Function to compliment user';
+}
+

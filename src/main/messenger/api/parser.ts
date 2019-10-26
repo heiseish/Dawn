@@ -1,5 +1,5 @@
 import idx from 'idx';
-import { formatTimeForListTemplate } from '../../externalApis/moment';
+import { formatTimeForListTemplate } from '../../3rdparty/moment';
 import Logger from '../../logger';
 
 /**

@@ -14,29 +14,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const analyze_1 = __importDefault(require("./analyze"));
 const execute_1 = __importDefault(require("./execute"));
 const getUser_1 = __importDefault(require("./getUser"));
-const identifySource_1 = __importDefault(require("./identifySource"));
 const logger_1 = __importDefault(require("./logger"));
 const respond_1 = __importDefault(require("./respond"));
+const cache_1 = __importDefault(require("./database/cache"));
+const sweeper_1 = __importDefault(require("./sweeper"));
 class Headquarter {
+    constructor() {
+        this.setUserDB = (user) => {
+            this.sweeper = new sweeper_1.default();
+            this.cache = new cache_1.default(user);
+            this.sweeper.add(this.cache.close);
+        };
+    }
     /**
-     * Handle receving events
-     * @param platform platforms currently supported
-     * @param payload message payload from user
-     * @param UserDb Mongoose DB User schema
-     * @param cache Cache server
-     * @return Promise<void>
-     * @throws Error if any errors with child processes
+     * Process request
+     * @param ctx
+     * @param cache
      */
-    receive(platform, payload, cache) {
+    receive(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
             logger_1.default.info('Transfering event to headquarter..', false, Headquarter.name);
             try {
-                const partialUniqueId = identifySource_1.default(platform, payload);
-                let user = yield getUser_1.default(partialUniqueId, platform, payload, cache);
-                user = yield analyze_1.default(platform, payload, user);
-                user = yield execute_1.default(user);
-                yield respond_1.default(platform, payload, user);
-                cache.saveUser(user.id, user);
+                let user = yield getUser_1.default(ctx, this.cache);
+                user = yield analyze_1.default(ctx);
+                user = yield execute_1.default(ctx);
+                yield respond_1.default(ctx);
+                this.cache.saveUser(user.id, user);
             }
             catch (err) {
                 logger_1.default.error(err);

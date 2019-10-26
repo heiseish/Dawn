@@ -26,6 +26,8 @@ const CIPHER = process.env.CIPHER;
 const PASSKEY = process.env.PASSKEY;
 const CONVERSE_SERVER = process.env.CONVERSE_SERVER;
 const WAIT_TIME_FOR_EXTERNAL_API = 10000;
+const GRPC_ADDR = process.env.GRPC_ADDR;
+const NODE_ENV = process.env.NODE_ENV;
 export {
 	CIPHER,
 	PASSKEY,
@@ -57,5 +59,7 @@ export {
 	GIPHY_KEY,
 	CONVERSE_SERVER,
 
-	WAIT_TIME_FOR_EXTERNAL_API
+    WAIT_TIME_FOR_EXTERNAL_API,
+    GRPC_ADDR,
+    NODE_ENV
 };

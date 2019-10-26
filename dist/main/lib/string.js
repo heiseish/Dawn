@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const moment_1 = require("../externalApis/moment");
+const moment_1 = require("../3rdparty/moment");
 const array_1 = require("../utils/array");
 /**
  * Handle unknown queries

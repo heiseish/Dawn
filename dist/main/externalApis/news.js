@@ -28,7 +28,7 @@ const MAP_TOPIC_TO_CATEGORY = {
 };
 /**
 * Get top headlines
-* @param {Dawn.userType} user
+* @param {dawn.Context} user
 * @return {news.article} articles
 */
 const getAllHeadlines = (user) => __awaiter(this, void 0, void 0, function* () {

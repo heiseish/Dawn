@@ -11,30 +11,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const translate_1 = require("./externalApis/@google/translate");
+const translate_1 = require("./3rdparty/@google/translate");
 const logger_1 = __importDefault(require("./logger"));
 const respond_1 = __importDefault(require("./messenger/respond"));
 const respond_2 = __importDefault(require("./telegram/respond"));
+const respondOptions = {
+    'telegram': respond_2.default,
+    'messenger': respond_1.default
+};
+const respond = (sp) => respondOptions[sp];
 /**
 * Respond to original message
-* @param {supportedPlatform} platform
-* @param {any} payload
-* @param {Dawn.userType} user
+* @param {dawn.Context} user
 */
-exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, function* () {
+exports.default = (ctx) => __awaiter(this, void 0, void 0, function* () {
     try {
         const log = logger_1.default.info('Responding...', true);
-        user = yield prepareResponseForSending(user);
-        switch (platform) {
-            case 'telegram':
-                yield respond_2.default(payload, user);
-                break;
-            case 'messenger':
-                yield respond_1.default(user);
-                break;
-            default:
-        }
-        user.response = { /* Sanitize reponse object */};
+        ctx = yield prepareResponseForSending(ctx);
+        respond(ctx.platform)(ctx);
+        ctx.response = { /* Sanitize reponse object */};
         log.stop('Responded.');
     }
     catch (e) {
@@ -43,16 +38,18 @@ exports.default = (platform, payload, user) => __awaiter(this, void 0, void 0, f
 });
 /**
 * Sync the language of the response with the locale of the convo
-* @param {Dawn.userType} user
-* @returns {Dawn.userType} updated user
+* @param {dawn.Context} user
+* @returns {dawn.Context} updated user
 */
 const prepareResponseForSending = (user) => __awaiter(this, void 0, void 0, function* () {
     try {
         const response = user.response;
-        if (response.simpleText) {
+        if (response.text) {
             const responseLang = 'eng';
             if (responseLang !== user.locale) {
-                user.response = Object.assign({}, response, { simpleText: yield translate_1.translate(response.simpleText, user.locale) });
+                for (let i = 0; i < user.response.text.length; ++i) {
+                    user.response.text[i] = yield translate_1.translate(user.response.text[i], user.locale);
+                }
             }
         }
         return user;

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const idx_1 = __importDefault(require("idx"));
 const rxjs_1 = require("rxjs");
-const _twitter_1 = require("../externalApis/@twitter");
+const _twitter_1 = require("../3rdparty/@twitter");
 const logger_1 = __importDefault(require("../logger"));
 const _1 = __importDefault(require("./"));
 const POKEMONGO_TWITTER = '2839430431';

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_schedule_1 = __importDefault(require("node-schedule"));
-const _nasa_1 = __importDefault(require("../externalApis/@nasa"));
+const _nasa_1 = __importDefault(require("../3rdparty/@nasa"));
 const logger_1 = __importDefault(require("../logger"));
 const _1 = __importDefault(require("./"));
 class MorningNasa {

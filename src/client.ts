@@ -6,7 +6,7 @@ import { ConversationInput } from './main/protobuf/seq2seq_service_pb';
 import { ImageClassificationServiceClient } from './main/protobuf/image_classification_service_grpc_pb';
 import { ImageRequest } from './main/protobuf/image_classification_service_pb';
 import fs from 'fs';
-import { measureExecutionTimeCallback } from '../src/main/utils/benchmark';
+import { measureExecutionTimeCallback } from './main/utils/benchmark';
 // function to encode file data to base64 encoded string
 const base64_encode = (file: string):string => {
     // read binary data
@@ -24,13 +24,13 @@ const base64_decode = (base64str:string , file:string):void => {
     console.log('******** File created from base64 encoded string ********');
 }
 
-var client = new Seq2SeqServiceClient('127.0.0.1:' + GRPC_PORT, grpc.credentials.createInsecure());
+var client = new Seq2SeqServiceClient('0.0.0.0:' + GRPC_PORT, grpc.credentials.createInsecure());
 let text = new ConversationInput();
 text.setTransId("12314512");
 text.setText("what shall I do");
 
 
-let imageClient = new ImageClassificationServiceClient('127.0.0.1:' + GRPC_PORT, grpc.credentials.createInsecure(), {
+let imageClient = new ImageClassificationServiceClient('0.0.0.0:' + GRPC_PORT, grpc.credentials.createInsecure(), {
     // "grpc.max_send_message_length": 1024 * 1024 * 100
 });
 let req = new ImageRequest();
@@ -39,15 +39,23 @@ req.setTransId("12314512");
 req.setImage('https://cataas.com/cat/says/hello%20world!');
 
 const test = async () => {
-	console.log(await measureExecutionTimeCallback((resolve) => {
-		client.respondToText(text, (err, resp) => {
-			if (err) {
-				console.log(err);
-				return;
-			}
-			resolve(resp)
-		})
-	}));
+// 	console.log(await measureExecutionTimeCallback((resolve) => {
+// 		client.respondToText(text, (err, resp) => {
+// 			if (err) {
+// 				console.log(err);
+// 				return;
+// 			}
+// 			resolve(resp)
+// 		})
+//     }));
+//    client.respondToText(text, (err, resp) => {
+//         if (err) {
+//             console.log(err);
+//             return;
+//         }
+//         console.log(resp.getState())
+//         console.log(resp.getText())
+//     })
 
 	console.log(await measureExecutionTimeCallback((resolve) => {
 		imageClient.recognizeImage(req, (err, resp) => {

@@ -51,7 +51,9 @@ const padLeft = (s: string, c: string, n: number): string => {
 * @return a string with all substrings removed
 */
 const replaceAllSubstring = (s: string, ...substrings: string[]): string => {
-	for (const substring of substrings) { s = replaceAll(s, substring, ''); }
+	for (const substring of substrings) { 
+        s = replaceAll(s, substring, ''); 
+    }
 	return s;
 };
 
@@ -74,7 +76,9 @@ const getNumberStringFromString = (s: string, index?: number): string | null => 
 const generateRandomId = (length = 10): string => {
 	let text = '';
 	const possible = '0123456789';
-	for (let i = 0; i < length; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
+	for (let i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
 	return text;
 };
 
@@ -85,9 +89,10 @@ const generateRandomId = (length = 10): string => {
 * @param {string} replace
 * @return a string will all `find` replaced by `replace`
 */
-const replaceAll = (str, find, replace): string => {
+const replaceAll = (str: string, find:string, replace:string): string => {
 	return str.replace(new RegExp(find, 'g'), replace);
 };
+
 
 export {
 	padRight,

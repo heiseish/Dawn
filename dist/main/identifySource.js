@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const idx_1 = __importDefault(require("idx"));
 const logger_1 = __importDefault(require("./logger"));
 const string_1 = require("./utils/string");
+const node_telegram_bot_api_1 = __importDefault(require("node-telegram-bot-api"));
 /**
  * Return a partial unique userId from incoming event to identify user
  * @param {supportedPlatform} platform supported platform currently
@@ -17,12 +18,13 @@ exports.default = (platform, payload) => {
         hashPrefix: '',
         id: '',
     };
-    switch (platform) {
+    if (payload instanceof node_telegram_bot_api_1.default.Message) {
+    }
+    switch () {
         case 'telegram':
-            if (idx_1.default(payload, (_) => _.from.id)) {
-                data.hashPrefix = 'tlg',
-                    data.id = idx_1.default(payload, (_) => _.from.id);
-            }
+            data.hashPrefix = 'tlg',
+                data.id = payload.from.id;
+            ;
             break;
         case 'messenger':
             if (idx_1.default(payload, (_) => _.sender.id)) {
