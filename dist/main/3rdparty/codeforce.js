@@ -20,9 +20,10 @@ const getUserRating = (handle) => __awaiter(this, void 0, void 0, function* () {
         const res = yield request_1.externalAPIRequest({
             uri: CODEFORCE_API + handle,
         });
-        const result = JSON.parse(res).result[0];
+        console.log(res);
+        const result = res.result[0];
         return {
-            rating: result.rating,
+            rating: parseInt(result.rating),
             rank: result.rank,
         };
     }

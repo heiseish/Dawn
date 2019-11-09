@@ -11,10 +11,11 @@ const getUserRating = async (handle: string): Promise<CodeforceRanking> => {
 	try {
 		const res = await externalAPIRequest({
 			uri: CODEFORCE_API + handle,
-		});
-		const result = JSON.parse(res).result[0];
+        });
+        console.log(res);
+		const result = res.result[0];
 		return {
-			rating: result.rating,
+			rating: parseInt(result.rating),
 			rank: result.rank,
 		};
 

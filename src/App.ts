@@ -144,7 +144,7 @@ export default class App implements dawn.App {
 	* @param {dawn.StreamPerson[]} people list of people to send to
 	*/
 	private loadStreamingEndpoint(people: dawn.StreamPerson[]): void {
-        if (NODE_ENV != 'local') {
+        // if (NODE_ENV != 'local') {
             this.streams = [];
             this.streams.push(new TwitterStreaming());
             this.streams.push(new MorningNasa());
@@ -152,7 +152,7 @@ export default class App implements dawn.App {
 
             for (const st of this.streams) st.startStreaming(people);
             for (const st of this.streams) this.sweeper.add(st.stopStreaming);
-        }
+        // }
 		
 	}
 

@@ -25,7 +25,6 @@ const mongoDB_1 = __importDefault(require("./main/database/mongoDB"));
 const preprocess_1 = __importDefault(require("./main/preprocess"));
 const sweeper_1 = __importDefault(require("./main/sweeper"));
 const telegram_1 = require("./main/telegram");
-const client_1 = require("./main/3rdparty/@google/grpc/client");
 /**
 * REST API
 */
@@ -90,10 +89,6 @@ class App {
     loadPingEndpoints() {
         this.express.get('/', (req, res) => res.status(200).json({ name: 'potts-backend' }));
         this.express.get('/ping', (req, res) => res.sendStatus(200));
-        this.express.get('/test/:tagId', (req, res) => {
-            client_1.RunInferenceSequence2Sequence(req.params.tagId)
-                .then(ans => res.send("My answer is  " + ans));
-        });
     }
     /**
     * Endpoint for facebook messenger
@@ -141,16 +136,16 @@ class App {
     * @param {dawn.StreamPerson[]} people list of people to send to
     */
     loadStreamingEndpoint(people) {
-        if (environment_1.NODE_ENV != 'local') {
-            this.streams = [];
-            this.streams.push(new twitter_1.default());
-            this.streams.push(new morningNasa_1.default());
-            this.streams.push(new codeforce_1.default(this.firebase));
-            for (const st of this.streams)
-                st.startStreaming(people);
-            for (const st of this.streams)
-                this.sweeper.add(st.stopStreaming);
-        }
+        // if (NODE_ENV != 'local') {
+        this.streams = [];
+        this.streams.push(new twitter_1.default());
+        this.streams.push(new morningNasa_1.default());
+        this.streams.push(new codeforce_1.default(this.firebase));
+        for (const st of this.streams)
+            st.startStreaming(people);
+        for (const st of this.streams)
+            this.sweeper.add(st.stopStreaming);
+        // }
     }
 }
 exports.default = App;

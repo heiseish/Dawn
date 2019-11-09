@@ -35,11 +35,11 @@ const base64_decode = (base64str, file) => {
     fs_1.default.writeFileSync(file, bitmap);
     console.log('******** File created from base64 encoded string ********');
 };
-var client = new seq2seq_service_grpc_pb_1.Seq2SeqServiceClient('127.0.0.1:' + GRPC_PORT, grpc_1.default.credentials.createInsecure());
+var client = new seq2seq_service_grpc_pb_1.Seq2SeqServiceClient('0.0.0.0:' + GRPC_PORT, grpc_1.default.credentials.createInsecure());
 let text = new seq2seq_service_pb_1.ConversationInput();
 text.setTransId("12314512");
 text.setText("what shall I do");
-let imageClient = new image_classification_service_grpc_pb_1.ImageClassificationServiceClient('127.0.0.1:' + GRPC_PORT, grpc_1.default.credentials.createInsecure(), {
+let imageClient = new image_classification_service_grpc_pb_1.ImageClassificationServiceClient('0.0.0.0:' + GRPC_PORT, grpc_1.default.credentials.createInsecure(), {
 // "grpc.max_send_message_length": 1024 * 1024 * 100
 });
 let req = new image_classification_service_pb_1.ImageRequest();

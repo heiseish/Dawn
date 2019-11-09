@@ -28,15 +28,27 @@ class CodeforceStream {
      * @returns void
      */
     startStreaming(list) {
-        this.scheduler = node_schedule_1.default.scheduleJob('*/20 * * * *', () => __awaiter(this, void 0, void 0, function* () {
+        logger_1.default.info('Starting Codeforce streaming');
+        this.scheduler = node_schedule_1.default.scheduleJob('*/1 * * * *', () => __awaiter(this, void 0, void 0, function* () {
             const users = yield this.firebase.getCodeforceHandle();
+            // console.log(users)
             for (const user of Object.values(users)) {
+                // console.log('User handle is ', user.handle);
                 const info = yield codeforce_1.getUserRating(user.handle);
                 if (!user.standing || info.rating != user.standing.rating) {
                     yield this.firebase.setCurrentCodeforceStanding(user.handle, info);
-                    _1.default({
-                        text: 'Codeforce user ' + user.handle + ':\nNew codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank,
-                    }, list);
+                    if (info.rating > user.standing.rating) {
+                        _1.default({
+                            text: 'Codeforce user ' + user.handle + ':\nNice!, you have improved to new codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank,
+                        }, list);
+                    }
+                    else {
+                        _1.default({
+                            text: 'Codeforce user ' + user.handle + ':\nYour codeforce rating drops a bit but dont give up!\nNew codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank,
+                        }, list);
+                    }
+                }
+                else if (!user.standing || info.rating < user.standing.rating) {
                 }
             }
         }));

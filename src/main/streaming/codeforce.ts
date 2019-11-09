@@ -18,16 +18,27 @@ export default class CodeforceStream implements dawn.Streamer {
 	 * @returns void
 	 */
 	startStreaming(list: dawn.StreamPerson[]): void {
-		this.scheduler = schedule.scheduleJob('*/20 * * * *', async () => {
-			const users: CodeforceUser[] = await this.firebase.getCodeforceHandle();
+        Logger.info('Starting Codeforce streaming');
+		this.scheduler = schedule.scheduleJob('*/1 * * * *', async () => {
+            const users: CodeforceUser[] = await this.firebase.getCodeforceHandle();
+            // console.log(users)
 			for (const user of Object.values(users)) {
+                // console.log('User handle is ', user.handle);
 				const info: CodeforceRanking = await getUserRating(user.handle);
 				if (!user.standing || info.rating != user.standing.rating) {
-					await this.firebase.setCurrentCodeforceStanding(user.handle, info);
-					stream({
-						text: 'Codeforce user ' + user.handle + ':\nNew codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank,
-					}, list);
-				}
+                    await this.firebase.setCurrentCodeforceStanding(user.handle, info);
+                    if (info.rating > user.standing.rating) {
+                        stream({
+                            text: 'Codeforce user ' + user.handle + ':\nNice!, you have improved to new codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank,
+                        }, list);
+                    } else {
+                        stream({
+                            text: 'Codeforce user ' + user.handle + ':\nYour codeforce rating drops a bit but dont give up!\nNew codeforce rating: ' + info.rating + '\nNew rank: ' + info.rank,
+                        }, list);
+                    }
+					
+				} else if (!user.standing || info.rating < user.standing.rating) {
+                }
 			}
 
 		});
